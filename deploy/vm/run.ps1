@@ -46,6 +46,49 @@ Function CreateRandomPassword() {
 }
 
 #******************************************************************************
+# Get an access token
+#******************************************************************************
+Function GetAzureToken() {
+
+    try {
+        $context = Get-AzureRmContext
+        $tenantId = $context.Tenant.Id
+        $refreshToken = @($context.TokenCache.ReadItems() | where {$_.tenantId -eq $tenantId -and $_.ExpiresOn -gt (Get-Date)})[0].RefreshToken
+        $body = "grant_type=refresh_token&refresh_token=$($refreshToken)&resource=74658136-14ec-4630-ad9b-26e160ff0fc6"
+        $apiToken = Invoke-RestMethod "https://login.windows.net/$tenantId/oauth2/token" -Method POST -Body $body -ContentType "application/x-www-form-urlencoded"
+        return $apiToken.access_token
+    }
+    catch {
+        Write-Host "An error occurred: $($_.Exception.Message)"
+    }
+}
+
+#******************************************************************************
+# Grant permission to to the app with id = $azureAppId
+#******************************************************************************
+Function GrantPermission() {
+    
+    Param(
+        [string] $azureAppId
+    )
+
+    try { 
+        $token = GetAzureToken
+        $header = @{
+            "Authorization"          = "Bearer " + $token
+            "X-Requested-With"       = "XMLHttpRequest"
+            "x-ms-client-request-id" = [guid]::NewGuid()
+            "x-ms-correlation-id"    = [guid]::NewGuid()
+        } 
+        $url = "https://main.iam.ad.ext.azure.com/api/RegisteredApplications/" + $azureAppId + "/Consent?onBehalfOfAll=true"
+        Invoke-RestMethod -Uri $url -Method Post -Headers $header
+    }
+    catch {
+        Write-Host "An error occurred: $($_.Exception.Message)"
+    }
+}
+
+#******************************************************************************
 # Script body
 #******************************************************************************
 $ErrorActionPreference = "Stop"
@@ -135,6 +178,8 @@ if ($aadConfig -and $aadConfig.ClientObjectId) {
     # still connected
     Set-AzureADApplication -ObjectId $aadConfig.ClientObjectId -ReplyUrls $replyUrls
 }
+
+GrantPermission -azureAppId $aadConfig.ClientObjectId
 
 Write-Host
 Write-Host "In your webbrowser go to:"

@@ -207,12 +207,14 @@
         "location": "[resourceGroup().location]",
         "documentDBApiVersion": "2016-03-19",
         "documentDBResourceId": "[resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('documentDBName'))]",
+        "documentDBConnString": "[concat('\"', 'AccountEndpoint=', reference(variables('documentDBResourceId')).documentEndpoint, ';AccountKey=', listkeys(variables('documentDBResourceId'), variables('documentDBApiVersion')).primaryMasterKey, ';', '\"')]",
         "eventHubApiVersion": "2017-04-01",
         "eventHubKeyName": "RootManageSharedAccessKey",
         "eventHubKeyResourceId": "[resourceId('Microsoft.EventHub/namespaces/AuthorizationRules', parameters('eventHubNamespaceName'), variables('eventHubKeyName'))]",
         "eventHubNamespaceResourceId": "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespaceName'))]",
         "eventHubResourceId": "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubNamespaceName'), parameters('eventHubName'))]",
         "eventHubRouteKeyResourceId": "[resourceId('Microsoft.EventHub/namespaces/eventhubs/AuthorizationRules', parameters('eventHubNamespaceName'), parameters('eventHubName'), parameters('eventHubAuthorizationName'))]",
+        "eventHubConnString": "[concat('\"Endpoint=sb://', parameters('eventHubNamespaceName'), '.', parameters('serviceBusEndpointSuffix'), '/;SharedAccessKeyName=', variables('eventHubKeyName'), ';SharedAccessKey=', listkeys(variables('eventHubKeyResourceId'), variables('eventHubApiVersion')).primaryKey, '\"')]",
         "iotHubApiVersion": "2018-04-01",
         "iotHubResourceId": "[resourceId('Microsoft.Devices/Iothubs', parameters('iotHubName'))]",
         "iotHubKeyName": "iothubowner",
@@ -411,7 +413,15 @@
         },
         "docdb-connstring": {
             "type": "string",
-            "value": "[concat('AccountEndpoint=', reference(variables('documentDBResourceId')).documentEndpoint, ';AccountKey=', listkeys(variables('documentDBResourceId'), variables('documentDBApiVersion')).primaryMasterKey, ';')]"
+            "value": "variables('documentDBConnString')]"
+        },
+        "eventhub-name": {
+            "type": "string",
+            "value": "[parameters('eventHubName')]"
+        },
+        "eventhub-connstring": {
+            "type": "string",
+            "value": "variables('eventHubConnString')]"
         },
         "iothub-name": {
             "type": "string",
@@ -420,6 +430,10 @@
         "iothub-endpoint": {
             "type": "string",
             "value": "[reference(variables('iotHubResourceId')).eventHubEndpoints.events.endpoint]"
+        },
+        "iothub-consumer-group": {
+            "type": "string",
+            "value": "[variables('onboardingConsumerGroupName')]"
         },
         "azureblob-account": {
             "type": "string",
@@ -433,21 +447,9 @@
             "type": "string",
             "value": "[parameters('storageEndpointSuffix')]"
         },
-        "iothub-consumer-group": {
-            "type": "string",
-            "value": "[variables('onboardingConsumerGroupName')]"
-        },
-        "eventhub-connstring": {
-            "type": "string",
-            "value": "[concat('Endpoint=sb://', parameters('eventHubNamespaceName'), '.', parameters('serviceBusEndpointSuffix'), '/;SharedAccessKeyName=', variables('eventHubKeyName'), ';SharedAccessKey=', listkeys(variables('eventHubKeyResourceId'), variables('eventHubApiVersion')).primaryKey)]"
-        },
-        "eventhub-name": {
-            "type": "string",
-            "value": "[parameters('eventHubName')]"
-        },
         "resourceGroup" : {
             "type": "string",
             "value": "[resourceGroup().name]"
-        }
+        }       
     }
 }

@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Gateway.v1.Controllers {
             var response = await client.GetAsync(VersionInfo.PATH + "/status");
 
             // Assert
-            response.EnsureSuccessStatusCode(); 
+            response.EnsureSuccessStatusCode();
             Assert.Equal("application/json; charset=utf-8",
                 response.Content.Headers.ContentType.ToString());
 

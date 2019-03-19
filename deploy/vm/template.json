@@ -338,7 +338,6 @@
         "location": "[resourceGroup().location]",
         "documentDBApiVersion": "2016-03-19",
         "documentDBResourceId": "[resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('documentDBName'))]",
-        "documentDBConnString": "[concat('\"', 'AccountEndpoint=', reference(variables('documentDBResourceId')).documentEndpoint, ';AccountKey=', listkeys(variables('documentDBResourceId'), variables('documentDBApiVersion')).primaryMasterKey, ';', '\"')]",
         "eventHubApiVersion": "2017-04-01",
         "eventHubKeyName": "RootManageSharedAccessKey",
         "eventHubKeyResourceId": "[resourceId('Microsoft.EventHub/namespaces/AuthorizationRules', parameters('eventHubNamespaceName'), variables('eventHubKeyName'))]",
@@ -843,7 +842,7 @@
                     ]
                 },
                 "protectedSettings": {
-                    "commandToExecute": "[concat('sh setup.sh ', ' --unsafe false --admin ', concat('\"', parameters('adminUsername'), '\"'), ' --registry-prefix ', concat('\"', parameters('containerRegistryPrefix'), '\"'), ' --hostname ', concat('\"', variables('vmFQDN'), '\"'), ' --ssl-certificate-key ', concat('\"', parameters('adminPassword'), '\"'), ' --ssl-certificate ', concat('\"', parameters('remoteEndpointCertificate'), '\"'), ' --auth-type aad ', ' --auth-audience ', concat('\"', parameters('authAudience'), '\"'), ' --aad-appid ', concat('\"', parameters('aadClientId'), '\"'), ' --aad-tenant ', concat('\"', parameters('aadTenantId'), '\"'), ' --aad-instance ', concat('\"', parameters('aadInstance'), '\"'), ' --iothub-connstring ', concat('\"', 'HostName=', reference(variables('iotHubResourceId')).hostName, ';SharedAccessKeyName=', variables('iotHubKeyName'), ';SharedAccessKey=', listkeys(variables('iotHubKeyResource'), variables('iotHubApiVersion')).primaryKey, '\"'), ' --docdb-connstring ', variables('documentDBConnString'), ' --iothub-name ', concat('\"', reference(variables('iotHubResourceId')).eventHubEndpoints.events.path, '\"'), ' --iothub-endpoint ', concat('\"', reference(variables('iotHubResourceId')).eventHubEndpoints.events.endpoint, '\"'), ' --azureblob-account ', concat('\"', parameters('storageName'), '\"'), ' --azureblob-key ', concat('\"', listKeys(variables('storageResourceId'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, '\"'), ' --azureblob-endpoint-suffix ',  concat('\"', parameters('storageEndpointSuffix'), '\"'), ' --release-version ', concat('\"', variables('servicesBranch'), '\"'), ' --iothub-consumer-group ', concat('\"', variables('onboardingConsumerGroupName'), '\"'), ' --evenhub-connstring ', variables('eventHubConnString'), ' --eventhub-name ', parameters('eventHubName'))]"
+                    "commandToExecute": "[concat('sh setup.sh ', ' --unsafe false --admin ', concat('\"', parameters('adminUsername'), '\"'), ' --registry-prefix ', concat('\"', parameters('containerRegistryPrefix'), '\"'), ' --hostname ', concat('\"', variables('vmFQDN'), '\"'), ' --ssl-certificate-key ', concat('\"', parameters('adminPassword'), '\"'), ' --ssl-certificate ', concat('\"', parameters('remoteEndpointCertificate'), '\"'), ' --auth-type aad ', ' --auth-audience ', concat('\"', parameters('authAudience'), '\"'), ' --aad-appid ', concat('\"', parameters('aadClientId'), '\"'), ' --aad-tenant ', concat('\"', parameters('aadTenantId'), '\"'), ' --aad-instance ', concat('\"', parameters('aadInstance'), '\"'), ' --iothub-connstring ', concat('\"', 'HostName=', reference(variables('iotHubResourceId')).hostName, ';SharedAccessKeyName=', variables('iotHubKeyName'), ';SharedAccessKey=', listkeys(variables('iotHubKeyResource'), variables('iotHubApiVersion')).primaryKey, '\"'), ' --docdb-connstring ', concat('\"', 'AccountEndpoint=', reference(variables('documentDBResourceId')).documentEndpoint, ';AccountKey=', listkeys(variables('documentDBResourceId'), variables('documentDBApiVersion')).primaryMasterKey, ';', '\"'), ' --iothub-name ', concat('\"', reference(variables('iotHubResourceId')).eventHubEndpoints.events.path, '\"'), ' --iothub-endpoint ', concat('\"', reference(variables('iotHubResourceId')).eventHubEndpoints.events.endpoint, '\"'), ' --azureblob-account ', concat('\"', parameters('storageName'), '\"'), ' --azureblob-key ', concat('\"', listKeys(variables('storageResourceId'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, '\"'), ' --azureblob-endpoint-suffix ',  concat('\"', parameters('storageEndpointSuffix'), '\"'), ' --release-version ', concat('\"', variables('servicesBranch'), '\"'), ' --iothub-consumer-group ', concat('\"', variables('onboardingConsumerGroupName'), '\"'), ' --evenhub-connstring ', variables('eventHubConnString'), ' --eventhub-name ', parameters('eventHubName'))]"
                 }
             }
         }
@@ -867,7 +866,7 @@
         },
         "docdb-connstring": {
             "type": "string",
-            "value": "variables('documentDBConnString')]"
+            "value": "[concat('\"', 'AccountEndpoint=', reference(variables('documentDBResourceId')).documentEndpoint, ';AccountKey=', listkeys(variables('documentDBResourceId'), variables('documentDBApiVersion')).primaryMasterKey, ';', '\"')]"
         },
         "eventhub-name": {
             "type": "string",
@@ -875,7 +874,7 @@
         },
         "eventhub-connstring": {
             "type": "string",
-            "value": "variables('eventHubConnString')]"
+            "value": "[variables('eventHubConnString')]"
         },
         "iothub-name": {
             "type": "string",

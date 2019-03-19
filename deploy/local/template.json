@@ -207,7 +207,6 @@
         "location": "[resourceGroup().location]",
         "documentDBApiVersion": "2016-03-19",
         "documentDBResourceId": "[resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('documentDBName'))]",
-        "documentDBConnString": "[concat('\"', 'AccountEndpoint=', reference(variables('documentDBResourceId')).documentEndpoint, ';AccountKey=', listkeys(variables('documentDBResourceId'), variables('documentDBApiVersion')).primaryMasterKey, ';', '\"')]",
         "eventHubApiVersion": "2017-04-01",
         "eventHubKeyName": "RootManageSharedAccessKey",
         "eventHubKeyResourceId": "[resourceId('Microsoft.EventHub/namespaces/AuthorizationRules', parameters('eventHubNamespaceName'), variables('eventHubKeyName'))]",
@@ -413,7 +412,7 @@
         },
         "docdb-connstring": {
             "type": "string",
-            "value": "variables('documentDBConnString')]"
+            "value": "[concat('\"', 'AccountEndpoint=', reference(variables('documentDBResourceId')).documentEndpoint, ';AccountKey=', listkeys(variables('documentDBResourceId'), variables('documentDBApiVersion')).primaryMasterKey, ';', '\"')]"
         },
         "eventhub-name": {
             "type": "string",
@@ -421,7 +420,7 @@
         },
         "eventhub-connstring": {
             "type": "string",
-            "value": "variables('eventHubConnString')]"
+            "value": "[variables('eventHubConnString')]"
         },
         "iothub-name": {
             "type": "string",

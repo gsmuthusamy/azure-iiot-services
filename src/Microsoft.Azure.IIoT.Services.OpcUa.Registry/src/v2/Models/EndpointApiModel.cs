@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Registry.Models;
     using Newtonsoft.Json;
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
 
@@ -29,6 +30,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
                 throw new ArgumentNullException(nameof(model));
             }
             Url = model.Url;
+            AlternativeUrls = model.AlternativeUrls;
             User = model.User == null ? null :
                 new CredentialApiModel(model.User);
             ServerThumbprint = model.ServerThumbprint;
@@ -42,6 +44,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         public EndpointModel ToServiceModel() {
             return new EndpointModel {
                 Url = Url,
+                AlternativeUrls = AlternativeUrls,
                 User = User?.ToServiceModel(),
                 SecurityMode = SecurityMode,
                 SecurityPolicy = SecurityPolicy,
@@ -50,11 +53,19 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         }
 
         /// <summary>
-        /// Endpoint
+        /// Endpoint url to use to connect with
         /// </summary>
         [JsonProperty(PropertyName = "url")]
         [Required]
         public string Url { get; set; }
+
+        /// <summary>
+        /// Alternative endpoint urls that can be used for
+        /// accessing and validating the server
+        /// </summary>
+        [JsonProperty(PropertyName = "alternativeUrls",
+            NullValueHandling = NullValueHandling.Ignore)]
+        public HashSet<string> AlternativeUrls { get; set; }
 
         /// <summary>
         /// User Authentication

@@ -138,13 +138,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Twin.v2.Controllers {
         }
 
         [Fact]
-        public async Task NodeMethodCallStaticScalarMethod4Test1() {
-            await GetTests().NodeMethodCallStaticScalarMethod4Test1();
+        public async Task NodeMethodCallBoiler2ResetTest() {
+            await GetTests().NodeMethodCallBoiler2ResetTest();
         }
 
         [Fact]
-        public async Task NodeMethodCallStaticScalarMethod4Test2() {
-            await GetTests().NodeMethodCallStaticScalarMethod4Test2();
+        public async Task NodeMethodCallBoiler1ResetTest() {
+            await GetTests().NodeMethodCallBoiler1ResetTest();
         }
     }
 }

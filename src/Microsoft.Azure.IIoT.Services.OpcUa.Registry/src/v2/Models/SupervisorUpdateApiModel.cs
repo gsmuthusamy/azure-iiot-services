@@ -27,6 +27,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         public SupervisorUpdateApiModel(SupervisorUpdateModel model) {
             SiteId = model.SiteId;
             Discovery = model.Discovery;
+            LogLevel = model.LogLevel;
             DiscoveryConfig = model.DiscoveryConfig == null ? null :
                 new DiscoveryConfigApiModel(model.DiscoveryConfig);
             DiscoveryCallbacks = model.DiscoveryCallbacks?
@@ -41,6 +42,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         public SupervisorUpdateModel ToServiceModel() {
             return new SupervisorUpdateModel {
                 SiteId = SiteId,
+                LogLevel = LogLevel,
                 Discovery = Discovery,
                 DiscoveryConfig = DiscoveryConfig?.ToServiceModel(),
                 DiscoveryCallbacks = DiscoveryCallbacks?
@@ -89,5 +91,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             NullValueHandling = NullValueHandling.Ignore)]
         [DefaultValue(null)]
         public bool? RemoveDiscoveryCallbacks { get; set; }
+
+        /// <summary>
+        /// Current log level
+        /// </summary>
+        [JsonProperty(PropertyName = "logLevel",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
+        public SupervisorLogLevel? LogLevel { get; set; }
     }
 }

@@ -27,6 +27,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             Id = model.Id;
             SiteId = model.SiteId;
             Discovery = model.Discovery;
+            LogLevel = model.LogLevel;
             DiscoveryConfig = model.DiscoveryConfig == null ? null :
                 new DiscoveryConfigApiModel(model.DiscoveryConfig);
             Certificate = model.Certificate;
@@ -42,6 +43,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             return new SupervisorModel {
                 Id = Id,
                 SiteId = SiteId,
+                LogLevel = LogLevel,
                 Discovery = Discovery,
                 Certificate = Certificate,
                 DiscoveryConfig = DiscoveryConfig?.ToServiceModel(),
@@ -88,6 +90,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             NullValueHandling = NullValueHandling.Ignore)]
         [DefaultValue(null)]
         public byte[] Certificate { get; set; }
+
+        /// <summary>
+        /// Current log level
+        /// </summary>
+        [JsonProperty(PropertyName = "logLevel",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(SupervisorLogLevel.Information)]
+        public SupervisorLogLevel? LogLevel { get; set; }
 
         /// <summary>
         /// Whether the registration is out of sync between

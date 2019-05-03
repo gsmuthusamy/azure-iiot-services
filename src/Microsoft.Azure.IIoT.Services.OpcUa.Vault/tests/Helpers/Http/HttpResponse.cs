@@ -7,7 +7,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test.Helpers.Http
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers.Http
 {
     public interface IHttpResponse
     {

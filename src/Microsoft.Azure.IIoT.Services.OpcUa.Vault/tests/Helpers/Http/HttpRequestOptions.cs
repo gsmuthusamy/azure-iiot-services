@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test.Helpers.Http
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers.Http
 {
     public class HttpRequestOptions
     {

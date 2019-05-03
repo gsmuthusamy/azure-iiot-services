@@ -7,7 +7,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Models
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
 {
 
     public enum ApplicationType : int

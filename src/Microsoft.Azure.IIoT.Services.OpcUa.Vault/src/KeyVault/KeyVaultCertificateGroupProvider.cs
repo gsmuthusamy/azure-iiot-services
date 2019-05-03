@@ -14,14 +14,14 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.IIoT.Exceptions;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
 using Microsoft.Azure.KeyVault.Models;
 using Newtonsoft.Json;
 using Opc.Ua;
 using Opc.Ua.Gds;
-using static Microsoft.Azure.IIoT.OpcUa.Services.Vault.KeyVault.KeyVaultCertFactory;
+using static Microsoft.Azure.IIoT.Services.OpcUa.Vault.KeyVault.KeyVaultCertFactory;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.KeyVault
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.KeyVault
 {
     /// <summary>
     /// The certificate provider for a group where the Issuer CA cert and Crl are stored in KeyVault.

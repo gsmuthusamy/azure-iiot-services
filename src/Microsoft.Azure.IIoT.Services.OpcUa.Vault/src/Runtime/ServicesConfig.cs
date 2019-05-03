@@ -3,47 +3,70 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+using Microsoft.Azure.IIoT.Utils;
+using Microsoft.Extensions.Configuration;
 
-
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime
 {
     public interface IServicesConfig
     {
-        string ServiceHost { get; set; }
-        string KeyVaultBaseUrl { get; set; }
-        string KeyVaultResourceId { get; set; }
-        string CosmosDBEndpoint { get; set; }
-        string CosmosDBDatabase { get; set; }
-        string CosmosDBCollection { get; set; }
-        string CosmosDBToken { get; set; }
-        bool ApplicationsAutoApprove { get; set; }
+        string ServiceHost { get; }
+        string KeyVaultBaseUrl { get; }
+        string KeyVaultResourceId { get; }
+        string CosmosDBConnectionString { get; }
+        string CosmosDBDatabase { get; }
+        string CosmosDBCollection { get; }
+        bool ApplicationsAutoApprove { get; }
     }
 
     /// <inheritdoc/>
-    public class ServicesConfig : IServicesConfig
+    public class ServicesConfig : ConfigBase, IServicesConfig
     {
-        public ServicesConfig()
-        {
-            KeyVaultResourceId = "https://vault.azure.net";
-            CosmosDBDatabase = "OpcVault";
-            CosmosDBCollection = "AppsAndCertRequests";
-            ApplicationsAutoApprove = true;
+        /// <summary>
+        /// Vault configuration
+        /// </summary>
+        private const string kOpcVault_KeyVaultBaseUrlKey = "OpcVault:KeyVaultBaseUrl";
+        private const string kOpcVault_KeyVaultResourceIdKey = "OpcVault:KeyVaultResourceId";
+        private const string kOpcVault_CosmosDBConnectionStringKey = "OpcVault:CosmosDBConnectionString";
+        private const string kOpcVault_CosmosDBCollectionKey = "OpcVault:CosmosDBCollection";
+        private const string kOpcVault_CosmosDBDatabaseKey = "OpcVault:CosmosDBDatabase";
+        private const string kOpcVault_ServiceHostKey = "OpcVault:ServiceHost";
+        private const string kOpcVault_ApplicationsAutoApproveKey = "OpcVault:ApplicationsAutoApprove";
+
+        /// <inheritdoc/>
+        public string ServiceHost => GetStringOrDefault(kOpcVault_ServiceHostKey);
+
+        /// <inheritdoc/>
+        public string KeyVaultBaseUrl => GetStringOrDefault(kOpcVault_KeyVaultBaseUrlKey,
+            GetStringOrDefault("OPC_VAULT_KEYVAULT_URI",
+                GetStringOrDefault("PCS_KEYVAULT_CONFIGURATION_URI"))).Trim();
+        /// <inheritdoc/>
+        public string KeyVaultResourceId => GetStringOrDefault(kOpcVault_KeyVaultResourceIdKey,
+            GetStringOrDefault("OPC_VAULT_KEYVAULT_RESOURCE_ID",
+                "https://vault.azure.net")).Trim();
+
+        /// <inheritdoc/>
+        public string CosmosDBConnectionString => GetStringOrDefault(kOpcVault_CosmosDBConnectionStringKey,
+            GetStringOrDefault("OPC_VAULT_COSMOSDB_CONNSTRING",
+                GetStringOrDefault("PCS_TELEMETRY_DOCUMENTDB_CONNSTRING",
+                GetStringOrDefault("_DB_CS", null))));
+        /// <inheritdoc/>
+        public string CosmosDBDatabase => GetStringOrDefault(kOpcVault_CosmosDBDatabaseKey,
+            GetStringOrDefault("OPC_VAULT_COSMOSDB_DBNAME", "OpcVault")).Trim();
+        /// <inheritdoc/>
+        public string CosmosDBCollection => GetStringOrDefault(kOpcVault_CosmosDBCollectionKey,
+            GetStringOrDefault("OPC_VAULT_COSMOSDB_COLLNAME", "AppsAndCertRequests")).Trim();
+
+        /// <inheritdoc/>
+        public bool ApplicationsAutoApprove => GetBoolOrDefault(kOpcVault_ApplicationsAutoApproveKey,
+            GetBoolOrDefault("OPC_VAULT_AUTOAPPROVE", true));
+
+        /// <summary>
+        /// Configuration constructor
+        /// </summary>
+        /// <param name="configuration"></param>
+        public ServicesConfig(IConfigurationRoot configuration) :
+            base(configuration) {
         }
-        /// <inheritdoc/>
-        public string ServiceHost { get; set; }
-        /// <inheritdoc/>
-        public string KeyVaultBaseUrl { get; set; }
-        /// <inheritdoc/>
-        public string KeyVaultResourceId { get; set; }
-        /// <inheritdoc/>
-        public string CosmosDBEndpoint { get; set; }
-        /// <inheritdoc/>
-        public string CosmosDBDatabase { get; set; }
-        /// <inheritdoc/>
-        public string CosmosDBCollection { get; set; }
-        /// <inheritdoc/>
-        public string CosmosDBToken { get; set; }
-        /// <inheritdoc/>
-        public bool ApplicationsAutoApprove { get; set; }
     }
 }

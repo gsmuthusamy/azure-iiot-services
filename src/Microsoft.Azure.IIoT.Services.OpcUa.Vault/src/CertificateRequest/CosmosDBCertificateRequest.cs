@@ -6,11 +6,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.IIoT.Exceptions;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB.Models;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Types;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types;
 using Microsoft.Azure.KeyVault.Models;
 using Serilog;
 using System;
@@ -20,9 +20,9 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using CertificateRequest = Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB.Models.CertificateRequest;
+using CertificateRequest = Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models.CertificateRequest;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault
 {
     public static class CosmosDBCertificateRequestFactory
     {

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Swagger
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Swagger
 {
     using System;
 

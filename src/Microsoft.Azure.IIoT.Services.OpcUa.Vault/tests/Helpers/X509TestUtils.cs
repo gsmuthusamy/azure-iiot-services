@@ -8,11 +8,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
 using Opc.Ua;
 using Xunit;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
 {
     public class X509TestUtils
     {

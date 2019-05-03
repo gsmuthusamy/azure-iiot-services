@@ -9,14 +9,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
 using Newtonsoft.Json;
 using Opc.Ua;
 using Opc.Ua.Gds;
 using Opc.Ua.Test;
 using Xunit;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
 {
     public class ApplicationTestData
     {

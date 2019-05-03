@@ -5,10 +5,11 @@
 
 
 using Microsoft.Azure.IIoT.Auth.Clients;
+using Microsoft.Azure.IIoT.Auth.Runtime;
 using Microsoft.Azure.IIoT.Exceptions;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test.Helpers;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers;
 using Microsoft.Azure.KeyVault.Models;
 using Microsoft.Extensions.Configuration;
 using Opc.Ua;
@@ -16,19 +17,19 @@ using Serilog;
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using TestCaseOrdering;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
 {
-
     public class CertificateGroupTestFixture : IDisposable
     {
-        private readonly ServicesConfig _serviceConfig = new ServicesConfig();
-        private readonly IClientConfig _clientConfig = new ClientConfig();
+        private readonly ServicesConfig _serviceConfig;
+        private readonly IClientConfig _clientConfig;
         private readonly ILogger _logger;
         public ApplicationTestDataGenerator RandomGenerator;
         public KeyVaultCertificateGroup KeyVault;
@@ -45,10 +46,11 @@ namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("testsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile("testsettings.Development.json", optional: true, reloadOnChange: true)
+                .AddFromDotEnvFile()
                 .AddEnvironmentVariables();
             IConfigurationRoot configuration = builder.Build();
-            configuration.Bind("OpcVault", _serviceConfig);
-            configuration.Bind("Auth", _clientConfig);
+            _serviceConfig = new ServicesConfig(configuration);
+            _clientConfig = new ClientConfig(configuration);
             _logger = SerilogTestLogger.Create<CertificateGroupTestFixture>();
             if (!InvalidConfiguration())
             {
@@ -72,10 +74,10 @@ namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test
         private bool InvalidConfiguration()
         {
             return
-                _serviceConfig.KeyVaultBaseUrl == null ||
-                _serviceConfig.KeyVaultResourceId == null ||
-                _clientConfig.AppId == null ||
-                _clientConfig.AppSecret == null;
+                string.IsNullOrEmpty(_serviceConfig.KeyVaultBaseUrl) ||
+                string.IsNullOrEmpty(_serviceConfig.KeyVaultResourceId) ||
+                string.IsNullOrEmpty(_clientConfig.AppId) ||
+                string.IsNullOrEmpty(_clientConfig.AppSecret);
         }
 
         public void Dispose()
@@ -84,7 +86,7 @@ namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test
         }
     }
 
-    [TestCaseOrderer("TestCaseOrdering.PriorityOrderer", "Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test")]
+    [TestCaseOrderer("TestCaseOrdering.PriorityOrderer", "Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests")]
     public class CertificateGroupTest : IClassFixture<CertificateGroupTestFixture>
     {
         private readonly CertificateGroupTestFixture _fixture;

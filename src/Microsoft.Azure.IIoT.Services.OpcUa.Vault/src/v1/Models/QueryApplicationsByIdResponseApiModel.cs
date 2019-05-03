@@ -4,14 +4,14 @@
 // ------------------------------------------------------------
 
 
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB.Models;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Models
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
 {
     public sealed class QueryApplicationsByIdResponseApiModel
     {

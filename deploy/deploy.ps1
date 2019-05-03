@@ -34,6 +34,10 @@
 
  .PARAMETER credentials
     To support non interactive usage of script. (TODO)
+
+ .PARAMETER development
+    Whether to deploy for development or production - defaults to $false (production).
+
 #>
 
 param(
@@ -48,6 +52,7 @@ param(
     $credentials,
     [string] $tenantId,
     [string] $aadApplicationName,
+    [bool] $development = $false,
     [ValidateSet("AzureCloud")] [string] $environmentName = "AzureCloud"
 )
 
@@ -74,7 +79,7 @@ Function SelectEnvironment() {
                     -ResourceManagerUrl https://management.azure.com/ `
                     -ManagementPortalUrl http://go.microsoft.com/fwlink/?LinkId=254433
             }
-            $script:locations = @("West US", "North Europe", "West Europe")
+            $script:locations = @("East US", "West US 2", "North Europe", "West Europe", "Canada Central", "Central India", "Southeast Asia")
         }
         default {
             throw ("'{0}' is not a supported Azure Cloud environment" -f $script:environmentName)
@@ -590,6 +595,7 @@ Function GetAzureADApplicationConfig() {
         }
         $serviceDisplayName = $aadApplicationName + "-services"
         $clientDisplayName = $aadApplicationName + "-clients"
+        $moduleDisplayName = $aadApplicationName + "-module"
 
         $tenant = Get-AzureADTenantDetail
         $tenantName =  ($tenant.VerifiedDomains | Where { $_._Default -eq $True }).Name
@@ -619,6 +625,15 @@ Function GetAzureADApplicationConfig() {
             Write-Host "Created new AAD client application '$($clientDisplayName)'."
         }
 
+        $moduleAadApplication=Get-AzureADApplication `
+            -Filter "DisplayName eq '$moduleDisplayName'"
+        if (!$moduleAadApplication) {
+            $moduleAadApplication = New-AzureADApplication -DisplayName $moduleDisplayName `
+                -PublicClient $False -HomePage "http://localhost" `
+                -IdentifierUris "https://$tenantName/$moduleDisplayName"
+            Write-Host "Created new AAD Module application '$($moduleDisplayName)'."
+        }
+
         # Find client principal
         $clientServicePrincipal=Get-AzureADServicePrincipal `
              -Filter "AppId eq '$($clientAadApplication.AppId)'"
@@ -638,6 +653,8 @@ Function GetAzureADApplicationConfig() {
             Add-AzureADApplicationOwner -ObjectId $serviceAadApplication.ObjectId `
                 -RefObjectId $user.ObjectId
             Add-AzureADApplicationOwner -ObjectId $clientAadApplication.ObjectId `
+                -RefObjectId $user.ObjectId
+            Add-AzureADApplicationOwner -ObjectId $moduleAadApplication.ObjectId `
                 -RefObjectId $user.ObjectId
             Write-Host "'$($user.UserPrincipalName)' added as owner for applications."
         }
@@ -661,6 +678,7 @@ Function GetAzureADApplicationConfig() {
         $appRoles.Add($adminRole)
         $knownApplications = New-Object System.Collections.Generic.List[System.String]
         $knownApplications.Add($clientAadApplication.AppId)
+        $knownApplications.Add($moduleAadApplication.AppId)
         $requiredResourcesAccess = `
             New-Object System.Collections.Generic.List[Microsoft.Open.AzureAD.Model.RequiredResourceAccess]
         $requiredPermissions = GetRequiredPermissions -appId "cfa8b339-82a2-471a-a3c9-0fc0be7a4093" `
@@ -718,6 +736,31 @@ Function GetAzureADApplicationConfig() {
             -RequiredResourceAccess $requiredResourcesAccess -ReplyUrls $replyUrls `
             -Oauth2AllowImplicitFlow $True -Oauth2AllowUrlPathMatching $True
 
+        # 
+        # Update module application to add reply urls required permissions.
+        #
+        $replyUrls = New-Object System.Collections.Generic.List[System.String]
+        $replyUrls.Add("urn:ietf:wg:oauth:2.0:oob")
+        $requiredResourcesAccess = `
+            New-Object System.Collections.Generic.List[Microsoft.Open.AzureAD.Model.RequiredResourceAccess]
+        $requiredPermissions = GetRequiredPermissions -applicationDisplayName $serviceDisplayName `
+            -requiredDelegatedPermissions "user_impersonation" # "Directory.Read.All|User.Read"
+        $requiredResourcesAccess.Add($requiredPermissions)
+        $requiredPermissions = GetRequiredPermissions -applicationDisplayName "Microsoft Graph" `
+            -requiredDelegatedPermissions "User.Read" 
+        $requiredResourcesAccess.Add($requiredPermissions)
+        Set-AzureADApplication -ObjectId $moduleAadApplication.ObjectId `
+            -RequiredResourceAccess $requiredResourcesAccess -ReplyUrls $replyUrls `
+            -Oauth2AllowImplicitFlow $False -Oauth2AllowUrlPathMatching $False
+        Write-Host "'$($moduleDisplayName)' updated with required resource access, reply url and implicit flow."  
+
+        $serviceSecret = New-AzureADApplicationPasswordCredential -ObjectId $serviceAadApplication.ObjectId `
+            -CustomKeyIdentifier "Service Key" -EndDate (get-date).AddYears(2)
+        $clientSecret = New-AzureADApplicationPasswordCredential -ObjectId $clientAadApplication.ObjectId `
+            -CustomKeyIdentifier "Client Key" -EndDate (get-date).AddYears(2)
+        $moduleSecret = New-AzureADApplicationPasswordCredential -ObjectId $moduleAadApplication.ObjectId `
+            -CustomKeyIdentifier "Module Key" -EndDate (get-date).AddYears(2)
+
         #
         # Grant permissions to app
         #
@@ -732,12 +775,25 @@ Function GetAzureADApplicationConfig() {
             TenantId = $creds.Tenant.Id
             Instance = $script:environment.ActiveDirectoryAuthority
             Audience = $serviceAadApplication.IdentifierUris[0].ToString()
+            ServiceName = $aadApplicationName
             AppName = $aadApplicationName
+            ServiceId = $serviceAadApplication.AppId
             AppId = $serviceAadApplication.AppId
+            ServiceSecret = $serviceSecret.Value
+            ServiceObjectId = $serviceAadApplication.ObjectId
             AppObjectId = $serviceAadApplication.ObjectId
+            ServicePrincipalId = $serviceServicePrincipal.ObjectId
+            ServiceDisplayName = $serviceDisplayName
             AppDisplayName = $serviceDisplayName
             ClientId = $clientAadApplication.AppId
+            ClientSecret = $clientSecret.Value
             ClientObjectId = $clientAadApplication.ObjectId
+            ClientDisplayName = $clientDisplayName
+            ModuleId = $moduleAadApplication.AppId
+            ModuleSecret = $moduleSecret.Value
+            ModuleObjectId = $moduleAadApplication.ObjectId
+            ModuleDisplayName = $moduleDisplayName
+            UserPrincipalId = $user.ObjectId
         }
     }
     catch {

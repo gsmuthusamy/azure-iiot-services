@@ -5,11 +5,12 @@
 
 
 using Microsoft.Azure.IIoT.Auth.Clients;
+using Microsoft.Azure.IIoT.Auth.Runtime;
 using Microsoft.Azure.IIoT.Exceptions;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test.Helpers;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Types;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types;
 using Microsoft.Extensions.Configuration;
 using Opc.Ua.Test;
 using Serilog;
@@ -22,14 +23,14 @@ using TestCaseOrdering;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
 {
 
     public class CertificateRequestTestFixture : IDisposable
     {
-        private readonly IClientConfig _clientConfig = new ClientConfig();
+        private readonly IClientConfig _clientConfig;
         private readonly IDocumentDBRepository _documentDBRepository;
-        private readonly ServicesConfig _serviceConfig = new ServicesConfig();
+        private readonly ServicesConfig _serviceConfig;
         private readonly string _configId;
         private readonly string _groupId;
         private readonly KeyVaultCertificateGroup _keyVaultCertificateGroup;
@@ -51,10 +52,11 @@ namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("testsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile("testsettings.Development.json", optional: true, reloadOnChange: true)
+                .AddFromDotEnvFile()
                 .AddEnvironmentVariables();
             IConfigurationRoot configuration = builder.Build();
-            configuration.Bind("OpcVault", _serviceConfig);
-            configuration.Bind("Auth", _clientConfig);
+            _serviceConfig = new ServicesConfig(configuration);
+            _clientConfig = new ClientConfig(configuration);
             _logger = SerilogTestLogger.Create<CertificateRequestTestFixture>();
             if (!InvalidConfiguration())
             {
@@ -98,20 +100,19 @@ namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test
         private bool InvalidConfiguration()
         {
             return
-                _serviceConfig.KeyVaultBaseUrl == null ||
-                _serviceConfig.KeyVaultResourceId == null ||
-                _clientConfig.AppId == null ||
-                _clientConfig.AppSecret == null ||
-                _serviceConfig.CosmosDBCollection == null ||
-                _serviceConfig.CosmosDBDatabase == null ||
-                _serviceConfig.CosmosDBEndpoint == null ||
-                _serviceConfig.CosmosDBToken == null
+                string.IsNullOrEmpty(_serviceConfig.KeyVaultBaseUrl) ||
+                string.IsNullOrEmpty(_serviceConfig.KeyVaultResourceId) ||
+                string.IsNullOrEmpty(_clientConfig.AppId) ||
+                string.IsNullOrEmpty(_clientConfig.AppSecret) ||
+                string.IsNullOrEmpty(_serviceConfig.CosmosDBCollection) ||
+                string.IsNullOrEmpty(_serviceConfig.CosmosDBDatabase) ||
+                string.IsNullOrEmpty(_serviceConfig.CosmosDBConnectionString)
                 ;
         }
 
     }
 
-    [TestCaseOrderer("TestCaseOrdering.PriorityOrderer", "Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test")]
+    [TestCaseOrderer("TestCaseOrdering.PriorityOrderer", "Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests")]
     public class CertificateRequestTest : IClassFixture<CertificateRequestTestFixture>
     {
         CertificateRequestTestFixture _fixture;

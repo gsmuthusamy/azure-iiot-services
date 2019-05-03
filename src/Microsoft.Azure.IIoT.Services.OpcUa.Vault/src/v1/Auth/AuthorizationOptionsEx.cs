@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Auth
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth
 {
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.Azure.IIoT.Auth.Server;
-    using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
 
     /// <summary>
     /// AuthorizationOptions extension

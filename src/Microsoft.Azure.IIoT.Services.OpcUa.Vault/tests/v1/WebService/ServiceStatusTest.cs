@@ -2,13 +2,13 @@
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test.Helpers;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test.Helpers.Http;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers.Http;
 using System.Net;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test.WebService
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.WebService
 {
     public class ServiceStatusTest
     {

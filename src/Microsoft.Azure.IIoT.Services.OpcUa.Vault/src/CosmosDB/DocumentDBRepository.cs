@@ -4,10 +4,11 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB
 {
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
+    using Microsoft.Azure.IIoT.Utils;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
@@ -24,18 +25,14 @@ namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB
         /// <inheritdoc/>
         public string DatabaseId { get; }
 
-        public DocumentDBRepository(string endpoint, string dataBaseId, string authKeyOrResourceToken)
+        public DocumentDBRepository(string connectionString, string dataBaseId)
         {
             this.DatabaseId = dataBaseId;
             this.UniqueKeyPolicy = new UniqueKeyPolicy { UniqueKeys = new Collection<UniqueKey>() };
-            this.Client = new DocumentClient(new Uri(endpoint), authKeyOrResourceToken, serializerSettings: SerializerSettings());
-        }
 
-        public DocumentDBRepository(string endpoint, string dataBaseId, SecureString authKeyOrResourceToken)
-        {
-            this.DatabaseId = dataBaseId;
-            this.UniqueKeyPolicy = new UniqueKeyPolicy { UniqueKeys = new Collection<UniqueKey>() };
-            this.Client = new DocumentClient(new Uri(endpoint), authKeyOrResourceToken, serializerSettings: SerializerSettings());
+            var cs = ConnectionString.Parse(connectionString);
+
+            this.Client = new DocumentClient(new Uri(cs.Endpoint), cs.SharedAccessKey, serializerSettings: SerializerSettings());
         }
 
         public async Task CreateRepositoryIfNotExistsAsync()

@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1
 {
     /// <summary>
     /// Web service API version 1 information

@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Auth {
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth {
     using System.Collections.Generic;
 
     /// <summary>

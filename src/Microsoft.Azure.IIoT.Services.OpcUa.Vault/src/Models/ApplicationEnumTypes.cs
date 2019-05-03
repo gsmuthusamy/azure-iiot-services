@@ -7,7 +7,7 @@
 
 using System;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Types
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types
 {
     public enum ApplicationType : int
     {

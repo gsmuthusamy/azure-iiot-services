@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB
 {
     public interface IDocumentDBCollection<T> where T : class
     {

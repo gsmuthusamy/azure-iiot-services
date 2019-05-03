@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Opc.Ua;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.KeyVault
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.KeyVault
 {
     public class KeyVaultCertFactory
     {

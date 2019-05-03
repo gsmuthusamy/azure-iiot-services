@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault
 {
     using Autofac;
-    using Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
     using Serilog;
     using System;
     using System.Threading.Tasks;

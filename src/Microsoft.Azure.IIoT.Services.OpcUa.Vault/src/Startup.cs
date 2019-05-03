@@ -3,17 +3,17 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault
 {
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime;
-    using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Swagger;
-    using Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1;
-    using Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Auth;
-    using Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Filters;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Swagger;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
     using Microsoft.Azure.IIoT.Services;
     using Microsoft.Azure.IIoT.Services.Auth;
     using Microsoft.Azure.KeyVault;
@@ -59,6 +59,7 @@ namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
+                .AddFromDotEnvFile()
                 .AddEnvironmentVariables();
 
             IConfigurationRoot config;
@@ -117,7 +118,7 @@ namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault
             // Add authorization
             services.AddAuthorization(options =>
             {
-                options.AddV1Policies(Config, Config.ServicesConfig);
+                options.AddV1Policies(Config, Config);
             });
 
             // Add controllers as services so they'll be resolved.
@@ -204,8 +205,6 @@ namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault
 
             // Register configuration interfaces
             builder.RegisterInstance(Config)
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterInstance(Config.ServicesConfig)
                 .AsImplementedInterfaces().SingleInstance();
 
             // register the serilog logger

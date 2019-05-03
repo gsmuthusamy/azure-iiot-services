@@ -10,7 +10,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Diagnostics
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Diagnostics
 {
     public class Serialization
     {

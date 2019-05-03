@@ -5,11 +5,11 @@
 
 
 
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB.Models;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Types;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types;
 
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models
 {
     public sealed class ReadRequestResultModel
     {

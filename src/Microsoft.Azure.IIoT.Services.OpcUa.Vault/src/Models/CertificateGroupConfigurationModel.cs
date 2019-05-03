@@ -6,7 +6,7 @@
 
 using Newtonsoft.Json;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models
 {
     public sealed class CertificateGroupConfigurationModel
     {

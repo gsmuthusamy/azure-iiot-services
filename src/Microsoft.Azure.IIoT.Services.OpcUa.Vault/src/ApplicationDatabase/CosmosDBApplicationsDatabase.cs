@@ -6,11 +6,11 @@
 using Autofac;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.IIoT.Exceptions;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB.Models;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Types;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ApplicationsDatabaseBase = Opc.Ua.Gds.Server.Database.ApplicationsDatabaseBase;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault
 {
     /// <summary>
     /// Helper to create app darabase for unit tests.

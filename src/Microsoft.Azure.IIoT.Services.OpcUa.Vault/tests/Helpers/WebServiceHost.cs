@@ -5,7 +5,7 @@
 
 using System;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test.Helpers
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers
 {
     public class WebServiceHost
     {

@@ -5,11 +5,12 @@
 
 
 using Microsoft.Azure.IIoT.Auth.Clients;
+using Microsoft.Azure.IIoT.Auth.Runtime;
 using Microsoft.Azure.IIoT.Exceptions;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test.Helpers;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Types;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
@@ -20,15 +21,15 @@ using TestCaseOrdering;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
 {
 
     public class ApplicationDatabaseTestFixture : IDisposable
     {
-        private readonly IClientConfig _clientConfig = new ClientConfig();
+        private readonly IClientConfig _clientConfig;
         private readonly IDocumentDBRepository _documentDBRepository;
         private readonly ILogger _logger;
-        private ServicesConfig _serviceConfig = new ServicesConfig();
+        private ServicesConfig _serviceConfig;
         private IConfigurationRoot _configuration;
         public IApplicationsDatabase ApplicationsDatabase;
         public IList<ApplicationTestData> ApplicationTestSet;
@@ -44,10 +45,11 @@ namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("testsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile("testsettings.Development.json", optional: true, reloadOnChange: true)
+                .AddFromDotEnvFile()
                 .AddEnvironmentVariables();
             _configuration = builder.Build();
-            _configuration.Bind("OpcVault", _serviceConfig);
-            _configuration.Bind("Auth", _clientConfig);
+            _serviceConfig = new ServicesConfig(_configuration);
+            _clientConfig = new ClientConfig(_configuration);
             _logger = SerilogTestLogger.Create<ApplicationDatabaseTestFixture>();
             if (!InvalidConfiguration())
             {
@@ -79,16 +81,15 @@ namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test
         private bool InvalidConfiguration()
         {
             return
-            _serviceConfig.CosmosDBCollection == null ||
-            _serviceConfig.CosmosDBDatabase == null ||
-            _serviceConfig.CosmosDBEndpoint == null ||
-            _serviceConfig.CosmosDBToken == null
+            string.IsNullOrEmpty(_serviceConfig.CosmosDBCollection) ||
+            string.IsNullOrEmpty(_serviceConfig.CosmosDBDatabase) ||
+            string.IsNullOrEmpty(_serviceConfig.CosmosDBConnectionString)
             ;
         }
 
     }
 
-    [TestCaseOrderer("TestCaseOrdering.PriorityOrderer", "Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test")]
+    [TestCaseOrderer("TestCaseOrdering.PriorityOrderer", "Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests")]
     public class ApplicationDatabaseTest : IClassFixture<ApplicationDatabaseTestFixture>
     {
         private readonly ApplicationDatabaseTestFixture _fixture;

@@ -7,10 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
 using Newtonsoft.Json;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Models
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
 {
     public sealed class StatusApiModel
     {

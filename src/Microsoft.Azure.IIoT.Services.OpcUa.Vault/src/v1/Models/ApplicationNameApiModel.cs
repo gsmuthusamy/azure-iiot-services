@@ -4,10 +4,10 @@
 // ------------------------------------------------------------
 
 
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
 using Newtonsoft.Json;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Models
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
 {
     public sealed class ApplicationNameApiModel
     {

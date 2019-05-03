@@ -5,10 +5,10 @@
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.IIoT.Auth.Clients;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.KeyVault;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Auth;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.KeyVault;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
 using Newtonsoft.Json;
 using Opc.Ua;
 using Serilog;
@@ -18,7 +18,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault
 {
 
     /// <summary>
@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault
             _serviceHost = _servicesConfig.ServiceHost;
             _keyVaultServiceClient = new KeyVaultServiceClient(_groupSecret, servicesConfig.KeyVaultBaseUrl, true, logger);
             if (clientConfig != null &&
-                clientConfig.AppId != null && clientConfig.AppSecret != null)
+                !string.IsNullOrEmpty(clientConfig.AppId) && !string.IsNullOrEmpty(clientConfig.AppSecret))
             {
                 _keyVaultServiceClient.SetAuthenticationClientCredential(clientConfig.AppId, clientConfig.AppSecret);
             }

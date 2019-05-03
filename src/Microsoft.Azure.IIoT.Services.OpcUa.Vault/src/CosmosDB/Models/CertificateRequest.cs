@@ -5,9 +5,9 @@
 
 using System;
 using Newtonsoft.Json;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Types;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB.Models
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models
 {
     [Serializable]
     public class CertificateRequest

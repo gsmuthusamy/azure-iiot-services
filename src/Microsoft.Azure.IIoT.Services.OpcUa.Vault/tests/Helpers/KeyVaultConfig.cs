@@ -5,10 +5,10 @@
 
 
 using Microsoft.Azure.IIoT.Auth.Clients;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
 using Serilog;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Test
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
 {
     public static class KeyVaultServiceClient
     {

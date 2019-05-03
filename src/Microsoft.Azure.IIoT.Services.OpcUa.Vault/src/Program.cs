@@ -5,7 +5,7 @@
 
 
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault
 {
     /// <summary>Application entry point</summary>
     public class Program

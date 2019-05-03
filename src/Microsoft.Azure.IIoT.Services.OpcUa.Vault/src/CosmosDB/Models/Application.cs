@@ -4,11 +4,11 @@
 // ------------------------------------------------------------
 
 using System;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Types;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types;
 using Newtonsoft.Json;
 
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB.Models
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models
 {
 
     [Serializable]

@@ -7,11 +7,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Types;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types;
 
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault
 {
     /// <summary>
     /// An abstract interface to the certificate request database

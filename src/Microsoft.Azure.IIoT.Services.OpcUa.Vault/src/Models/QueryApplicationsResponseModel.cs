@@ -4,9 +4,9 @@
 //  See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models
 {
     public sealed class QueryApplicationsResponseModel
     {

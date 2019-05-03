@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB
 {
     using System;
     using System.Collections.Generic;

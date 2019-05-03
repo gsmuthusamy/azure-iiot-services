@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.IIoT.Http;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Swagger;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Auth;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Filters;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Swagger;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Controllers
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
 {
     /// <summary>
     /// Certificate Request services.

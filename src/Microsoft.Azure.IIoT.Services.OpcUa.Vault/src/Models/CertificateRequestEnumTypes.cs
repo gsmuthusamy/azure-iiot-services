@@ -5,7 +5,7 @@
 
 
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Types
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types
 {
     /// <summary>
     /// The certificate request states.

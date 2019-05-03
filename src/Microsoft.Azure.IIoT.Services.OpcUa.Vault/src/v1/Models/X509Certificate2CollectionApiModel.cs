@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Models
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
 {
     public sealed class X509Certificate2CollectionApiModel
     {

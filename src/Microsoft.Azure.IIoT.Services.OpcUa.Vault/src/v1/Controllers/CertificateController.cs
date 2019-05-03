@@ -9,9 +9,9 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Filters;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Controllers
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
 {
     /// <summary>
     /// Certificate CRL Distribution Point and Authority Information Access services.

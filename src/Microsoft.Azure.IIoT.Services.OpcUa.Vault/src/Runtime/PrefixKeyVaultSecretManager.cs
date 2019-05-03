@@ -7,7 +7,7 @@ using Microsoft.Azure.KeyVault.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureKeyVault;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime
 {
     public class PrefixKeyVaultSecretManager : IKeyVaultSecretManager
     {

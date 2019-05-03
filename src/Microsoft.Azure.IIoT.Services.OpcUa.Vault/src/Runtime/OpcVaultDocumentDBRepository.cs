@@ -3,22 +3,16 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Runtime
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime
 {
     using System.Security;
-    using Microsoft.Azure.IIoT.OpcUa.Services.Vault.CosmosDB;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
 
     public class OpcVaultDocumentDbRepository : DocumentDBRepository
     {
-        private readonly SecureString _authKeyOrResourceToken;
         public OpcVaultDocumentDbRepository(IServicesConfig config) :
-            base(config.CosmosDBEndpoint, config.CosmosDBDatabase, config.CosmosDBToken)
+            base(config.CosmosDBConnectionString, config.CosmosDBDatabase)
         {
-            _authKeyOrResourceToken = new SecureString();
-            foreach (char ch in config.CosmosDBToken)
-            {
-                _authKeyOrResourceToken.AppendChar(ch);
-            }
         }
     }
 }

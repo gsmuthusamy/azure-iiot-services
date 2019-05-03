@@ -5,13 +5,13 @@
 
 
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Controllers
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
 {
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Auth;
-    using Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Filters;
-    using Microsoft.Azure.IIoT.OpcUa.Services.Vault.v1.Models;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
     using Serilog;
     using System;
     using System.Threading.Tasks;

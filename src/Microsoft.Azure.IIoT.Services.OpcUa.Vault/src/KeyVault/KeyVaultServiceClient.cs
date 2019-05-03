@@ -23,7 +23,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.KeyVault
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.KeyVault
 {
     public struct CertificateKeyInfo
     {

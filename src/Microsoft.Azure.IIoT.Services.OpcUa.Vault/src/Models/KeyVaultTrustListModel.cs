@@ -8,7 +8,7 @@ using Opc.Ua;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models
 {
     public class KeyVaultTrustListModel
     {

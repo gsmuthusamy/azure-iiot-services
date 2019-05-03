@@ -8,9 +8,9 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.IIoT.OpcUa.Services.Vault.Models;
+using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
 
-namespace Microsoft.Azure.IIoT.OpcUa.Services.Vault
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault
 {
     /// <summary>
     /// Certificate Group interface.

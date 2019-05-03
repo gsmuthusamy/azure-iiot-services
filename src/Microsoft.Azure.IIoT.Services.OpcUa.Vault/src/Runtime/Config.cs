@@ -3,31 +3,30 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
 
-using Microsoft.Azure.IIoT.Auth.Clients;
-using Microsoft.Azure.IIoT.Auth.Runtime;
-using Microsoft.Azure.IIoT.Auth.Server;
-using Microsoft.Azure.IIoT.Services.Cors;
-using Microsoft.Azure.IIoT.Services.Cors.Runtime;
-using Microsoft.Azure.IIoT.Services.Swagger;
-using Microsoft.Azure.IIoT.Services.Swagger.Runtime;
-using Microsoft.Azure.IIoT.Utils;
-using Microsoft.Extensions.Configuration;
-using System;
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime
-{
+    using Microsoft.Azure.IIoT.Auth.Clients;
+    using Microsoft.Azure.IIoT.Auth.Runtime;
+    using Microsoft.Azure.IIoT.Auth.Server;
+    using Microsoft.Azure.IIoT.OpcUa.Api.Registry;
+    using Microsoft.Azure.IIoT.Services.Cors;
+    using Microsoft.Azure.IIoT.Services.Cors.Runtime;
+    using Microsoft.Azure.IIoT.Services.Swagger;
+    using Microsoft.Azure.IIoT.Services.Swagger.Runtime;
+    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Configuration;
+    using System;
     /// <summary>Web service configuration</summary>
     public class Config : ConfigBase, IAuthConfig,
-        ICorsConfig, IClientConfig, ISwaggerConfig, IServicesConfig
-    {
+        ICorsConfig, IClientConfig, ISwaggerConfig, IServicesConfig,
+        IRegistryConfig {
         /// <summary>
         /// Configuration constructor
         /// </summary>
         /// <param name="configuration"></param>
         public Config(IConfigurationRoot configuration) :
-            this(ServiceInfo.ID, configuration)
-        {
+            this(ServiceInfo.ID, configuration) {
         }
 
         /// <summary>
@@ -37,10 +36,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime
         /// <param name="configuration"></param>
         internal Config(string serviceId,
             IConfigurationRoot configuration) :
-            base(configuration)
-        {
+            base(configuration) {
             _vault = new ServicesConfig(configuration);
             _swagger = new SwaggerConfig(configuration, serviceId);
+            _registry = new RegistryConfig(configuration);
             _auth = new AuthConfig(configuration, serviceId);
             _cors = new CorsConfig(configuration);
         }
@@ -91,9 +90,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime
         public string CosmosDBCollection => _vault.CosmosDBCollection;
         /// <inheritdoc/>
         public bool ApplicationsAutoApprove => _vault.ApplicationsAutoApprove;
+        /// <inheritdoc/>
+        public string OpcUaRegistryServiceUrl => _registry.OpcUaRegistryServiceUrl;
+        /// <inheritdoc/>
+        public string OpcUaRegistryServiceResourceId => _registry.OpcUaRegistryServiceResourceId;
 
         private readonly IServicesConfig _vault;
         private readonly SwaggerConfig _swagger;
+        private readonly RegistryConfig _registry;
         private readonly AuthConfig _auth;
         private readonly CorsConfig _cors;
     }

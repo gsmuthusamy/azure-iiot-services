@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth {
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1 {
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.Azure.IIoT.Auth.Server;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+    using Microsoft.Azure.IIoT.Services.Auth;
 
     /// <summary>
     /// AuthorizationOptions extension
@@ -14,25 +14,41 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth {
     public static class AuthorizationOptionsEx {
 
         /// <summary>
-        /// Add v1 policies to options
+        /// Add policies to options
         /// </summary>
-        /// <param name="config"></param>
-        /// <param name="servicesConfig"></param>
         /// <param name="options"></param>
-        public static void AddV1Policies(this AuthorizationOptions options,
-            IAuthConfig config, IVaultConfig servicesConfig) {
+        /// <param name="withAuthorization"></param>
+        /// <param name="useRoleBasedAccess"></param>
+        public static void AddPolicies(this AuthorizationOptions options,
+            bool withAuthorization, bool useRoleBasedAccess) {
+
+            if (!withAuthorization) {
+                options.AddNoOpPolicies(Policies.All());
+                return;
+            }
 
             options.AddPolicy(Policies.CanRead, policy =>
                 policy.RequireAuthenticatedUser());
-            options.AddPolicy(Policies.CanWrite, policy =>
-                policy.RequireAuthenticatedUser()
-                .Require(WriterRights));
-            options.AddPolicy(Policies.CanSign, policy =>
-                policy.RequireAuthenticatedUser()
-                .Require(ApproverRights));
-            options.AddPolicy(Policies.CanManage, policy =>
-                policy.RequireAuthenticatedUser()
-                .Require(AdminRights));
+
+            if (!useRoleBasedAccess) {
+                options.AddPolicy(Policies.CanWrite, policy =>
+                    policy.RequireAuthenticatedUser());
+                options.AddPolicy(Policies.CanSign, policy =>
+                    policy.RequireAuthenticatedUser());
+                options.AddPolicy(Policies.CanManage, policy =>
+                    policy.RequireAuthenticatedUser());
+            }
+            else {
+                options.AddPolicy(Policies.CanWrite, policy =>
+                    policy.RequireAuthenticatedUser()
+                    .Require(WriterRights));
+                options.AddPolicy(Policies.CanSign, policy =>
+                    policy.RequireAuthenticatedUser()
+                    .Require(ApproverRights));
+                options.AddPolicy(Policies.CanManage, policy =>
+                    policy.RequireAuthenticatedUser()
+                    .Require(AdminRights));
+            }
         }
 
         /// <summary>
@@ -63,6 +79,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth {
                 context.User.IsInRole(Roles.Approver) ||
                 context.User.HasClaim(c => c.Type == Claims.Execute);
         }
-
     }
 }

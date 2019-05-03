@@ -24,6 +24,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth {
         /// Writer role name
         /// </summary>
         public const string Writer = "Write";
-
     }
 }

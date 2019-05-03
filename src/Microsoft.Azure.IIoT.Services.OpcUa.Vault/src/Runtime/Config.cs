@@ -96,6 +96,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         /// <inheritdoc/>
         public string OpcUaRegistryServiceResourceId => _registry.OpcUaRegistryServiceResourceId;
 
+        /// <summary>
+        /// Whether to use role based access
+        /// </summary>
+        public bool UseRoles => GetBoolOrDefault("PCS_AUTH_ROLES", true);
+
         private readonly IVaultConfig _vault;
         private readonly SwaggerConfig _swagger;
         private readonly RegistryConfig _registry;

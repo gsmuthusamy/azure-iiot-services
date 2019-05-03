@@ -6,11 +6,11 @@
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
     using Microsoft.Azure.IIoT.Services;
     using Microsoft.Azure.IIoT.Services.Diagnostics;
     using Microsoft.Azure.IIoT.Services.Auth;
     using Microsoft.Azure.IIoT.Services.Cors;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
     using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Clients;
     using Microsoft.Azure.KeyVault;
     using Microsoft.Azure.Services.AppAuthentication;
@@ -27,7 +27,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
     using System;
     using Serilog;
     using ILogger = Serilog.ILogger;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
 
     /// <summary>
     /// Webservice startup
@@ -53,7 +52,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         /// Created through builder
         /// </summary>
         /// <param name="env"></param>
-        public Startup(IHostingEnvironment env) {
+        /// <param name="configuration"></param>
+        public Startup(IHostingEnvironment env, IConfiguration configuration) {
             Environment = env;
 
             var configBuilder = new ConfigurationBuilder()
@@ -116,7 +116,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
 
             // Add authorization
             services.AddAuthorization(options => {
-                options.AddV1Policies(Config, Config);
+                options.AddPolicies(Config.AuthRequired,
+                    Config.UseRoles && !Environment.IsDevelopment());
             });
 
             // Add controllers as services so they'll be resolved.
@@ -221,9 +222,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             // Registry (optional)
             builder.RegisterType<RegistryServiceClient>()
                 .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<IIoTHttpClient>()
+            builder.RegisterType<v1.Auth.IIoTHttpClient>()
                 .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<IIoTTokenProvider>()
+            builder.RegisterType<v1.Auth.IIoTTokenProvider>()
                 .AsImplementedInterfaces().SingleInstance();
         }
     }

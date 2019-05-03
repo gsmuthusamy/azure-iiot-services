@@ -3,8 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters
-{
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters {
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Azure.IIoT.Exceptions;
@@ -69,11 +68,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters
                     context.Result = GetResponse(HttpStatusCode.BadRequest,
                         context.Exception);
                     break;
-                case ServiceResultException sre:
-                    {
+                case ServiceResultException sre: {
                         HttpStatusCode statusCode;
-                        switch (sre.StatusCode)
-                        {
+                        switch (sre.StatusCode) {
                             case StatusCodes.BadNodeIdUnknown:
                                 statusCode = HttpStatusCode.NotFound;
                                 break;

@@ -4,62 +4,97 @@
 // ------------------------------------------------------------
 
 
-using System;
-using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Newtonsoft.Json;
+    using System;
+    using System.ComponentModel.DataAnnotations;
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
-{
-    public sealed class FetchRequestResultApiModel
-    {
-        [JsonProperty(PropertyName = "requestId", Order = 5)]
+    /// <summary>
+    /// Fetch results
+    /// </summary>
+    public sealed class FetchRequestResultApiModel {
+
+        /// <summary>
+        /// Request id
+        /// </summary>
+        [JsonProperty(PropertyName = "requestId")]
         public string RequestId { get; set; }
 
-        [JsonProperty(PropertyName = "applicationId", Order = 10)]
+        /// <summary>
+        /// Application id
+        /// </summary>
+        [JsonProperty(PropertyName = "applicationId")]
         public string ApplicationId { get; set; }
 
-        [JsonProperty(PropertyName = "state", Order = 15)]
+        /// <summary>
+        /// State
+        /// </summary>
+        [JsonProperty(PropertyName = "state")]
         [Required]
         public CertificateRequestState State { get; set; }
 
-        [JsonProperty(PropertyName = "certificateGroupId", Order = 20)]
+        /// <summary>
+        /// Group id
+        /// </summary>
+        [JsonProperty(PropertyName = "certificateGroupId")]
         public string CertificateGroupId { get; set; }
 
-        [JsonProperty(PropertyName = "certificateTypeId", Order = 30)]
+        /// <summary>
+        /// Type
+        /// </summary>
+        [JsonProperty(PropertyName = "certificateTypeId")]
         public string CertificateTypeId { get; set; }
 
-        [JsonProperty(PropertyName = "signedCertificate", Order = 40)]
+        /// <summary>
+        /// Signed certificate
+        /// </summary>
+        [JsonProperty(PropertyName = "signedCertificate")]
         public string SignedCertificate { get; set; }
 
-        [JsonProperty(PropertyName = "privateKeyFormat", Order = 50)]
+        /// <summary>
+        /// Format
+        /// </summary>
+        [JsonProperty(PropertyName = "privateKeyFormat")]
         public string PrivateKeyFormat { get; set; }
 
-        [JsonProperty(PropertyName = "privateKey", Order = 60)]
+        /// <summary>
+        /// Private key
+        /// </summary>
+        [JsonProperty(PropertyName = "privateKey")]
         public string PrivateKey { get; set; }
 
-        [JsonProperty(PropertyName = "authorityId", Order = 70)]
+        /// <summary>
+        /// Auth id
+        /// </summary>
+        [JsonProperty(PropertyName = "authorityId")]
         public string AuthorityId { get; set; }
 
-        public FetchRequestResultApiModel(
-            string requestId,
-            string applicationId,
-            Types.CertificateRequestState state,
-            string certificateGroupId,
-            string certificateTypeId,
-            byte[] signedCertificate,
-            string privateKeyFormat,
-            byte[] privateKey,
-            string authorityId)
-        {
-            this.RequestId = requestId;
-            this.ApplicationId = applicationId;
-            this.State = (CertificateRequestState)state;
-            this.CertificateGroupId = certificateGroupId;
-            this.CertificateTypeId = certificateTypeId;
-            this.SignedCertificate = (signedCertificate != null) ? Convert.ToBase64String(signedCertificate) : null;
-            this.PrivateKeyFormat = privateKeyFormat;
-            this.PrivateKey = (privateKey != null) ? Convert.ToBase64String(privateKey) : null;
-            this.AuthorityId = authorityId;
+        /// <summary>
+        /// Create fetch request
+        /// </summary>
+        /// <param name="requestId"></param>
+        /// <param name="applicationId"></param>
+        /// <param name="state"></param>
+        /// <param name="certificateGroupId"></param>
+        /// <param name="certificateTypeId"></param>
+        /// <param name="signedCertificate"></param>
+        /// <param name="privateKeyFormat"></param>
+        /// <param name="privateKey"></param>
+        /// <param name="authorityId"></param>
+        public FetchRequestResultApiModel(string requestId, string applicationId,
+            Types.CertificateRequestState state, string certificateGroupId,
+            string certificateTypeId, byte[] signedCertificate,
+            string privateKeyFormat, byte[] privateKey, string authorityId) {
+            RequestId = requestId;
+            ApplicationId = applicationId;
+            State = (CertificateRequestState)state;
+            CertificateGroupId = certificateGroupId;
+            CertificateTypeId = certificateTypeId;
+            SignedCertificate = (signedCertificate != null) ?
+                Convert.ToBase64String(signedCertificate) : null;
+            PrivateKeyFormat = privateKeyFormat;
+            PrivateKey = (privateKey != null) ? Convert.ToBase64String(privateKey) : null;
+            AuthorityId = authorityId;
         }
 
     }

@@ -3,45 +3,39 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Azure.IIoT.OpcUa.Api.Registry;
+    using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Models;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
 
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.IIoT.OpcUa.Api.Registry;
-using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Models;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
-using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
-{
     /// <summary>
-    /// Application services.
+    /// Registry sync services.
     /// </summary>
     [ApiController]
-    [Route(VersionInfo.PATH + "/reg"), TypeFilter(typeof(ExceptionsFilterAttribute))]
+    [ExceptionsFilter]
+    [Route(VersionInfo.PATH + "/registry")]
     [Produces("application/json")]
     [Authorize(Policy = Policies.CanRead)]
-    public sealed class RegistryController : Controller
-    {
-        private readonly IApplicationsDatabase _applicationDatabase;
-        private readonly IRegistryServiceApi _registryServiceApi;
-        private readonly ILogger _logger;
+    public sealed class RegistryController : Controller {
 
-        /// <inheritdoc/>
-        public RegistryController(
-            IApplicationsDatabase applicationDatabase,
-            IRegistryServiceApi registryServiceApi,
-            ILogger logger)
-        {
+        /// <summary>
+        /// Create the controller
+        /// </summary>
+        /// <param name="applicationDatabase"></param>
+        /// <param name="registryServiceApi"></param>
+        public RegistryController(IApplicationsDatabase applicationDatabase,
+            IRegistryServiceApi registryServiceApi) {
             _applicationDatabase = applicationDatabase;
             _registryServiceApi = registryServiceApi;
-            _logger = logger;
         }
 
         /// <summary>
@@ -53,19 +47,16 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// </remarks>
         /// <returns>The differing application records</returns>
         [HttpGet("diff")]
-        public async Task<RegistryApplicationStatusResponseApiModel> RegistryApplicationStatusDiffAsync(bool? allRecords)
-        {
+        public async Task<RegistryApplicationStatusResponseApiModel> RegistryApplicationStatusDiffAsync(
+            bool? allRecords) {
             var modelResult = new List<RegistryApplicationStatusApiModel>();
-            var query = new ApplicationRegistrationQueryApiModel()
-            {
+            var query = new ApplicationRegistrationQueryApiModel() {
                 //ApplicationUri = applicationUri
             };
-            foreach (var record in await _registryServiceApi.QueryAllApplicationsAsync(query))
-            {
+            foreach (var record in await _registryServiceApi.QueryAllApplicationsAsync(query)) {
                 var status = await GetApplicationStatusAsync(record);
                 if ((allRecords != null && (bool)allRecords) ||
-                    status.Status != RegistryApplicationStatusType.Ok)
-                {
+                    status.Status != RegistryApplicationStatusType.Ok) {
                     modelResult.Add(status);
                 }
             }
@@ -83,21 +74,16 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         [HttpPost("update")]
         public async Task<RegistryApplicationStatusResponseApiModel> UpdateApplicationStatusDiffAsync(
             string registryId,
-            bool? allRecords)
-        {
+            bool? allRecords) {
             var modelResult = new List<RegistryApplicationStatusApiModel>();
-            if (registryId == null)
-            {
-                var query = new ApplicationRegistrationQueryApiModel()
-                {
+            if (registryId == null) {
+                var query = new ApplicationRegistrationQueryApiModel() {
                     //ApplicationUri = applicationUri
                 };
-                foreach (var record in await _registryServiceApi.QueryAllApplicationsAsync(query))
-                {
+                foreach (var record in await _registryServiceApi.QueryAllApplicationsAsync(query)) {
                     var status = await GetApplicationStatusAsync(record);
                     if ((allRecords != null && (bool)allRecords) ||
-                        status.Status == RegistryApplicationStatusType.New)
-                    {
+                        status.Status == RegistryApplicationStatusType.New) {
                         var newApplication = NewApplicationFromRegistry(record);
                         var registeredApplication = await _applicationDatabase.RegisterApplicationAsync(newApplication);
                         status.Application = new ApplicationRecordApiModel(registeredApplication);
@@ -105,8 +91,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
                     }
                 }
             }
-            else
-            {
+            else {
                 var registryApplication = await _registryServiceApi.GetApplicationAsync(registryId);
                 var status = await GetApplicationStatusAsync(registryApplication.Application);
                 var newApplication = NewApplicationFromRegistry(registryApplication.Application);
@@ -127,15 +112,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         [HttpGet("{registryId}/status")]
         public async Task<RegistryApplicationStatusApiModel> RegistryStatusAsync(
             string registryId
-            )
-        {
-            RegistryApplicationStatusApiModel modelResult = new RegistryApplicationStatusApiModel()
-            {
+            ) {
+            var modelResult = new RegistryApplicationStatusApiModel() {
                 Status = RegistryApplicationStatusType.Unknown
             };
-            ApplicationRegistrationApiModel record = await _registryServiceApi.GetApplicationAsync(registryId);
-            if (record != null)
-            {
+            var record = await _registryServiceApi.GetApplicationAsync(registryId);
+            if (record != null) {
                 return await GetApplicationStatusAsync(record.Application);
             }
             return modelResult;
@@ -146,22 +128,19 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// Get the registry service status.
         /// </summary>
         [HttpGet]
-        public Task<StatusResponseApiModel> GetStatusAsync()
-        {
+        public Task<StatusResponseApiModel> GetStatusAsync() {
             return _registryServiceApi.GetServiceStatusAsync();
         }
 
 
-        private RegistryApplicationStatusType TestApplicationStatus(ApplicationInfoApiModel registry, Application application)
-        {
-            if (String.Equals(registry.ApplicationUri, application.ApplicationUri))
-            {
+        private RegistryApplicationStatusType TestApplicationStatus(ApplicationInfoApiModel registry,
+            Application application) {
+            if (string.Equals(registry.ApplicationUri, application.ApplicationUri)) {
                 if ((int)registry.ApplicationType != (int)application.ApplicationType ||
-                    !String.Equals(registry.ApplicationName, application.ApplicationName) ||
-                    !String.Equals(registry.ProductUri, application.ProductUri) //||
-                                                                                //!String.Equals(registry.ApplicationId, application.RegistryId)
-                    )
-                {
+                    !string.Equals(registry.ApplicationName, application.ApplicationName) ||
+                    !string.Equals(registry.ProductUri, application.ProductUri) //||
+                                                                                //!string.Equals(registry.ApplicationId, application.RegistryId)
+                    ) {
                     return RegistryApplicationStatusType.Update;
                 }
 
@@ -172,25 +151,19 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
             return RegistryApplicationStatusType.Unknown;
         }
 
-        private async Task<RegistryApplicationStatusApiModel> GetApplicationStatusAsync(ApplicationInfoApiModel record)
-        {
-            RegistryApplicationStatusApiModel modelResult = new RegistryApplicationStatusApiModel()
-            {
+        private async Task<RegistryApplicationStatusApiModel> GetApplicationStatusAsync(ApplicationInfoApiModel record) {
+            var modelResult = new RegistryApplicationStatusApiModel() {
                 Status = RegistryApplicationStatusType.Unknown
             };
-            if (record != null)
-            {
+            if (record != null) {
                 modelResult.Registry = record;
                 modelResult.Status = RegistryApplicationStatusType.New;
-                try
-                {
+                try {
                     var applications = await _applicationDatabase.ListApplicationAsync(record.ApplicationUri);
-                    foreach (var application in applications)
-                    {
+                    foreach (var application in applications) {
                         var status = TestApplicationStatus(record, application);
                         if (status == RegistryApplicationStatusType.Ok ||
-                            status == RegistryApplicationStatusType.Update)
-                        {
+                            status == RegistryApplicationStatusType.Update) {
                             // TODO: check if there are more results?
                             modelResult.Application = new ApplicationRecordApiModel(application);
                             modelResult.Status = status;
@@ -198,26 +171,21 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
                         }
                     }
                 }
-                catch
-                {
+                catch {
                     // not found, new
                 }
             }
             return modelResult;
         }
 
-        private Application NewApplicationFromRegistry(ApplicationInfoApiModel record)
-        {
-            var applicationNames = new ApplicationName[]
-                            {
-                                new ApplicationName()
-                                {
-                                    Text = record.ApplicationName,
-                                    Locale = record.Locale
-                                }
-                            };
-            var newApplication = new Application()
-            {
+        private Application NewApplicationFromRegistry(ApplicationInfoApiModel record) {
+            var applicationNames = new[] {
+                new ApplicationName {
+                    Text = record.ApplicationName,
+                    Locale = record.Locale
+                }
+            };
+            var newApplication = new Application() {
                 ApplicationName = record.ApplicationName,
                 ApplicationNames = applicationNames,
                 ApplicationType = (Types.ApplicationType)record.ApplicationType,
@@ -229,18 +197,18 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
                 ApplicationState = Types.ApplicationState.New,
                 CreateTime = DateTime.UtcNow
             };
-            if (record.ApplicationType != IIoT.OpcUa.Api.Registry.Models.ApplicationType.Client)
-            {
-                if (record.Capabilities != null)
-                {
-                    newApplication.ServerCapabilities = String.Join(",", record.Capabilities);
+            if (record.ApplicationType != IIoT.OpcUa.Api.Registry.Models.ApplicationType.Client) {
+                if (record.Capabilities != null) {
+                    newApplication.ServerCapabilities = string.Join(",", record.Capabilities);
                 }
-                else
-                {
+                else {
                     newApplication.ServerCapabilities = "NA";
                 }
             }
             return newApplication;
         }
+
+        private readonly IApplicationsDatabase _applicationDatabase;
+        private readonly IRegistryServiceApi _registryServiceApi;
     }
 }

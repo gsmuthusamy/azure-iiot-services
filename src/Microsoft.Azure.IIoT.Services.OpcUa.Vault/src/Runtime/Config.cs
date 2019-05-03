@@ -4,8 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
-
-
     using Microsoft.Azure.IIoT.Auth.Clients;
     using Microsoft.Azure.IIoT.Auth.Runtime;
     using Microsoft.Azure.IIoT.Auth.Server;
@@ -17,10 +15,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
     using System;
-    /// <summary>Web service configuration</summary>
-    public class Config : ConfigBase, IAuthConfig,
-        ICorsConfig, IClientConfig, ISwaggerConfig, IServicesConfig,
-        IRegistryConfig {
+
+    /// <summary>
+    /// Web service configuration
+    /// </summary>
+    public class Config : ConfigBase, IAuthConfig, ICorsConfig,
+        IClientConfig, ISwaggerConfig, IVaultConfig, IRegistryConfig {
+
         /// <summary>
         /// Configuration constructor
         /// </summary>
@@ -37,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         internal Config(string serviceId,
             IConfigurationRoot configuration) :
             base(configuration) {
-            _vault = new ServicesConfig(configuration);
+            _vault = new ServiceConfig(configuration);
             _swagger = new SwaggerConfig(configuration, serviceId);
             _registry = new RegistryConfig(configuration);
             _auth = new AuthConfig(configuration, serviceId);
@@ -95,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         /// <inheritdoc/>
         public string OpcUaRegistryServiceResourceId => _registry.OpcUaRegistryServiceResourceId;
 
-        private readonly IServicesConfig _vault;
+        private readonly IVaultConfig _vault;
         private readonly SwaggerConfig _swagger;
         private readonly RegistryConfig _registry;
         private readonly AuthConfig _auth;

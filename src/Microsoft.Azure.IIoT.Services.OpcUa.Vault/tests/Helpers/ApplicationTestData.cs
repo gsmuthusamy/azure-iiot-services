@@ -243,15 +243,15 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
                 int random = _randomSource.NextInt32(7);
                 if ((result.Count == 0) || (random & 1) == 0)
                 {
-                    result.Add(string.Format("opc.tcp://{0}:{1}/{2}", name, (port++).ToString(), appUri));
+                    result.Add(string.Format("opc.tcp://{0}:{1}/{2}", name, port++.ToString(), appUri));
                 }
                 if ((random & 2) == 0)
                 {
-                    result.Add(string.Format("http://{0}:{1}/{2}", name, (port++).ToString(), appUri));
+                    result.Add(string.Format("http://{0}:{1}/{2}", name, port++.ToString(), appUri));
                 }
                 if ((random & 4) == 0)
                 {
-                    result.Add(string.Format("https://{0}:{1}/{2}", name, (port++).ToString(), appUri));
+                    result.Add(string.Format("https://{0}:{1}/{2}", name, port++.ToString(), appUri));
                 }
             }
             return result;

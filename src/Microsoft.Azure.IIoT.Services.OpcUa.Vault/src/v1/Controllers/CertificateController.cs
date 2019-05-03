@@ -3,32 +3,27 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
+    using Microsoft.AspNetCore.Mvc;
+    using System;
+    using System.Security.Cryptography.X509Certificates;
+    using System.Threading.Tasks;
 
-using System;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
-
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
-{
     /// <summary>
     /// Certificate CRL Distribution Point and Authority Information Access services.
     /// </summary>
     [ApiController]
-    [Route("/certs"), TypeFilter(typeof(ExceptionsFilterAttribute))]
-    public sealed class CertificateController : Controller
-    {
-        private readonly ICertificateGroup _certificateGroups;
+    [ExceptionsFilter]
+    [Route(VersionInfo.PATH + "/certs")]
+    public sealed class CertificateController : Controller {
 
         /// <summary>
         /// Create the controller.
         /// </summary>
         /// <param name="certificateGroups"></param>
         public CertificateController(
-            ICertificateGroup certificateGroups)
-        {
+            ICertificateGroup certificateGroups) {
             _certificateGroups = certificateGroups;
         }
 
@@ -40,46 +35,39 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// <returns>The Issuer Ca cert as a file</returns>
         [HttpGet("issuer/{serial}/{cert}")]
         [Produces(ContentType.Cert)]
-        public async Task<ActionResult> GetIssuerCertAsync(string serial, string cert)
-        {
-            try
-            {
+        public async Task<ActionResult> GetIssuerCertAsync(string serial, string cert) {
+            try {
                 serial = serial.ToLower();
                 cert = cert.ToLower();
-                if (cert.EndsWith(".cer"))
-                {
-                    string groupId = cert.Substring(0, cert.Length - 4);
+                if (cert.EndsWith(".cer")) {
+                    var groupId = cert.Substring(0, cert.Length - 4);
                     // find isser cert with serial no.
 
                     X509Certificate2Collection certVersions;
                     string nextPageLink;
-                    (certVersions, nextPageLink)= await _certificateGroups.GetIssuerCACertificateVersionsAsync(groupId, false);
-                    while (certVersions != null && certVersions.Count > 0)
-                    {
-                        foreach (var certVersion in certVersions)
-                        {
-                            if (serial.Equals(certVersion.SerialNumber, StringComparison.OrdinalIgnoreCase))
-                            {
+                    (certVersions, nextPageLink) =
+                        await _certificateGroups.GetIssuerCACertificateVersionsAsync(groupId, false);
+                    while (certVersions != null && certVersions.Count > 0) {
+                        foreach (var certVersion in certVersions) {
+                            if (serial.Equals(certVersion.SerialNumber, StringComparison.OrdinalIgnoreCase)) {
                                 var byteArray = certVersion.RawData;
-                                return new FileContentResult(byteArray, ContentType.Cert)
-                                {
-                                    FileDownloadName = Utils.DownloadName(certVersion, groupId) + ".cer"
+                                return new FileContentResult(byteArray, ContentType.Cert) {
+                                    FileDownloadName = certVersion.GetFileNameOrDefault(groupId) + ".cer"
                                 };
                             }
                         }
-                        if (nextPageLink != null)
-                        {
-                            (certVersions, nextPageLink) = await _certificateGroups.GetIssuerCACertificateVersionsAsync(groupId, false, nextPageLink);
+                        if (nextPageLink != null) {
+                            (certVersions, nextPageLink) =
+                                await _certificateGroups.GetIssuerCACertificateVersionsAsync(
+                                    groupId, false, nextPageLink);
                         }
-                        else
-                        {
+                        else {
                             certVersions = null;
                         }
                     }
                 }
             }
-            catch
-            {
+            catch {
                 await Task.Delay(1000);
             }
             return new NotFoundResult();
@@ -90,81 +78,46 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// </summary>
         [HttpGet("crl/{serial}/{crl}")]
         [Produces(ContentType.Crl)]
-        public async Task<ActionResult> GetIssuerCrlAsync(string serial, string crl)
-        {
-            try
-            {
+        public async Task<ActionResult> GetIssuerCrlAsync(string serial, string crl) {
+            try {
                 serial = serial.ToLower();
                 crl = crl.ToLower();
-                if (crl.EndsWith(".crl"))
-                {
-                    string groupId = crl.Substring(0, crl.Length - 4);
+                if (crl.EndsWith(".crl")) {
+                    var groupId = crl.Substring(0, crl.Length - 4);
                     // find isser cert with serial no.
                     X509Certificate2Collection certVersions;
                     string nextPageLink;
-                    (certVersions, nextPageLink) = await _certificateGroups.GetIssuerCACertificateVersionsAsync(groupId, false);
-                    while (certVersions != null && certVersions.Count > 0)
-                    {
-                        foreach (var cert in certVersions)
-                        {
-                            if (serial.Equals(cert.SerialNumber, StringComparison.OrdinalIgnoreCase))
-                            {
+                    (certVersions, nextPageLink) =
+                        await _certificateGroups.GetIssuerCACertificateVersionsAsync(groupId, false);
+                    while (certVersions != null && certVersions.Count > 0) {
+                        foreach (var cert in certVersions) {
+                            if (serial.Equals(cert.SerialNumber, StringComparison.OrdinalIgnoreCase)) {
                                 var thumbPrint = cert.Thumbprint;
-                                var crlBinary = await _certificateGroups.GetIssuerCACrlChainAsync(groupId, thumbPrint);
+                                var crlBinary = await _certificateGroups.GetIssuerCACrlChainAsync(
+                                    groupId, thumbPrint);
                                 var byteArray = crlBinary[0].RawData;
-                                return new FileContentResult(byteArray, ContentType.Crl)
-                                {
-                                    FileDownloadName = Utils.DownloadName(cert, groupId) + ".crl"
+                                return new FileContentResult(byteArray, ContentType.Crl) {
+                                    FileDownloadName = cert.GetFileNameOrDefault(groupId) + ".crl"
                                 };
                             }
                         }
-                        if (nextPageLink != null)
-                        {
-                            (certVersions, nextPageLink) = await _certificateGroups.GetIssuerCACertificateVersionsAsync(groupId, false, nextPageLink);
+                        if (nextPageLink != null) {
+                            (certVersions, nextPageLink) =
+                                await _certificateGroups.GetIssuerCACertificateVersionsAsync
+                                (groupId, false, nextPageLink);
                         }
-                        else
-                        {
+                        else {
                             certVersions = null;
                         }
                     }
                 }
             }
-            catch
-            {
+            catch {
                 await Task.Delay(1000);
             }
             return new NotFoundResult();
         }
 
+        private readonly ICertificateGroup _certificateGroups;
     }
-
-    public class ContentType
-    {
-
-        public const string Cert = "application/pkix-cert";
-        public const string Crl = "application/pkix-crl";
-        // see CertificateContentType.Pfx
-        public const string Pfx = "application/x-pkcs12";
-        // see CertificateContentType.Pem
-        public const string Pem = "application/x-pem-file";
-    }
-
-    public class Utils
-    {
-        public static string DownloadName(X509Certificate2 cert, string name)
-        {
-            try
-            {
-                var dn = Opc.Ua.Utils.ParseDistinguishedName(cert.Subject);
-                var prefix = dn.Where(x => x.StartsWith("CN=", StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Substring(3);
-                return prefix + " [" + cert.Thumbprint + "]";
-            }
-            catch
-            {
-                return name;
-            }
-        }
-
-    }
-
 }

@@ -3,42 +3,66 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
+    using Newtonsoft.Json;
 
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
-using Newtonsoft.Json;
+    /// <summary>
+    /// Trust list api model
+    /// </summary>
+    public sealed class TrustListApiModel {
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
-{
-    public sealed class TrustListApiModel
-    {
-
-        [JsonProperty(PropertyName = "groupId", Order = 10)]
+        /// <summary>
+        /// Group id
+        /// </summary>
+        [JsonProperty(PropertyName = "groupId")]
         public string GroupId { get; set; }
 
-        [JsonProperty(PropertyName = "issuerCertificates", Order = 20)]
+        /// <summary>
+        /// Issuer certificates
+        /// </summary>
+        [JsonProperty(PropertyName = "issuerCertificates")]
         public X509Certificate2CollectionApiModel IssuerCertificates { get; set; }
 
-        [JsonProperty(PropertyName = "issuerCrls", Order = 30)]
+        /// <summary>
+        /// Issuer crls
+        /// </summary>
+        [JsonProperty(PropertyName = "issuerCrls")]
         public X509CrlCollectionApiModel IssuerCrls { get; set; }
 
-        [JsonProperty(PropertyName = "trustedCertificates", Order = 40)]
+        /// <summary>
+        /// Trusted certificates
+        /// </summary>
+        [JsonProperty(PropertyName = "trustedCertificates")]
         public X509Certificate2CollectionApiModel TrustedCertificates { get; set; }
 
-        [JsonProperty(PropertyName = "trustedCrls", Order = 50)]
+        /// <summary>
+        /// Trusted crls
+        /// </summary>
+        [JsonProperty(PropertyName = "trustedCrls")]
         public X509CrlCollectionApiModel TrustedCrls { get; set; }
 
-        [JsonProperty(PropertyName = "nextPageLink", Order = 60)]
+        /// <summary>
+        /// Next page link
+        /// </summary>
+        [JsonProperty(PropertyName = "nextPageLink")]
         public string NextPageLink { get; set; }
 
-        public TrustListApiModel(KeyVaultTrustListModel keyVaultTrustList)
-        {
+        /// <summary>
+        /// Create model
+        /// </summary>
+        /// <param name="keyVaultTrustList"></param>
+        public TrustListApiModel(KeyVaultTrustListModel keyVaultTrustList) {
             GroupId = keyVaultTrustList.Group;
-            IssuerCertificates = new X509Certificate2CollectionApiModel(keyVaultTrustList.IssuerCertificates);
-            IssuerCrls = new X509CrlCollectionApiModel(keyVaultTrustList.IssuerCrls);
-            TrustedCertificates = new X509Certificate2CollectionApiModel(keyVaultTrustList.TrustedCertificates);
-            TrustedCrls = new X509CrlCollectionApiModel(keyVaultTrustList.TrustedCrls);
+            IssuerCertificates = new X509Certificate2CollectionApiModel(
+                keyVaultTrustList.IssuerCertificates);
+            IssuerCrls = new X509CrlCollectionApiModel(
+                keyVaultTrustList.IssuerCrls);
+            TrustedCertificates = new X509Certificate2CollectionApiModel(
+                keyVaultTrustList.TrustedCertificates);
+            TrustedCrls = new X509CrlCollectionApiModel(
+                keyVaultTrustList.TrustedCrls);
             NextPageLink = keyVaultTrustList.NextPageLink;
         }
-
     }
 }

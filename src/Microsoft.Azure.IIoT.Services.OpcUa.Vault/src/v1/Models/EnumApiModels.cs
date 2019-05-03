@@ -7,11 +7,9 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
-{
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
 
-    public enum ApplicationType : int
-    {
+    public enum ApplicationType {
         [EnumMember(Value = "server")]
         Server = 0,
         [EnumMember(Value = "client")]
@@ -22,8 +20,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
         DiscoveryServer = 3
     }
 
-    public enum ApplicationState : int
-    {
+    public enum ApplicationState {
         [EnumMember(Value = "new")]
         New = 0,
         [EnumMember(Value = "approved")]
@@ -36,8 +33,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
         Deleted = 4
     }
 
-    public enum CertificateRequestState
-    {
+    public enum CertificateRequestState {
         [EnumMember(Value = "new")]
         New = 0,
         [EnumMember(Value = "approved")]
@@ -55,8 +51,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
     }
 
     [Flags]
-    public enum QueryApplicationType : uint
-    {
+    public enum QueryApplicationType : uint {
         [EnumMember(Value = "any")]
         Any = 0,
         [EnumMember(Value = "server")]
@@ -68,8 +63,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
     }
 
     [Flags]
-    public enum QueryApplicationState : uint
-    {
+    public enum QueryApplicationState : uint {
         [EnumMember(Value = "any")]
         Any = 0,
         [EnumMember(Value = "new")]

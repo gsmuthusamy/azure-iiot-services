@@ -3,33 +3,32 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Swagger;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Swagger;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
-
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
-{
     /// <summary>
     /// Application services.
     /// </summary>
     [ApiController]
-    [Route(VersionInfo.PATH + "/app"), TypeFilter(typeof(ExceptionsFilterAttribute))]
+    [Route(VersionInfo.PATH + "/app")]
+    [ExceptionsFilter]
     [Produces("application/json")]
     [Authorize(Policy = Policies.CanRead)]
-    public sealed class ApplicationController : Controller
-    {
-        private readonly IApplicationsDatabase _applicationDatabase;
+    public sealed class ApplicationController : Controller {
 
-        /// <inheritdoc/>
-        public ApplicationController(IApplicationsDatabase applicationDatabase)
-        {
+        /// <summary>
+        /// Create controller
+        /// </summary>
+        /// <param name="applicationDatabase"></param>
+        public ApplicationController(IApplicationsDatabase applicationDatabase) {
             _applicationDatabase = applicationDatabase;
         }
 
@@ -45,15 +44,15 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// <returns>The registered application record</returns>
         [HttpPost("register")]
         [Authorize(Policy = Policies.CanWrite)]
-        public async Task<ApplicationRecordApiModel> RegisterApplicationAsync([FromBody] ApplicationRecordApiModel application)
-        {
-            if (application == null)
-            {
+        public async Task<ApplicationRecordApiModel> RegisterApplicationAsync(
+            [FromBody] ApplicationRecordApiModel application) {
+            if (application == null) {
                 throw new ArgumentNullException(nameof(application));
             }
             var applicationServiceModel = application.ToServiceModel();
             applicationServiceModel.AuthorityId = User.Identity.Name;
-            return new ApplicationRecordApiModel(await _applicationDatabase.RegisterApplicationAsync(applicationServiceModel));
+            return new ApplicationRecordApiModel(
+                await _applicationDatabase.RegisterApplicationAsync(applicationServiceModel));
         }
 
         /// <summary>
@@ -65,9 +64,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// <param name="applicationId">The application id</param>
         /// <returns>The application record</returns>
         [HttpGet("{applicationId}")]
-        public async Task<ApplicationRecordApiModel> GetApplicationAsync(string applicationId)
-        {
-            return new ApplicationRecordApiModel(await _applicationDatabase.GetApplicationAsync(applicationId));
+        public async Task<ApplicationRecordApiModel> GetApplicationAsync(string applicationId) {
+            return new ApplicationRecordApiModel(
+                await _applicationDatabase.GetApplicationAsync(applicationId));
         }
 
         /// <summary>
@@ -81,15 +80,15 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// <returns>The updated application record</returns>
         [HttpPut("{applicationId}")]
         [Authorize(Policy = Policies.CanWrite)]
-        public async Task<ApplicationRecordApiModel> UpdateApplicationAsync([FromBody] ApplicationRecordApiModel application)
-        {
-            if (application == null)
-            {
+        public async Task<ApplicationRecordApiModel> UpdateApplicationAsync(
+            [FromBody] ApplicationRecordApiModel application) {
+            if (application == null) {
                 throw new ArgumentNullException(nameof(application));
             }
             var applicationServiceModel = application.ToServiceModel();
             applicationServiceModel.AuthorityId = User.Identity.Name;
-            return new ApplicationRecordApiModel(await _applicationDatabase.UpdateApplicationAsync(application.ApplicationId, applicationServiceModel));
+            return new ApplicationRecordApiModel(
+                await _applicationDatabase.UpdateApplicationAsync(application.ApplicationId, applicationServiceModel));
         }
 
         /// <summary>
@@ -106,9 +105,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// <returns>The updated application record</returns>
         [HttpPost("{applicationId}/{approved}/approve")]
         [Authorize(Policy = Policies.CanManage)]
-        public async Task<ApplicationRecordApiModel> ApproveApplicationAsync(string applicationId, bool approved, bool? force)
-        {
-            return new ApplicationRecordApiModel(await _applicationDatabase.ApproveApplicationAsync(applicationId, approved, force ?? false));
+        public async Task<ApplicationRecordApiModel> ApproveApplicationAsync(
+            string applicationId, bool approved, bool? force) {
+            return new ApplicationRecordApiModel(
+                await _applicationDatabase.ApproveApplicationAsync(applicationId, approved, force ?? false));
         }
 
         /// <summary>
@@ -120,12 +120,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// Certificate Requests associated with the application id are set to the 'Deleted' state,
         /// and will be revoked with the next CRL update.
         /// Requires Writer role.
-        ///</remarks>      
+        ///</remarks>
         /// <param name="applicationId">The application id</param>
         [HttpDelete("{applicationId}/unregister")]
         [Authorize(Policy = Policies.CanWrite)]
-        public async Task UnregisterApplicationAsync(string applicationId)
-        {
+        public async Task UnregisterApplicationAsync(string applicationId) {
             await _applicationDatabase.UnregisterApplicationAsync(applicationId);
         }
 
@@ -142,8 +141,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// <param name="force">optional, skip sanity checks and force to delete application</param>
         [HttpDelete("{applicationId}")]
         [Authorize(Policy = Policies.CanManage)]
-        public async Task DeleteApplicationAsync(string applicationId, bool? force)
-        {
+        public async Task DeleteApplicationAsync(string applicationId, bool? force) {
             await _applicationDatabase.DeleteApplicationAsync(applicationId, force ?? false);
         }
 
@@ -165,11 +163,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         public async Task<QueryApplicationsResponseApiModel> ListApplicationsAsync(
             string applicationUri,
             [FromQuery] string nextPageLink,
-            [FromQuery] int? pageSize)
-        {
+            [FromQuery] int? pageSize) {
             var modelResult = new List<ApplicationRecordApiModel>();
-            foreach (var record in await _applicationDatabase.ListApplicationAsync(applicationUri))
-            {
+            foreach (var record in await _applicationDatabase.ListApplicationAsync(applicationUri)) {
                 modelResult.Add(new ApplicationRecordApiModel(record));
             }
             return new QueryApplicationsResponseApiModel(modelResult, null);
@@ -185,10 +181,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// <returns></returns>
         [HttpPost("querybyid")]
         public async Task<QueryApplicationsByIdResponseApiModel> QueryApplicationsByIdAsync(
-            [FromBody] QueryApplicationsByIdApiModel query)
-        {
-            if (query == null)
-            {
+            [FromBody] QueryApplicationsByIdApiModel query) {
+            if (query == null) {
                 // query all
                 query = new QueryApplicationsByIdApiModel(0, 0, null, null, 0, null, null, null);
             }
@@ -222,10 +216,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         public async Task<QueryApplicationsResponseApiModel> QueryApplicationsAsync(
             [FromBody] QueryApplicationsApiModel query,
             [FromQuery] string nextPageLink,
-            [FromQuery] int? pageSize)
-        {
-            if (query == null)
-            {
+            [FromQuery] int? pageSize) {
+            if (query == null) {
                 // query all
                 query = new QueryApplicationsApiModel(null, null, 0, null, null, null);
             }
@@ -241,5 +233,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
             return new QueryApplicationsResponseApiModel(result);
         }
 
+        private readonly IApplicationsDatabase _applicationDatabase;
     }
 }

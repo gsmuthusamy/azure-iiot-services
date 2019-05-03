@@ -3,50 +3,45 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault
-{
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
     using Autofac;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
     using Serilog;
     using System;
     using System.Threading.Tasks;
 
-    public class WarmStartDatabase : IStartable
-    {
-        private readonly IDocumentDBRepository _repository;
-        private readonly ICertificateRequest _certificateRequest;
-        private readonly IApplicationsDatabase _applicationDatabase;
-        private readonly ILogger _logger;
+    public class WarmStartDatabase : IStartable {
 
         public WarmStartDatabase(
             IDocumentDBRepository repository,
             ICertificateRequest certificateRequest,
             IApplicationsDatabase applicationDatabase,
             ILogger logger
-            )
-        {
+            ) {
             _repository = repository;
             _certificateRequest = certificateRequest;
             _applicationDatabase = applicationDatabase;
             _logger = logger;
         }
 
-        public void Start()
-        {
-            Task.Run(async () =>
-            {
-                try
-                {
+        /// <inheritdoc/>
+        public void Start() {
+            Task.Run(async () => {
+                try {
                     await _repository.CreateRepositoryIfNotExistsAsync();
-                    await _applicationDatabase.Initialize();
-                    await _certificateRequest.Initialize();
+                    await _applicationDatabase.InitializeAsync();
+                    await _certificateRequest.InitializeAsync();
                     _logger.Information("Database warm start successful.");
                 }
-                catch (Exception ex)
-                {
+                catch (Exception ex) {
                     _logger.Error("Failed to warm start databases.", ex);
                 }
             });
         }
+
+        private readonly IDocumentDBRepository _repository;
+        private readonly ICertificateRequest _certificateRequest;
+        private readonly IApplicationsDatabase _applicationDatabase;
+        private readonly ILogger _logger;
     }
 }

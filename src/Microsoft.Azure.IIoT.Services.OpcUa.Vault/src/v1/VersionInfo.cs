@@ -4,13 +4,11 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1
-{
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1 {
     /// <summary>
     /// Web service API version 1 information
     /// </summary>
-    public static class VersionInfo
-    {
+    public static class VersionInfo {
         /// <summary>
         /// Number used for routing HTTP requests
         /// </summary>
@@ -25,6 +23,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1
         /// Date when the API version has been published
         /// </summary>
         public const string DATE = "2019-02-01";
-
     }
 }

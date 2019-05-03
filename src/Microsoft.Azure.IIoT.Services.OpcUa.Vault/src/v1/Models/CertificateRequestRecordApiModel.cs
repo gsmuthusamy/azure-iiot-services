@@ -4,64 +4,98 @@
 // ------------------------------------------------------------
 
 
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Newtonsoft.Json;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
-{
-    public sealed class CertificateRequestRecordApiModel
-    {
-        [JsonProperty(PropertyName = "requestId", Order = 5)]
+    /// <summary>
+    /// Certificate request record model
+    /// </summary>
+    public sealed class CertificateRequestRecordApiModel {
+
+        /// <summary>
+        /// Request id
+        /// </summary>
+        [JsonProperty(PropertyName = "requestId")]
         public string RequestId { get; set; }
 
-        [JsonProperty(PropertyName = "applicationId", Order = 10)]
+        /// <summary>
+        /// Application id
+        /// </summary>
+        [JsonProperty(PropertyName = "applicationId")]
         public string ApplicationId { get; set; }
 
-        [JsonProperty(PropertyName = "state", Order = 15)]
+        /// <summary>
+        /// Request state
+        /// </summary>
+        [JsonProperty(PropertyName = "state")]
         [Required]
         public CertificateRequestState State { get; }
 
-        [JsonProperty(PropertyName = "certificateGroupId", Order = 20)]
+        /// <summary>
+        /// Certificate group
+        /// </summary>
+        [JsonProperty(PropertyName = "certificateGroupId")]
         public string CertificateGroupId { get; set; }
 
-        [JsonProperty(PropertyName = "certificateTypeId", Order = 30)]
+        /// <summary>
+        /// Type
+        /// </summary>
+        [JsonProperty(PropertyName = "certificateTypeId")]
         public string CertificateTypeId { get; set; }
 
-        [JsonProperty(PropertyName = "signingRequest", Order = 35)]
+        /// <summary>
+        /// Is Signing request
+        /// </summary>
+        [JsonProperty(PropertyName = "signingRequest")]
         [Required]
         public bool SigningRequest { get; }
 
-        [JsonProperty(PropertyName = "subjectName", Order = 40)]
+        /// <summary>
+        /// Subject
+        /// </summary>
+        [JsonProperty(PropertyName = "subjectName")]
         public string SubjectName { get; set; }
 
-        [JsonProperty(PropertyName = "domainNames", Order = 50)]
+        /// <summary>
+        /// Domain names
+        /// </summary>
+        [JsonProperty(PropertyName = "domainNames")]
         public IList<string> DomainNames { get; set; }
 
-        [JsonProperty(PropertyName = "privateKeyFormat", Order = 60)]
+        /// <summary>
+        /// Private key format to return
+        /// </summary>
+        [JsonProperty(PropertyName = "privateKeyFormat")]
         public string PrivateKeyFormat { get; set; }
 
-        public CertificateRequestRecordApiModel(
-            string requestId,
-            string applicationId,
-            Types.CertificateRequestState state,
-            string certificateGroupId,
-            string certificateTypeId,
-            bool signingRequest,
-            string subjectName,
-            IList<string> domainNames,
-            string privateKeyFormat)
-        {
-            this.RequestId = requestId;
-            this.ApplicationId = applicationId;
-            this.State = (CertificateRequestState)state;
-            this.CertificateGroupId = certificateGroupId;
-            this.CertificateTypeId = certificateTypeId;
-            this.SigningRequest = signingRequest;
-            this.SubjectName = subjectName;
-            this.DomainNames = domainNames;
-            this.PrivateKeyFormat = privateKeyFormat;
+        /// <summary>
+        /// Create request model
+        /// </summary>
+        /// <param name="requestId"></param>
+        /// <param name="applicationId"></param>
+        /// <param name="state"></param>
+        /// <param name="certificateGroupId"></param>
+        /// <param name="certificateTypeId"></param>
+        /// <param name="signingRequest"></param>
+        /// <param name="subjectName"></param>
+        /// <param name="domainNames"></param>
+        /// <param name="privateKeyFormat"></param>
+        public CertificateRequestRecordApiModel(string requestId,
+            string applicationId, Types.CertificateRequestState state,
+            string certificateGroupId, string certificateTypeId,
+            bool signingRequest, string subjectName,
+            IList<string> domainNames, string privateKeyFormat) {
+            RequestId = requestId;
+            ApplicationId = applicationId;
+            State = (CertificateRequestState)state;
+            CertificateGroupId = certificateGroupId;
+            CertificateTypeId = certificateTypeId;
+            SigningRequest = signingRequest;
+            SubjectName = subjectName;
+            DomainNames = domainNames;
+            PrivateKeyFormat = privateKeyFormat;
         }
-
     }
 }

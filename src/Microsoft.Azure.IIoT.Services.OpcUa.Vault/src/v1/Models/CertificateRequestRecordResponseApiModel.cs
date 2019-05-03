@@ -4,31 +4,32 @@
 // ------------------------------------------------------------
 
 
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
+    using Newtonsoft.Json;
+    using System.Collections.Generic;
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
-{
-    public sealed class CertificateRequestQueryResponseApiModel
-    {
+    /// <summary>
+    /// Response model
+    /// </summary>
+    public sealed class CertificateRequestQueryResponseApiModel {
+
         /// <summary>
         /// The query result.
         /// </summary>
-        [JsonProperty(PropertyName = "requests", Order = 10)]
+        [JsonProperty(PropertyName = "requests")]
         public IList<CertificateRequestRecordApiModel> Requests { get; set; }
 
         /// <summary>
         /// Link to the next page of results.
         /// </summary>
-        [JsonProperty(PropertyName = "nextPageLink", Order = 20)]
+        [JsonProperty(PropertyName = "nextPageLink")]
         public string NextPageLink { get; set; }
 
-        public CertificateRequestQueryResponseApiModel(IList<ReadRequestResultModel> requests, string nextPageLink)
-        {
-            List<CertificateRequestRecordApiModel> requestList = new List<CertificateRequestRecordApiModel>();
-            foreach (ReadRequestResultModel request in requests)
-            {
+        public CertificateRequestQueryResponseApiModel(IList<ReadRequestResultModel> requests,
+            string nextPageLink) {
+            var requestList = new List<CertificateRequestRecordApiModel>();
+            foreach (var request in requests) {
                 requestList.Add(new CertificateRequestRecordApiModel(
                     request.RequestId,
                     request.ApplicationId,

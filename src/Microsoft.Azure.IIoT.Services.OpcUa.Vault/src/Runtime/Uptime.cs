@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
-using System;
+    using System;
 
     /// <summary>
     /// Simple helper capturing uptime information

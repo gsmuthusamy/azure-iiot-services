@@ -3,27 +3,34 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
+    using Newtonsoft.Json;
+    using System.Collections.Generic;
 
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+    /// <summary>
+    /// Configuration collection model
+    /// </summary>
+    public sealed class CertificateGroupConfigurationCollectionApiModel {
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
-{
-    public sealed class CertificateGroupConfigurationCollectionApiModel
-    {
-        [JsonProperty(PropertyName = "groups", Order = 10)]
+        /// <summary>
+        /// Groups
+        /// </summary>
+        [JsonProperty(PropertyName = "groups")]
         public IList<CertificateGroupConfigurationApiModel> Groups { get; set; }
 
-        public CertificateGroupConfigurationCollectionApiModel(IList<CertificateGroupConfigurationModel> config)
-        {
+        /// <summary>
+        /// Create collection
+        /// </summary>
+        /// <param name="config"></param>
+        public CertificateGroupConfigurationCollectionApiModel(
+            IList<CertificateGroupConfigurationModel> config) {
             var newGroups = new List<CertificateGroupConfigurationApiModel>();
-            foreach (var group in config)
-            {
-                var newGroup = new CertificateGroupConfigurationApiModel( group.Id, group);
+            foreach (var group in config) {
+                var newGroup = new CertificateGroupConfigurationApiModel(group.Id, group);
                 newGroups.Add(newGroup);
             }
-            this.Groups = newGroups;
+            Groups = newGroups;
         }
     }
 }

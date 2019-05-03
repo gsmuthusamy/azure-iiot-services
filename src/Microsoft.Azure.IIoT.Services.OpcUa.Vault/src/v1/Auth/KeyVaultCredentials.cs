@@ -3,87 +3,85 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth {
+    using Microsoft.IdentityModel.Clients.ActiveDirectory;
+    using Microsoft.Rest;
+    using System;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Threading;
+    using System.Threading.Tasks;
 
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Microsoft.Rest;
-using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading;
-using System.Threading.Tasks;
+    /// <summary>
+    /// Credentials used to use the keyvault client
+    /// </summary>
+    public class KeyVaultCredentials : ServiceClientCredentials {
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth
-{
-    /// <inheritdoc/>
-    public class KeyVaultCredentials : ServiceClientCredentials
-    {
-        string authority;
-        string bearerToken;
-        string resourceId;
-        string clientId;
-        string clientSecret;
-
-        /// <inheritdoc/>
-        public KeyVaultCredentials(
-            string bearerToken,
-            string authority,
-            string resourceId,
-            string clientId,
-            string clientSecret
-            )
-        {
-            this.bearerToken = bearerToken;
-            this.authority = authority;
-            this.resourceId = resourceId;
-            this.clientId = clientId;
-            this.clientSecret = clientSecret;
+        /// <summary>
+        /// Create credentials
+        /// </summary>
+        /// <param name="bearerToken"></param>
+        /// <param name="authority"></param>
+        /// <param name="resourceId"></param>
+        /// <param name="clientId"></param>
+        /// <param name="clientSecret"></param>
+        public KeyVaultCredentials(string bearerToken, string authority, string resourceId,
+            string clientId, string clientSecret) {
+            _bearerToken = bearerToken;
+            _authority = authority;
+            _resourceId = resourceId;
+            _clientId = clientId;
+            _clientSecret = clientSecret;
         }
 
-        private string AuthenticationToken { get; set; }
         /// <inheritdoc/>
-        public override void InitializeServiceClient<T>(ServiceClient<T> client)
-        {
+        public override void InitializeServiceClient<T>(ServiceClient<T> client) {
             var authenticationContext =
-                new AuthenticationContext(authority);
+                new AuthenticationContext(_authority);
 
             var credential = new ClientCredential(
-                clientId: clientId,
-                clientSecret: clientSecret);
+                clientId: _clientId,
+                clientSecret: _clientSecret);
 
-            var user = new UserAssertion(bearerToken);
+            var user = new UserAssertion(_bearerToken);
 
             var result = authenticationContext.AcquireTokenAsync(
-                resource: resourceId,
+                resource: _resourceId,
                 clientCredential: credential,
                 userAssertion: user).GetAwaiter().GetResult();
 
-            if (result == null)
-            {
+            if (result == null) {
                 throw new InvalidOperationException("Failed to obtain the JWT token");
             }
 
-            AuthenticationToken = result.AccessToken;
+            _authenticationToken = result.AccessToken;
         }
 
         /// <inheritdoc/>
-        public override async Task ProcessHttpRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            if (request == null)
-            {
+        public override async Task ProcessHttpRequestAsync(HttpRequestMessage request,
+            CancellationToken cancellationToken) {
+            if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
 
-            if (AuthenticationToken == null)
-            {
+            if (_authenticationToken == null) {
                 throw new InvalidOperationException("Token Provider Cannot Be Null");
             }
 
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AuthenticationToken);
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.Authorization = new AuthenticationHeaderValue(
+                "Bearer", _authenticationToken);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(
+                "application/json"));
 
             //request.Version = new Version(apiVersion);
             await base.ProcessHttpRequestAsync(request, cancellationToken);
         }
-    }
 
+        private string _authenticationToken;
+        private readonly string _authority;
+        private readonly string _bearerToken;
+        private readonly string _resourceId;
+        private readonly string _clientId;
+        private readonly string _clientSecret;
+    }
 }

@@ -4,19 +4,27 @@
 // ------------------------------------------------------------
 
 
-using System.Collections.Generic;
-using Newtonsoft.Json;
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Newtonsoft.Json;
+    using System.Collections.Generic;
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
-{
-    public sealed class CertificateGroupListApiModel
-    {
-        [JsonProperty(PropertyName = "groups", Order = 20)]
+    /// <summary>
+    /// Create group list model
+    /// </summary>
+    public sealed class CertificateGroupListApiModel {
+
+        /// <summary>
+        /// Groups
+        /// </summary>
+        [JsonProperty(PropertyName = "groups")]
         public IList<string> Groups { get; set; }
 
-        public CertificateGroupListApiModel(IList<string> groups)
-        {
-            this.Groups = groups;
+        /// <summary>
+        /// Create groups
+        /// </summary>
+        /// <param name="groups"></param>
+        public CertificateGroupListApiModel(IList<string> groups) {
+            Groups = groups;
         }
     }
 }

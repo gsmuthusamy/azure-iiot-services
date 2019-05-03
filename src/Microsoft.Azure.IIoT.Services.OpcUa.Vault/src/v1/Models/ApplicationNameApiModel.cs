@@ -3,43 +3,53 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
+    using Newtonsoft.Json;
 
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
-using Newtonsoft.Json;
+    /// <summary>
+    /// Application name model
+    /// </summary>
+    public sealed class ApplicationNameApiModel {
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
-{
-    public sealed class ApplicationNameApiModel
-    {
-        [JsonProperty(PropertyName = "locale", NullValueHandling = NullValueHandling.Ignore)]
+        /// <summary>
+        /// Locale
+        /// </summary>
+        [JsonProperty(PropertyName = "locale",
+            NullValueHandling = NullValueHandling.Ignore)]
         public string Locale { get; set; }
 
+        /// <summary>
+        /// Text
+        /// </summary>
         [JsonProperty(PropertyName = "text")]
         public string Text { get; set; }
 
-        public ApplicationNameApiModel()
-        {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public ApplicationNameApiModel() {
         }
 
-        public ApplicationNameApiModel(ApplicationName applicationName)
-        {
-            this.Locale = applicationName.Locale;
-            this.Text = applicationName.Text;
+        /// <summary>
+        /// Create from model
+        /// </summary>
+        /// <param name="applicationName"></param>
+        public ApplicationNameApiModel(ApplicationName applicationName) {
+            Locale = applicationName.Locale;
+            Text = applicationName.Text;
         }
 
-        public ApplicationNameApiModel(string applicationName)
-        {
-            this.Locale = null;
-            this.Text = applicationName;
-        }
-
-        public ApplicationName ToServiceModel()
-        {
-            var applicationName = new ApplicationName();
-            applicationName.Locale = this.Locale;
-            applicationName.Text = this.Text;
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        /// <returns></returns>
+        public ApplicationName ToServiceModel() {
+            var applicationName = new ApplicationName {
+                Locale = Locale,
+                Text = Text
+            };
             return applicationName;
         }
-
     }
 }

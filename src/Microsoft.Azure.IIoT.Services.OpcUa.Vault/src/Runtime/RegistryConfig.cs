@@ -3,17 +3,16 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-using Microsoft.Azure.IIoT.OpcUa.Api.Registry;
-using Microsoft.Azure.IIoT.Utils;
-using Microsoft.Extensions.Configuration;
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
+    using Microsoft.Azure.IIoT.OpcUa.Api.Registry;
+    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Configuration;
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime
-{
     /// <summary>
     /// Registry configuration
     /// </summary>
-    public class RegistryConfig : ConfigBase, IRegistryConfig
-    {
+    public class RegistryConfig : ConfigBase, IRegistryConfig {
+
         /// <summary>
         /// Opc registry service url
         /// </summary>

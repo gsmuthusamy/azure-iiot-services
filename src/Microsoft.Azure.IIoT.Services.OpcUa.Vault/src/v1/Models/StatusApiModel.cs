@@ -3,34 +3,46 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
 
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
-using Newtonsoft.Json;
+    /// <summary>
+    /// Status model
+    /// </summary>
+    public sealed class StatusApiModel {
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
-{
-    public sealed class StatusApiModel
-    {
-        private const string DateFormat = "yyyy-MM-dd'T'HH:mm:sszzz";
-        private string appMessage;
-        private string kvMessage;
-
-        [JsonProperty(PropertyName = "name", Order = 10)]
+        /// <summary>
+        /// Service name
+        /// </summary>
+        [JsonProperty(PropertyName = "name")]
         public string Name => "OpcVault";
 
-        [JsonProperty(PropertyName = "status", Order = 20)]
+        /// <summary>
+        /// Status
+        /// </summary>
+        [JsonProperty(PropertyName = "status")]
         public string Status { get; set; }
 
-        [JsonProperty(PropertyName = "currentTime", Order = 30)]
+        /// <summary>
+        /// Current time
+        /// </summary>
+        [JsonProperty(PropertyName = "currentTime")]
         public string CurrentTime => DateTimeOffset.UtcNow.ToString(DateFormat);
 
-        [JsonProperty(PropertyName = "startTime", Order = 40)]
+        /// <summary>
+        /// Service start time
+        /// </summary>
+        [JsonProperty(PropertyName = "startTime")]
         public string StartTime => Uptime.Start.ToString(DateFormat);
 
-        [JsonProperty(PropertyName = "upTime", Order = 50)]
+        /// <summary>
+        /// Uptime
+        /// </summary>
+        [JsonProperty(PropertyName = "upTime")]
         public long UpTime => Convert.ToInt64(Uptime.Duration.TotalSeconds);
 
         /// <summary>
@@ -38,11 +50,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
         /// used to correlate logs coming from the same instance. The value
         /// changes every time the service starts.
         /// </summary>
-        [JsonProperty(PropertyName = "uid", Order = 60)]
+        [JsonProperty(PropertyName = "uid")]
         public string UID => Uptime.ProcessId;
 
         /// <summary>A property bag with details about the service</summary>
-        [JsonProperty(PropertyName = "properties", Order = 70)]
+        [JsonProperty(PropertyName = "properties")]
         public Dictionary<string, string> Properties => new Dictionary<string, string>
         {
             { "Culture", Thread.CurrentThread.CurrentCulture.Name },
@@ -50,38 +62,33 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
         };
 
         /// <summary>A property bag with details about the internal dependencies</summary>
-        [JsonProperty(PropertyName = "dependencies", Order = 80)]
+        [JsonProperty(PropertyName = "dependencies")]
         public Dictionary<string, string> Dependencies => new Dictionary<string, string>
         {
             { "ApplicationDatabase", appMessage },
             { "KeyVault", kvMessage }
         };
 
-        [JsonProperty(PropertyName = "$metadata", Order = 1000)]
+        [JsonProperty(PropertyName = "$metadata")]
         public Dictionary<string, string> Metadata => new Dictionary<string, string>
         {
             { "$type", "Status;" + VersionInfo.NUMBER },
             { "$uri", "/" + VersionInfo.PATH + "/status" }
         };
 
-        public StatusApiModel(
-            bool appOk,
-            string appMessage,
-            bool kvOk,
-            string kvMessage
-            )
-        {
-            this.Status = appOk && kvOk ? "OK" : "ERROR";
+        public StatusApiModel(bool appOk, string appMessage, bool kvOk, string kvMessage) {
+            Status = appOk && kvOk ? "OK" : "ERROR";
             this.appMessage = appOk ? "OK" : "ERROR";
-            if (!string.IsNullOrEmpty(appMessage))
-            {
+            if (!string.IsNullOrEmpty(appMessage)) {
                 this.appMessage += ":" + appMessage;
             }
             this.kvMessage = kvOk ? "OK" : "ERROR";
-            if (!string.IsNullOrEmpty(kvMessage))
-            {
+            if (!string.IsNullOrEmpty(kvMessage)) {
                 this.kvMessage += ":" + kvMessage;
             }
         }
+        private const string DateFormat = "yyyy-MM-dd'T'HH:mm:sszzz";
+        private readonly string appMessage;
+        private readonly string kvMessage;
     }
 }

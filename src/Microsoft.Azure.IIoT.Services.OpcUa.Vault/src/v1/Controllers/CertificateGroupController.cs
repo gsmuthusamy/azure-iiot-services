@@ -3,28 +3,26 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Swagger;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
+    using Microsoft.Azure.IIoT.Exceptions;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using System.Security.Cryptography.X509Certificates;
+    using System.Threading.Tasks;
 
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.IIoT.Exceptions;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Swagger;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
-
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
-{
     /// <summary>
     /// Certificate Group services.
     /// </summary>
     [ApiController]
-    [Route(VersionInfo.PATH + "/group"), TypeFilter(typeof(ExceptionsFilterAttribute))]
+    [ExceptionsFilter]
+    [Route(VersionInfo.PATH + "/group")]
     [Produces("application/json")]
     [Authorize(Policy = Policies.CanRead)]
-    public sealed class CertificateGroupController : Controller
-    {
+    public sealed class CertificateGroupController : Controller {
         private readonly ICertificateGroup _certificateGroups;
 
         /// <summary>
@@ -32,8 +30,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// </summary>
         /// <param name="certificateGroups"></param>
         public CertificateGroupController(
-            ICertificateGroup certificateGroups)
-        {
+            ICertificateGroup certificateGroups) {
             _certificateGroups = certificateGroups;
         }
 
@@ -46,9 +43,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// </remarks>
         /// <returns>List of certificate group names</returns>
         [HttpGet]
-        public async Task<CertificateGroupListApiModel> GetCertificateGroupsAsync()
-        {
-            return new CertificateGroupListApiModel(await _certificateGroups.GetCertificateGroupIds());
+        public async Task<CertificateGroupListApiModel> GetCertificateGroupsAsync() {
+            return new CertificateGroupListApiModel(await _certificateGroups.GetCertificateGroupIdsAsync());
         }
 
         /// <summary>
@@ -61,11 +57,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// <param name="group">The group name</param>
         /// <returns>The configuration</returns>
         [HttpGet("{group}")]
-        public async Task<CertificateGroupConfigurationApiModel> GetCertificateGroupConfigurationAsync(string group)
-        {
+        public async Task<CertificateGroupConfigurationApiModel> GetCertificateGroupConfigurationAsync(string group) {
             return new CertificateGroupConfigurationApiModel(
                 group,
-                await _certificateGroups.GetCertificateGroupConfiguration(group));
+                await _certificateGroups.GetCertificateGroupConfigurationAsync(group));
         }
 
         /// <summary>
@@ -90,12 +85,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         [Authorize(Policy = Policies.CanManage)]
         public async Task<CertificateGroupConfigurationApiModel> UpdateCertificateGroupConfigurationAsync(
             string group,
-            [FromBody] CertificateGroupConfigurationApiModel config)
-        {
-            var onBehalfOfCertificateGroups = await _certificateGroups.OnBehalfOfRequest(Request);
+            [FromBody] CertificateGroupConfigurationApiModel config) {
+            var onBehalfOfCertificateGroups = await _certificateGroups.SendOnBehalfOfRequestAsync(Request);
             return new CertificateGroupConfigurationApiModel(
                 group,
-                await onBehalfOfCertificateGroups.UpdateCertificateGroupConfiguration(group, config.ToServiceModel()));
+                await onBehalfOfCertificateGroups.UpdateCertificateGroupConfigurationAsync(group, config.ToServiceModel()));
         }
 
         /// <summary>
@@ -114,12 +108,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// <returns>The group configuration</returns>
         [HttpPost("{group}/{subject}/{certType}/create")]
         [Authorize(Policy = Policies.CanManage)]
-        public async Task<CertificateGroupConfigurationApiModel> CreateCertificateGroupAsync(string group, string subject, string certType)
-        {
-            var onBehalfOfCertificateGroups = await _certificateGroups.OnBehalfOfRequest(Request);
+        public async Task<CertificateGroupConfigurationApiModel> CreateCertificateGroupAsync(
+            string group, string subject, string certType) {
+            var onBehalfOfCertificateGroups = await _certificateGroups.SendOnBehalfOfRequestAsync(Request);
             return new CertificateGroupConfigurationApiModel(
                 group,
-                await onBehalfOfCertificateGroups.CreateCertificateGroupConfiguration(group, subject, certType));
+                await onBehalfOfCertificateGroups.CreateCertificateGroupConfigurationAsync(group, subject, certType));
         }
 
         /// <summary>
@@ -135,8 +129,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// <returns>The group configuration</returns>
         [HttpDelete("{group}")]
         [Authorize(Policy = Policies.CanManage)]
-        public async Task DeleteCertificateGroupAsync(string group)
-        {
+        public async Task DeleteCertificateGroupAsync(string group) {
             await Task.Delay(1000);
             // intentionally not implemented yet
             throw new ResourceNotFoundException();
@@ -151,10 +144,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// </remarks>
         /// <returns>The configurations</returns>
         [HttpGet("groupsconfig")]
-        public async Task<CertificateGroupConfigurationCollectionApiModel> GetCertificateGroupsConfigurationAsync()
-        {
+        public async Task<CertificateGroupConfigurationCollectionApiModel> GetCertificateGroupsConfigurationAsync() {
             return new CertificateGroupConfigurationCollectionApiModel(
-                await _certificateGroups.GetCertificateGroupConfigurationCollection());
+                await _certificateGroups.GetCertificateGroupConfigurationCollectionAsync());
         }
 
         /// <summary>
@@ -175,10 +167,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
             string group,
             bool? withCertificates,
             [FromQuery] string nextPageLink,
-            [FromQuery] int? pageSize)
-        {
+            [FromQuery] int? pageSize) {
             X509Certificate2Collection collection;
-            (collection, nextPageLink) = await _certificateGroups.GetIssuerCACertificateVersionsAsync(group, withCertificates, nextPageLink, pageSize);
+            (collection, nextPageLink) = await _certificateGroups.GetIssuerCACertificateVersionsAsync(
+                group, withCertificates, nextPageLink, pageSize);
             return new X509Certificate2CollectionApiModel(collection, nextPageLink);
         }
 
@@ -196,10 +188,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
             string group,
             string thumbPrint,
             [FromQuery] string nextPageLink,
-            [FromQuery] int? pageSize)
-        {
+            [FromQuery] int? pageSize) {
             return new X509Certificate2CollectionApiModel(
-                await _certificateGroups.GetIssuerCACertificateChainAsync(group, thumbPrint, nextPageLink, pageSize));
+                await _certificateGroups.GetIssuerCACertificateChainAsync(
+                    group, thumbPrint, nextPageLink, pageSize));
         }
 
         /// <summary>
@@ -216,8 +208,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
             string group,
             string thumbPrint,
             [FromQuery] string nextPageLink,
-            [FromQuery] int? pageSize)
-        {
+            [FromQuery] int? pageSize) {
             return new X509CrlCollectionApiModel(
                 await _certificateGroups.GetIssuerCACrlChainAsync(group, thumbPrint, nextPageLink, pageSize));
         }
@@ -242,9 +233,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         public async Task<TrustListApiModel> GetCertificateGroupTrustListAsync(
             string group,
             [FromQuery] string nextPageLink,
-            [FromQuery] int? pageSize)
-        {
-            return new TrustListApiModel(await _certificateGroups.GetTrustListAsync(group, nextPageLink, pageSize));
+            [FromQuery] int? pageSize) {
+            return new TrustListApiModel(await _certificateGroups.GetTrustListAsync(
+                group, nextPageLink, pageSize));
         }
 
         /// <summary>
@@ -261,9 +252,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers
         /// <returns>The new Issuer CA certificate</returns>
         [HttpPost("{group}/issuerca/create")]
         [Authorize(Policy = Policies.CanManage)]
-        public async Task<X509Certificate2ApiModel> CreateCertificateGroupIssuerCACertAsync(string group)
-        {
-            var onBehalfOfCertificateGroups = await _certificateGroups.OnBehalfOfRequest(Request);
+        public async Task<X509Certificate2ApiModel> CreateCertificateGroupIssuerCACertAsync(string group) {
+            var onBehalfOfCertificateGroups = await _certificateGroups.SendOnBehalfOfRequestAsync(Request);
             return new X509Certificate2ApiModel(
                 await onBehalfOfCertificateGroups.CreateIssuerCACertificateAsync(group));
         }

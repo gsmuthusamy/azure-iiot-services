@@ -4,53 +4,74 @@
 // ------------------------------------------------------------
 
 
-using Newtonsoft.Json;
-using System;
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Newtonsoft.Json;
+    using System;
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
-{
-    public sealed class CreateSigningRequestApiModel
-    {
-        [JsonProperty(PropertyName = "applicationId", Order = 10)]
+    /// <summary>
+    /// Signing request
+    /// </summary>
+    public sealed class CreateSigningRequestApiModel {
+
+        /// <summary>
+        /// Application id
+        /// </summary>
+        [JsonProperty(PropertyName = "applicationId")]
         public string ApplicationId { get; set; }
 
-        [JsonProperty(PropertyName = "certificateGroupId", Order = 20)]
+        /// <summary>
+        /// Certificate group id
+        /// </summary>
+        [JsonProperty(PropertyName = "certificateGroupId")]
         public string CertificateGroupId { get; set; }
 
-        [JsonProperty(PropertyName = "certificateTypeId", Order = 30)]
+        /// <summary>
+        /// Type
+        /// </summary>
+        [JsonProperty(PropertyName = "certificateTypeId")]
         public string CertificateTypeId { get; set; }
 
-        [JsonProperty(PropertyName = "certificateRequest", Order = 40)]
+        /// <summary>
+        /// Request string
+        /// </summary>
+        [JsonProperty(PropertyName = "certificateRequest")]
         public string CertificateRequest { get; set; }
 
-        public CreateSigningRequestApiModel(
-            string applicationId,
-            string certificateGroupId,
-            string certificateTypeId,
-            byte[] certificateRequest)
-        {
-            this.ApplicationId = applicationId;
-            this.CertificateGroupId = certificateGroupId;
-            this.CertificateTypeId = certificateTypeId;
-            this.CertificateRequest = certificateRequest != null ? Convert.ToBase64String(certificateRequest) : null;
+        /// <summary>
+        /// Create signing request
+        /// </summary>
+        /// <param name="applicationId"></param>
+        /// <param name="certificateGroupId"></param>
+        /// <param name="certificateTypeId"></param>
+        /// <param name="certificateRequest"></param>
+        public CreateSigningRequestApiModel(string applicationId,
+            string certificateGroupId, string certificateTypeId,
+            byte[] certificateRequest) {
+            ApplicationId = applicationId;
+            CertificateGroupId = certificateGroupId;
+            CertificateTypeId = certificateTypeId;
+            CertificateRequest = certificateRequest != null ?
+                Convert.ToBase64String(certificateRequest) : null;
         }
 
-        public byte [] ToServiceModel()
-        {
+        /// <summary>
+        /// Convert back to service model
+        /// </summary>
+        /// <returns></returns>
+        public byte[] ToServiceModel() {
             const string certRequestPemHeader = "-----BEGIN CERTIFICATE REQUEST-----";
             const string certRequestPemFooter = "-----END CERTIFICATE REQUEST-----";
-            if (CertificateRequest != null)
-            {
-                if (CertificateRequest.Contains(certRequestPemHeader, StringComparison.OrdinalIgnoreCase))
-                {
-                    var strippedCertificateRequest = CertificateRequest.Replace(certRequestPemHeader, "", StringComparison.OrdinalIgnoreCase);
-                    strippedCertificateRequest = strippedCertificateRequest.Replace(certRequestPemFooter, "", StringComparison.OrdinalIgnoreCase);
+            if (CertificateRequest != null) {
+                if (CertificateRequest.Contains(certRequestPemHeader, StringComparison.OrdinalIgnoreCase)) {
+                    var strippedCertificateRequest = CertificateRequest.Replace(
+                        certRequestPemHeader, "", StringComparison.OrdinalIgnoreCase);
+                    strippedCertificateRequest = strippedCertificateRequest.Replace(
+                        certRequestPemFooter, "", StringComparison.OrdinalIgnoreCase);
                     return Convert.FromBase64String(strippedCertificateRequest);
                 }
                 return Convert.FromBase64String(CertificateRequest);
             }
             return null;
         }
-
     }
 }

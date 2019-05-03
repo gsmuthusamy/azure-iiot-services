@@ -3,58 +3,87 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Newtonsoft.Json;
+    using System.Collections.Generic;
 
-using System.Collections.Generic;
-using Newtonsoft.Json;
+    /// <summary>
+    /// Query by id
+    /// </summary>
+    public sealed class QueryApplicationsByIdApiModel {
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
-{
-
-    public sealed class QueryApplicationsByIdApiModel
-    {
-        [JsonProperty(PropertyName = "startingRecordId", Order = 10)]
+        /// <summary>
+        /// Starting record id
+        /// </summary>
+        [JsonProperty(PropertyName = "startingRecordId")]
         public uint StartingRecordId { get; set; }
 
-        [JsonProperty(PropertyName = "maxRecordsToReturn", Order = 20)]
+        /// <summary>
+        /// Max records to return
+        /// </summary>
+        [JsonProperty(PropertyName = "maxRecordsToReturn")]
         public uint MaxRecordsToReturn { get; set; }
 
-        [JsonProperty(PropertyName = "applicationName", Order = 30)]
+        /// <summary>
+        /// Application name
+        /// </summary>
+        [JsonProperty(PropertyName = "applicationName")]
         public string ApplicationName { get; set; }
 
-        [JsonProperty(PropertyName = "applicationUri", Order = 40)]
+        /// <summary>
+        /// Application uri
+        /// </summary>
+        [JsonProperty(PropertyName = "applicationUri")]
         public string ApplicationUri { get; set; }
 
-        [JsonProperty(PropertyName = "applicationType", Order = 50)]
+        /// <summary>
+        /// Application type
+        /// </summary>
+        [JsonProperty(PropertyName = "applicationType")]
         public QueryApplicationType? ApplicationType { get; set; }
 
-        [JsonProperty(PropertyName = "productUri", Order = 60)]
+        /// <summary>
+        /// Product uri
+        /// </summary>
+        [JsonProperty(PropertyName = "productUri")]
         public string ProductUri { get; set; }
 
-        [JsonProperty(PropertyName = "serverCapabilities", Order = 70)]
+        /// <summary>
+        /// Server capabilities
+        /// </summary>
+        [JsonProperty(PropertyName = "serverCapabilities")]
         public IList<string> ServerCapabilities { get; set; }
 
-        [JsonProperty(PropertyName = "applicationState", Order = 80)]
+        /// <summary>
+        /// Application state
+        /// </summary>
+        [JsonProperty(PropertyName = "applicationState")]
         public QueryApplicationState? ApplicationState { get; set; }
 
-        public QueryApplicationsByIdApiModel(
-            uint startingRecordId,
-            uint maxRecordsToReturn,
-            string applicationName,
-            string applicationUri,
-            QueryApplicationType? applicationType,
-            string productUri,
-            IList<string> serverCapabilities,
-            QueryApplicationState? applicationState
-            )
-        {
-            this.StartingRecordId = startingRecordId;
-            this.MaxRecordsToReturn = maxRecordsToReturn;
-            this.ApplicationName = applicationName;
-            this.ApplicationUri = applicationUri;
-            this.ApplicationType = applicationType;
-            this.ProductUri = productUri;
-            this.ServerCapabilities = serverCapabilities;
-            this.ApplicationState = applicationState;
+        /// <summary>
+        /// Create model
+        /// </summary>
+        /// <param name="startingRecordId"></param>
+        /// <param name="maxRecordsToReturn"></param>
+        /// <param name="applicationName"></param>
+        /// <param name="applicationUri"></param>
+        /// <param name="applicationType"></param>
+        /// <param name="productUri"></param>
+        /// <param name="serverCapabilities"></param>
+        /// <param name="applicationState"></param>
+        public QueryApplicationsByIdApiModel(uint startingRecordId,
+            uint maxRecordsToReturn, string applicationName,
+            string applicationUri, QueryApplicationType? applicationType,
+            string productUri, IList<string> serverCapabilities,
+            QueryApplicationState? applicationState) {
+            StartingRecordId = startingRecordId;
+            MaxRecordsToReturn = maxRecordsToReturn;
+            ApplicationName = applicationName;
+            ApplicationUri = applicationUri;
+            ApplicationType = applicationType;
+            ProductUri = productUri;
+            ServerCapabilities = serverCapabilities;
+            ApplicationState = applicationState;
         }
 
     }

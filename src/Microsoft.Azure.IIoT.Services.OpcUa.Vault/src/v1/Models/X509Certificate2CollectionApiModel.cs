@@ -3,31 +3,43 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using Newtonsoft.Json;
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
-{
-    public sealed class X509Certificate2CollectionApiModel
-    {
-        [JsonProperty(PropertyName = "chain", Order = 10)]
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Newtonsoft.Json;
+    using System.Collections.Generic;
+    using System.Security.Cryptography.X509Certificates;
+
+    /// <summary>
+    /// Certificate collection
+    /// </summary>
+    public sealed class X509Certificate2CollectionApiModel {
+
+        /// <summary>
+        /// Chain
+        /// </summary>
+        [JsonProperty(PropertyName = "chain")]
         public IList<X509Certificate2ApiModel> Chain { get; set; }
 
-        [JsonProperty(PropertyName = "nextPageLink", Order = 20)]
+        /// <summary>
+        /// Next link
+        /// </summary>
+        [JsonProperty(PropertyName = "nextPageLink")]
         public string NextPageLink { get; set; }
 
-        public X509Certificate2CollectionApiModel(X509Certificate2Collection certificateCollection, string nextPageLink = null)
-        {
+        /// <summary>
+        /// Create collection
+        /// </summary>
+        /// <param name="certificateCollection"></param>
+        /// <param name="nextPageLink"></param>
+        public X509Certificate2CollectionApiModel(
+            X509Certificate2Collection certificateCollection, string nextPageLink = null) {
             var chain = new List<X509Certificate2ApiModel>();
-            foreach (var cert in certificateCollection)
-            {
+            foreach (var cert in certificateCollection) {
                 var certApiModel = new X509Certificate2ApiModel(cert);
                 chain.Add(certApiModel);
             }
-            this.Chain = chain;
-            this.NextPageLink = nextPageLink;
+            Chain = chain;
+            NextPageLink = nextPageLink;
         }
-
     }
 }

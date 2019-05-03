@@ -3,50 +3,70 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Newtonsoft.Json;
+    using System;
+    using System.Security.Cryptography.X509Certificates;
 
-using Newtonsoft.Json;
-using System;
-using System.Security.Cryptography.X509Certificates;
+    /// <summary>
+    /// Certificate model
+    /// </summary>
+    public sealed class X509Certificate2ApiModel {
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models
-{
-    public sealed class X509Certificate2ApiModel
-    {
-        [JsonProperty(PropertyName = "subject", Order = 10)]
+        /// <summary>
+        /// Subject
+        /// </summary>
+        [JsonProperty(PropertyName = "subject")]
         public string Subject { get; set; }
 
-        [JsonProperty(PropertyName = "thumbprint", Order = 20)]
+        /// <summary>
+        /// Thumbprint
+        /// </summary>
+        [JsonProperty(PropertyName = "thumbprint")]
         public string Thumbprint { get; set; }
 
-        [JsonProperty(PropertyName = "serialNumber", Order = 30)]
+        /// <summary>
+        /// Serial number
+        /// </summary>
+        [JsonProperty(PropertyName = "serialNumber")]
         public string SerialNumber { get; set; }
 
-        [JsonProperty(PropertyName = "notBefore", Order = 30)]
+        /// <summary>
+        /// Not before validity
+        /// </summary>
+        [JsonProperty(PropertyName = "notBefore")]
         public DateTime? NotBefore { get; set; }
 
-        [JsonProperty(PropertyName = "notAfter", Order = 30)]
+        /// <summary>
+        /// Not after validity
+        /// </summary>
+        [JsonProperty(PropertyName = "notAfter")]
         public DateTime? NotAfter { get; set; }
 
-        [JsonProperty(PropertyName = "certificate", Order = 40)]
+        /// <summary>
+        /// Raw data
+        /// </summary>
+        [JsonProperty(PropertyName = "certificate")]
         public string Certificate { get; set; }
 
-        public X509Certificate2ApiModel(X509Certificate2 certificate, bool withCertificate = true)
-        {
-            if (withCertificate)
-            {
-                this.Certificate = Convert.ToBase64String(certificate.RawData);
+        public X509Certificate2ApiModel(X509Certificate2 certificate,
+            bool withCertificate = true) {
+            if (withCertificate) {
+                Certificate = Convert.ToBase64String(certificate.RawData);
             }
-            this.Thumbprint = certificate.Thumbprint;
-            this.SerialNumber = certificate.SerialNumber;
-            this.NotBefore = certificate.NotBefore;
-            this.NotAfter = certificate.NotAfter;
-            this.Subject = certificate.Subject;
+            Thumbprint = certificate.Thumbprint;
+            SerialNumber = certificate.SerialNumber;
+            NotBefore = certificate.NotBefore;
+            NotAfter = certificate.NotAfter;
+            Subject = certificate.Subject;
         }
 
-        public X509Certificate2 ToServiceModel()
-        {
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        /// <returns></returns>
+        public X509Certificate2 ToServiceModel() {
             return new X509Certificate2(Convert.FromBase64String(Certificate));
         }
-
     }
 }

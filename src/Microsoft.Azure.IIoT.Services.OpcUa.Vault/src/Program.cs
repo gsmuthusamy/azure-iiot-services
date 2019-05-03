@@ -3,32 +3,28 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+    using Microsoft.Extensions.Configuration;
+    using Serilog;
+    using Serilog.Events;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
 
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
-using Microsoft.Extensions.Configuration;
-using Serilog;
-using Serilog.Events;
-using System;
-using System.Collections.Generic;
-using System.IO;
-
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault
-{
-    /// <summary>Application entry point</summary>
-    public class Program
-    {
-        public static int Main(string[] args)
-        {
+    /// <summary>
+    /// Application entry point
+    /// </summary>
+    public class Program {
+        public static int Main(string[] args) {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
                 .CreateLogger();
-
-            try
-            {
+            try {
                 /*
                 Kestrel is a cross-platform HTTP server based on libuv, a
                 cross-platform asynchronous I/O library.
@@ -49,7 +45,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault
                 Print some information to help development and debugging, like
                 runtime and configuration settings
                 */
-                Console.WriteLine($"[{Uptime.ProcessId}] Starting web service, process ID: " + Uptime.ProcessId);
+                Console.WriteLine($"[{Uptime.ProcessId}] Starting web service, process ID: " +
+                    Uptime.ProcessId);
 
                 var host = new WebHostBuilder()
                     .UseConfiguration(configRoot)
@@ -66,13 +63,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault
 
                 return 0;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Log.Fatal(ex, "Host terminated unexpectedly");
                 return 1;
             }
-            finally
-            {
+            finally {
                 Log.CloseAndFlush();
             }
         }

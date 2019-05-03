@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Graph {
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Processor {
 
     /// <summary>
     /// Web service information

@@ -16,6 +16,26 @@
                 "description": "Url of the AAD login page (example: https://login.microsoftonline.com/)"
             }
         },
+        "aadServiceId": {
+            "type": "string",
+            "metadata": {
+                "description": "AAD service application identifier (GUID)"
+            }
+        },
+        "aadServicePrincipalObjectId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "AAD service application principal id (GUID)"
+            }
+        },
+        "aadServiceSecret": {
+            "type": "securestring",
+            "defaultValue": "",
+            "metadata": {
+                "description": "AAD service application secret."
+            }
+        },
         "aadClientId": {
             "type": "string",
             "defaultValue": "",
@@ -27,21 +47,39 @@
             "type": "securestring",
             "defaultValue": "",
             "metadata": {
-                "description": "AAD application secret."
+                "description": "AAD client application secret."
             }
         },
-        "aadServicePrincipalObjectId": {
+        "aadModuleId": {
             "type": "string",
-            "defaultValue": "",
             "metadata": {
-                "description": "AAD service object identifier (GUID)"
+                "description": "AAD module application identifier (GUID)"
+            }
+        },
+        "aadModuleSecret": {
+            "type": "securestring",
+            "metadata": {
+                "description": "AAD module application secret."
             }
         },
         "authAudience": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "[parameters('aadServiceId')]",
             "metadata": {
                 "description": "Audience to validate token audience against."
+            }
+        },
+        "aadTrustedIssuer": {
+            "type": "string",
+            "defaultValue": "[concat('https://sts.windows.net/', parameters('aadTenantId'))]",
+            "metadata": {
+                "description": "Audience to validate token audience against."
+            }
+        },
+        "aadUserPrincipalId": {
+            "type": "string",
+            "metadata": {
+                "description": "The user principal id managing the vault. (GUID)"
             }
         },
         "solutionName": {
@@ -332,12 +370,41 @@
                 "description": "The certficate that needs to be updated to the VM"
             },
             "defaultValue": ""
+        },
+        "groupsConfig": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Default certificate group configuration. (JSON)"
+            }
         }
     },
     "variables": {
+        "tenantId": "[subscription().tenantId]",
         "location": "[resourceGroup().location]",
+        "opcVaultName": "[concat(variables('groupPrefix'), '-', variables('randomSuffix'))]",
+        "opcVaultSku": "Premium",
+        "keyVaultName": "[concat(variables('groupPrefix'), '-', variables('randomSuffix'), '-svc')]",
+        "keyVaultSku": "Standard",
+        "keyVaultApiVersion": "2018-02-14",
+        "enabledForDeployment": false,
+        "enabledForTemplateDeployment": false,
+        "enableVaultForVolumeEncryption": false,
         "documentDBApiVersion": "2016-03-19",
         "documentDBResourceId": "[resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('documentDBName'))]",
+        "readPermissions": [ "Get", "List" ],
+        "readDeletePermissions": [ "Get", "List", "Delete" ],
+        "writeDeletePermissions": [ "Get", "List", "Set", "Delete" ],
+        "signPermissions": [ "Get", "List", "Sign" ],
+        "createPermissions": [ "Get", "List", "Update", "Create", "Import" ],
+        "groupsObject": {
+            "secrets": [
+                {
+                    "secretName": "groups",
+                    "secretValue": "[parameters('groupsConfig')]"
+                }
+            ]
+        },
         "eventHubApiVersion": "2017-04-01",
         "eventHubKeyName": "RootManageSharedAccessKey",
         "eventHubKeyResourceId": "[resourceId('Microsoft.EventHub/namespaces/AuthorizationRules', parameters('eventHubNamespaceName'), variables('eventHubKeyName'))]",
@@ -354,7 +421,6 @@
         "onboardingConsumerGroupName": "onboarding",
         "storageApiVersion": "2017-06-01",
         "storageResourceId": "[resourceId('Microsoft.Storage/storageAccounts/',  parameters('storageName'))]",
-        "keyVaultVersion": "2015-06-01",
         "computeApiVersion": "2017-03-30",
         "vmFQDN": "[concat(parameters('vmName'), '.', variables('location'), '.', parameters('vmFQDNSuffix'))]",
         "imagePublisher": "Canonical",
@@ -381,6 +447,169 @@
         "appServiceWorkerSize": "0"
     },
     "resources": [
+        {
+            "comments": "This is the KeyVault for secret configurations.",
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[variables('keyVaultName')]",
+            "apiVersion": "[variables('keyVaultApiVersion')]",
+            "location": "[variables('location')]",
+            "tags": {
+                "displayName": "KeyVault"
+            },
+            "properties": {
+                "sku": {
+                    "name": "[variables('keyVaultSku')]",
+                    "family": "A"
+                },
+                "dependsOn": [
+                ],
+                "enabledForDeployment": "[variables('enabledForDeployment')]",
+                "enabledForTemplateDeployment": "[variables('enabledForTemplateDeployment')]",
+                "enabledForVolumeEncryption": "[variables('enableVaultForVolumeEncryption')]",
+                "tenantId": "[reference(variables('serviceIdentityResourceId'), variables('identityApiVersion')).tenantId]",
+                "accessPolicies": [
+                    {
+                        "tenantId": "[parameters('aadTenantId')]",
+                        "objectId": "[parameters('aadServicePrincipalObjectId')]",
+                        "permissions": {
+                            "secrets": "[variables('readPermissions')]"
+                        }
+                    },
+                    {
+                        "tenantId": "[parameters('aadTenantId')]",
+                        "objectId": "[parameters('aadUserPrincipalId')]",
+                        "permissions": {
+                            "secrets": "[variables('readPermissions')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(variables('keyVaultName'), '/', 'Service-Auth--AppSecret')]",
+            "apiVersion": "[variables('keyVaultApiVersion')]",
+            "properties": {
+                "value": "[parameters('aadServiceSecret')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(variables('keyVaultName'), '/', 'Service-OpcVault--CosmosDBToken')]",
+            "apiVersion": "[variables('keyVaultApiVersion')]",
+            "properties": {
+                "value": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('documentDBName')), variables('documentDBApiVersion')).primaryMasterKey]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDb/databaseAccounts', variables('documentDBName'))]",
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(variables('keyVaultName'), '/', 'Service-OpcVault--ServiceHost')]",
+            "apiVersion": "[variables('keyVaultApiVersion')]",
+            "properties": {
+                "value": "[reference(concat('Microsoft.Web/sites/', variables('webAppServiceName'))).hostNames[0]]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(variables('keyVaultName'), '/', 'App-AzureAd--ClientSecret')]",
+            "apiVersion": "[variables('keyVaultApiVersion')]",
+            "properties": {
+                "value": "[parameters('aadClientSecret')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(variables('keyVaultName'), '/', 'Service-Swagger--AppSecret')]",
+            "apiVersion": "[variables('keyVaultApiVersion')]",
+            "properties": {
+                "value": "[parameters('aadClientSecret')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+            ]
+        },
+        {
+            "comments": "This is the dedicated KeyVault Premium Sku for the OPCVault HSM cert store.",
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[variables('opcVaultName')]",
+            "apiVersion": "[variables('keyVaultApiVersion')]",
+            "location": "[variables('location')]",
+            "tags": {
+                "displayName": "OpcVault"
+            },
+            "properties": {
+                "enabledForDeployment": "[variables('enabledForDeployment')]",
+                "enabledForTemplateDeployment": "[variables('enabledForTemplateDeployment')]",
+                "enabledForVolumeEncryption": "[variables('enableVaultForVolumeEncryption')]",
+                "tenantId": "[variables('tenantId')]",
+                "sku": {
+                    "name": "[variables('opcVaultSku')]",
+                    "family": "A"
+                },
+                "accessPolicies": []
+            },
+            "resources": [
+                {
+                    "type": "accessPolicies",
+                    "name": "add",
+                    "apiVersion": "[variables('keyVaultApiVersion')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.KeyVault/vaults', variables('opcVaultName'))]"
+                    ],
+                    "properties": {
+                        "accessPolicies": [
+                            {
+                                "tenantId": "[parameters('aadTenantId')]",
+                                "objectId": "[parameters('aadServicePrincipalObjectId')]",
+                                "permissions": {
+                                    "secrets": "[variables('readDeletePermissions')]",
+                                    "certificates": "[variables('readPermissions')]"
+                                }
+                            },
+                            {
+                                "tenantId": "[parameters('aadTenantId')]",
+                                "objectId": "[parameters('aadUserPrincipalId')]",
+                                "permissions": {
+                                    "keys": "[variables('signPermissions')]",
+                                    "secrets": "[variables('writeDeletePermissions')]",
+                                    "certificates": "[variables('createPermissions')]"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "comments": "This secret contains the OpcVault certificate group configuration.",
+            "condition": "[not(empty(parameters('groupsConfig')))]",
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(variables('opcVaultName'), '/', variables('groupsObject').secrets[copyIndex()].secretName)]",
+            "apiVersion": "[variables('keyVaultApiVersion')]",
+            "properties": {
+                "value": "[variables('groupsObject').secrets[copyIndex()].secretValue]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('opcVaultName'))]"
+            ],
+            "copy": {
+                "name": "secretsCopy",
+                "count": "[length(variables('groupsObject').secrets)]"
+            }
+        },
         {
             "comments": "Azure IoT Hub",
             "apiVersion": "[variables('iotHubApiVersion')]",
@@ -557,26 +786,6 @@
                 "[variables('eventHubNamespaceResourceId')]",
                 "[variables('eventHubResourceId')]"
             ]
-        },
-        {
-            "type": "Microsoft.KeyVault/vaults",
-            "name": "[parameters('keyVaultName')]",
-            "apiVersion": "[variables('keyVaultVersion')]",
-            "location": "[resourceGroup().location]",
-            "tags": {
-                "displayName": "[parameters('keyVaultDisplayName')]"
-            },
-            "properties": {
-                "enabledForDeployment": true,
-                "enabledForTemplateDeployment": false,
-                "enabledForVolumeEncryption": false,
-                "sku": {
-                    "name": "[parameters('keyVaultSkuName')]",
-                    "family": "A"
-                },
-                "tenantId": "[parameters('aadTenantId')]",
-                "accessPolicies": []
-            }
         },
         {
             "comments": "AppService plan to host the Application Gateway Web App",
@@ -898,6 +1107,14 @@
         "azureblob-endpoint-suffix": {
             "type": "string",
             "value": "[parameters('storageEndpointSuffix')]"
+        },
+        "keyVaultBaseUrl": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))).vaultUri]"
+        },
+        "opcVaultBaseUrl": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.KeyVault/vaults', variables('opcVaultName'))).vaultUri]"
         },
         "resourceGroup" : {
             "type": "string",

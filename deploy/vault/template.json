@@ -1,9 +1,10 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "aadTenantId": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "The AAD tenant identifier (GUID)"
             }
@@ -21,26 +22,30 @@
                 "description": "AAD service application identifier (GUID)"
             }
         },
-        "aadServicePrincipalId": {
+        "aadServicePrincipalObjectId": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "AAD service application principal id (GUID)"
             }
         },
         "aadServiceSecret": {
             "type": "securestring",
+            "defaultValue": "",
             "metadata": {
                 "description": "AAD service application secret."
             }
         },
         "aadClientId": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "AAD client application identifier (GUID)"
             }
         },
         "aadClientSecret": {
             "type": "securestring",
+            "defaultValue": "",
             "metadata": {
                 "description": "AAD client application secret."
             }
@@ -57,7 +62,7 @@
                 "description": "AAD module application secret."
             }
         },
-        "aadAudience": {
+        "authAudience": {
             "type": "string",
             "defaultValue": "[parameters('aadServiceId')]",
             "metadata": {
@@ -130,13 +135,12 @@
                 "description": "Preset web app environment."
             }
         }
-
     },
     "variables": {
         "tenantId": "[subscription().tenantId]",
         "groupPrefix": "[take(resourceGroup().name, 8)]",
         "randomSuffix": "[take(uniqueString(subscription().subscriptionId, resourceGroup().id, resourceGroup().name), 5)]",
-        "applocation": "[resourceGroup().location]",
+        "location": "[resourceGroup().location]",
         "opcVaultName": "[concat(variables('groupPrefix'), '-', variables('randomSuffix'))]",
         "opcVaultSku": "Premium",
         "keyVaultName": "[concat(variables('groupPrefix'), '-', variables('randomSuffix'), '-svc')]",
@@ -154,8 +158,6 @@
         "documentDBName": "[concat(variables('groupPrefix'), '-', variables('randomSuffix'))]",
         "documentDBApiVersion": "2016-03-19",
         "documentDBResourceId": "[resourceId('Microsoft.DocumentDb/databaseAccounts', variables('documentDBName'))]",
-        "apiType": "SQL",
-        "offerType": "Standard",
         "readPermissions": [ "Get", "List" ],
         "readDeletePermissions": [ "Get", "List", "Delete" ],
         "writeDeletePermissions": [ "Get", "List", "Set", "Delete" ],
@@ -210,7 +212,7 @@
             "type": "Microsoft.KeyVault/vaults",
             "name": "[variables('keyVaultName')]",
             "apiVersion": "[variables('keyVaultApiVersion')]",
-            "location": "[variables('applocation')]",
+            "location": "[variables('location')]",
             "tags": {
                 "displayName": "KeyVault"
             },
@@ -244,7 +246,7 @@
                     },
                     {
                         "tenantId": "[parameters('aadTenantId')]",
-                        "objectId": "[parameters('aadServicePrincipalId')]",
+                        "objectId": "[parameters('aadServicePrincipalObjectId')]",
                         "permissions": {
                             "secrets": "[variables('readPermissions')]"
                         }
@@ -290,8 +292,7 @@
                 "value": "[reference(concat('Microsoft.Web/sites/', variables('webAppServiceName'))).hostNames[0]]"
             },
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
-                "[resourceId('Microsoft.Web/sites/', variables('webAppServiceName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
             ]
         },
         {
@@ -321,7 +322,7 @@
             "type": "Microsoft.KeyVault/vaults",
             "name": "[variables('opcVaultName')]",
             "apiVersion": "[variables('keyVaultApiVersion')]",
-            "location": "[variables('applocation')]",
+            "location": "[variables('location')]",
             "tags": {
                 "displayName": "OpcVault"
             },
@@ -349,7 +350,7 @@
                         "accessPolicies": [
                             {
                                 "tenantId": "[parameters('aadTenantId')]",
-                                "objectId": "[parameters('aadServicePrincipalId')]",
+                                "objectId": "[parameters('aadServicePrincipalObjectId')]",
                                 "permissions": {
                                     "secrets": "[variables('readDeletePermissions')]",
                                     "certificates": "[variables('readPermissions')]"
@@ -487,7 +488,7 @@
                         //"OPCVAULT__COSMOSDBTOKEN": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('documentDBName')), variables('documentDBApiVersion')).primaryMasterKey]",
                         "AUTH__APPID": "[parameters('aadServiceId')]",
                         //"AUTH__APPSECRET": "[parameters('aadServiceSecret')]",
-                        "AUTH__AUDIENCE": "[parameters('aadAudience')]",
+                        "AUTH__AUDIENCE": "[parameters('authAudience')]",
                         "AUTH__TENANTID": "[parameters('aadTenantId')]",
                         "AUTH__TRUSTEDISSUER": "[parameters('aadTrustedIssuer')]",
                         "SWAGGER__ENABLED": "[if (equals(parameters('environment'),'Development'),'True','False')]",

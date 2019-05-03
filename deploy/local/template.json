@@ -9,6 +9,19 @@
                 "description": "The AAD tenant identifier (GUID)"
             }
         },
+        "aadServicePrincipalObjectId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "AAD service application principal id (GUID)"
+            }
+        },
+        "aadUserPrincipalId": {
+            "type": "string",
+            "metadata": {
+                "description": "The user principal id managing the vault. (GUID)"
+            }
+        },
         "solutionName": {
             "type": "string",
             "defaultValue": "iiotservices",
@@ -181,30 +194,25 @@
                 "description": "The Azure IoT Hub tier"
             }
         },
-        "keyVaultName": {
+        "groupsConfig": {
             "type": "string",
-            "defaultValue": "[concat('keyvault-', take(uniqueString(subscription().subscriptionId, resourceGroup().id, parameters('solutionName')), 5))]",
+            "defaultValue": "",
             "metadata": {
-                "description": "The resource name of the KeyVault"
-            }
-        },
-        "keyVaultDisplayName": {
-            "type": "string",
-            "defaultValue": "[parameters('solutionName')]",
-            "metadata": {
-                "description": "The display name for the KeyVault"
-            }
-        },
-        "keyVaultSkuName": {
-            "type": "string",
-            "defaultValue": "Standard",
-            "metadata": {
-                "description": "The KeyVault SKU to use."
+                "description": "Default certificate group configuration. (JSON)"
             }
         }
     },
     "variables": {
+        "tenantId": "[subscription().tenantId]",
         "location": "[resourceGroup().location]",
+        "opcVaultName": "[concat(variables('groupPrefix'), '-', variables('randomSuffix'))]",
+        "opcVaultSku": "Premium",
+        "keyVaultName": "[concat(variables('groupPrefix'), '-', variables('randomSuffix'), '-svc')]",
+        "keyVaultSku": "Standard",
+        "keyVaultApiVersion": "2018-02-14",
+        "enabledForDeployment": false,
+        "enabledForTemplateDeployment": false,
+        "enableVaultForVolumeEncryption": false,
         "documentDBApiVersion": "2016-03-19",
         "documentDBResourceId": "[resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('documentDBName'))]",
         "eventHubApiVersion": "2017-04-01",
@@ -222,10 +230,78 @@
         "deviceNotificationRouteName": "DeviceNotifications",
         "onboardingConsumerGroupName": "onboarding",
         "storageApiVersion": "2017-06-01",
-        "storageResourceId": "[resourceId('Microsoft.Storage/storageAccounts/',  parameters('storageName'))]",
-        "keyVaultVersion": "2015-06-01"
+        "storageResourceId": "[resourceId('Microsoft.Storage/storageAccounts/',  parameters('storageName'))]"
     },
     "resources": [
+        {
+            "comments": "This is the dedicated KeyVault Premium Sku for the OPCVault HSM cert store.",
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[variables('opcVaultName')]",
+            "apiVersion": "[variables('keyVaultApiVersion')]",
+            "location": "[variables('location')]",
+            "tags": {
+                "displayName": "OpcVault"
+            },
+            "properties": {
+                "enabledForDeployment": "[variables('enabledForDeployment')]",
+                "enabledForTemplateDeployment": "[variables('enabledForTemplateDeployment')]",
+                "enabledForVolumeEncryption": "[variables('enableVaultForVolumeEncryption')]",
+                "tenantId": "[variables('tenantId')]",
+                "sku": {
+                    "name": "[variables('opcVaultSku')]",
+                    "family": "A"
+                },
+                "accessPolicies": []
+            },
+            "resources": [
+                {
+                    "type": "accessPolicies",
+                    "name": "add",
+                    "apiVersion": "[variables('keyVaultApiVersion')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.KeyVault/vaults', variables('opcVaultName'))]"
+                    ],
+                    "properties": {
+                        "accessPolicies": [
+                            {
+                                "tenantId": "[parameters('aadTenantId')]",
+                                "objectId": "[parameters('aadServicePrincipalObjectId')]",
+                                "permissions": {
+                                    "secrets": "[variables('readDeletePermissions')]",
+                                    "certificates": "[variables('readPermissions')]"
+                                }
+                            },
+                            {
+                                "tenantId": "[parameters('aadTenantId')]",
+                                "objectId": "[parameters('aadUserPrincipalId')]",
+                                "permissions": {
+                                    "keys": "[variables('signPermissions')]",
+                                    "secrets": "[variables('writeDeletePermissions')]",
+                                    "certificates": "[variables('createPermissions')]"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "comments": "This secret contains the OpcVault certificate group configuration.",
+            "condition": "[not(empty(parameters('groupsConfig')))]",
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(variables('opcVaultName'), '/', variables('groupsObject').secrets[copyIndex()].secretName)]",
+            "apiVersion": "[variables('keyVaultApiVersion')]",
+            "properties": {
+                "value": "[variables('groupsObject').secrets[copyIndex()].secretValue]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('opcVaultName'))]"
+            ],
+            "copy": {
+                "name": "secretsCopy",
+                "count": "[length(variables('groupsObject').secrets)]"
+            }
+        },
         {
             "comments": "Azure IoT Hub",
             "apiVersion": "[variables('iotHubApiVersion')]",
@@ -444,6 +520,10 @@
         "azureblob-endpoint-suffix": {
             "type": "string",
             "value": "[parameters('storageEndpointSuffix')]"
+        },
+        "opcVaultBaseUrl": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.KeyVault/vaults', variables('opcVaultName'))).vaultUri]"
         },
         "resourceGroup" : {
             "type": "string",

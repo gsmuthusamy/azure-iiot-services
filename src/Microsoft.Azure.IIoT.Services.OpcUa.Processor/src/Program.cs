@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Graph {
-    using Microsoft.Azure.IIoT.Services.OpcUa.Graph.Runtime;
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Processor {
+    using Microsoft.Azure.IIoT.Services.OpcUa.Processor.Runtime;
     using Microsoft.Azure.IIoT.OpcUa.Graph.Services;
     using Microsoft.Azure.IIoT.OpcUa.Protocol.Services;
     using Microsoft.Azure.IIoT.Tasks.Default;

@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests {
     using Microsoft.Azure.IIoT.Auth.Clients;
     using Microsoft.Azure.IIoT.Auth.Runtime;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Services;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
     using Microsoft.Extensions.Configuration;
     using Serilog;
@@ -36,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests {
                 var timeid = DateTime.UtcNow.ToFileTimeUtc() / 1000 % 10000;
                 GroupId = "GroupTestIssuerCA" + timeid.ToString();
                 ConfigId = "GroupTestConfig" + timeid.ToString();
-                var keyVaultServiceClient = KeyVaultServiceClient.Get(ConfigId, _serviceConfig, _clientConfig, _logger);
+                var keyVaultServiceClient = KeyVaultTestServiceClient.Get(ConfigId, _serviceConfig, _clientConfig, _logger);
                 KeyVault = new KeyVaultCertificateGroup(keyVaultServiceClient, _serviceConfig, _clientConfig, _logger);
                 KeyVault.PurgeAsync(ConfigId, GroupId).Wait();
                 KeyVault.CreateCertificateGroupConfigurationAsync(GroupId, "CN=OPC Vault Cert Request Test CA, O=Microsoft, OU=Azure IoT", null).Wait();

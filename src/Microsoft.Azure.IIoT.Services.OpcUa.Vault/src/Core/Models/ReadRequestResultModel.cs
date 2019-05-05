@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models {
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types;
+namespace Microsoft.Azure.IIoT.OpcUa.Vault.Models {
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Types;
     public sealed class ReadRequestResultModel {
         public string RequestId { get; set; }
         public string ApplicationId { get; set; }
@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models {
         public string[] DomainNames { get; set; }
         public string PrivateKeyFormat { get; set; }
 
-        public ReadRequestResultModel(CertificateRequest request) {
+        public ReadRequestResultModel(CertificateRequestDocument request) {
             RequestId = request.RequestId.ToString();
             ApplicationId = request.ApplicationId;
             State = request.CertificateRequestState;

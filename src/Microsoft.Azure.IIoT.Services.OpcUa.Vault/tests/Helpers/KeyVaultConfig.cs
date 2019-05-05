@@ -5,11 +5,15 @@
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests {
     using Microsoft.Azure.IIoT.Auth.Clients;
+    using Microsoft.Azure.IIoT.OpcUa.Vault;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.KeyVault;
     using Serilog;
-    public static class KeyVaultServiceClient {
-        public static KeyVault.KeyVaultServiceClient Get(string groupConfigId,
+
+    public static class KeyVaultTestServiceClient {
+
+        public static KeyVaultServiceClient Get(string groupConfigId,
             IVaultConfig _serviceConfig, IClientConfig _clientConfig, ILogger logger) {
-            var _keyVaultServiceClient = new KeyVault.KeyVaultServiceClient(groupConfigId,
+            var _keyVaultServiceClient = new KeyVaultServiceClient(groupConfigId,
                 _serviceConfig.KeyVaultBaseUrl, true, logger);
             if (_clientConfig != null &&
                 _clientConfig.AppId != null && _clientConfig.AppSecret != null) {

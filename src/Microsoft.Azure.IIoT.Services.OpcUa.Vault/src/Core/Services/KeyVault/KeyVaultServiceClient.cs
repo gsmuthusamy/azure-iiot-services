@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.KeyVault {
+namespace Microsoft.Azure.IIoT.OpcUa.Vault.KeyVault {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.KeyVault;
     using Microsoft.Azure.KeyVault.Models;

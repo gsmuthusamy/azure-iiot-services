@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
+using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
 using Newtonsoft.Json;
 using Opc.Ua;
 using Opc.Ua.Gds;
@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
             IssuerCertificates = null;
         }
 
-        public Application Model;
+        public ApplicationDocument Model;
         public ApplicationRecordDataType ApplicationRecord;
         public NodeId CertificateGroupId;
         public NodeId CertificateTypeId;
@@ -84,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
         /// </summary>
         /// <param name="expected">The expected Application model data</param>
         /// <param name="actual">The actualy Application model data</param>
-        public static void AssertEqualApplicationModelData(Application expected, Application actual)
+        public static void AssertEqualApplicationModelData(ApplicationDocument expected, ApplicationDocument actual)
         {
             Assert.Equal(expected.ApplicationName, actual.ApplicationName);
             Assert.Equal(expected.ApplicationType, actual.ApplicationType);
@@ -101,9 +101,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
         /// </summary>
         /// <param name="application">The application with server capabilities.</param>
         /// <returns></returns>
-        public static string ServerCapabilities(Application application)
+        public static string ServerCapabilities(ApplicationDocument application)
         {
-            if ((int)application.ApplicationType != (int)Types.ApplicationType.Client)
+            if ((int)application.ApplicationType != (int)Microsoft.Azure.IIoT.OpcUa.Vault.Types.ApplicationType.Client)
             {
                 if (application.ServerCapabilities == null || application.ServerCapabilities.Length == 0)
                 {
@@ -137,10 +137,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
             return capabilities.ToString();
         }
 
-        public static Application ApplicationDeepCopy(Application app)
+        public static ApplicationDocument ApplicationDeepCopy(ApplicationDocument app)
         {
             // serialize/deserialize to avoid using MemberwiseClone
-            return (Application)JsonConvert.DeserializeObject(JsonConvert.SerializeObject(app), typeof(Application));
+            return (ApplicationDocument)JsonConvert.DeserializeObject(JsonConvert.SerializeObject(app), typeof(ApplicationDocument));
         }
 
     }
@@ -187,11 +187,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
             }
             ApplicationTestData testData = new ApplicationTestData
             {
-                Model = new Application
+                Model = new ApplicationDocument
                 {
                     ApplicationUri = appUri,
                     ApplicationName = appName,
-                    ApplicationType = (Types.ApplicationType)appType,
+                    ApplicationType = (Microsoft.Azure.IIoT.OpcUa.Vault.Types.ApplicationType)appType,
                     ProductUri = prodUri,
                     ServerCapabilities = ApplicationTestData.ServerCapabilities(serverCapabilities.ToArray()),
                     ApplicationNames = new ApplicationName[] { new ApplicationName { Locale = "en-us", Text = appName } },

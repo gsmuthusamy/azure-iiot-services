@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types;
+namespace Microsoft.Azure.IIoT.OpcUa.Vault {
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Types;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -25,14 +25,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         /// If the applicationId is not empty an Update is performed.
         /// </summary>
         /// <param name="application">The application record</param>
-        Task<Application> RegisterApplicationAsync(Application application);
+        Task<ApplicationDocument> RegisterApplicationAsync(ApplicationDocument application);
 
         /// <summary>
         /// Get the application by applicationId
         /// </summary>
         /// <param name="id">The applicationId</param>
         /// <returns>The application</returns>
-        Task<Application> GetApplicationAsync(string id);
+        Task<ApplicationDocument> GetApplicationAsync(string id);
 
         /// <summary>
         /// Update an application.
@@ -40,8 +40,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         /// <param name="id">The applicationId</param>
         /// <param name="application">The application</param>
         /// <returns>The updated application</returns>
-        Task<Application> UpdateApplicationAsync(string id,
-            Application application);
+        Task<ApplicationDocument> UpdateApplicationAsync(string id,
+            ApplicationDocument application);
 
         /// <summary>
         /// Approve or reject a new application.
@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         /// <param name="id">The applicationId</param>
         /// <param name="approved">true if approved, false if rejected</param>
         /// <param name="force">Ignore state check</param>
-        Task<Application> ApproveApplicationAsync(string id,
+        Task<ApplicationDocument> ApproveApplicationAsync(string id,
             bool approved, bool force);
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         /// a similar OPC UA GDS server function.
         /// </summary>
         /// <param name="id">The application Id</param>
-        Task<Application> UnregisterApplicationAsync(string id);
+        Task<ApplicationDocument> UnregisterApplicationAsync(string id);
 
         /// <summary>
         /// Physically remove the application form the database. Must be in deleted state.
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         /// </summary>
         /// <param name="uri">The ApplicationUri</param>
         /// <returns>The applications</returns>
-        Task<IList<Application>> ListApplicationAsync(string uri);
+        Task<IList<ApplicationDocument>> ListApplicationAsync(string uri);
 
         /// <summary>
         /// Query for Applications sorted by ID.

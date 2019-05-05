@@ -5,7 +5,8 @@
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests {
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Services;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers;
     using Microsoft.Azure.KeyVault.Models;
     using Serilog;

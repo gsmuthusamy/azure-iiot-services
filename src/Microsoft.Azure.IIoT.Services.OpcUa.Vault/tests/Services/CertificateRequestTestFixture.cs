@@ -7,7 +7,9 @@
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests {
     using Microsoft.Azure.IIoT.Auth.Clients;
     using Microsoft.Azure.IIoT.Auth.Runtime;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
+    using Microsoft.Azure.IIoT.OpcUa.Vault;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Services;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
     using Microsoft.Extensions.Configuration;
     using Serilog;
@@ -43,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests {
                 var timeid = DateTime.UtcNow.ToFileTimeUtc() / 1000 % 10000;
                 _groupId = "CertReqIssuerCA" + timeid.ToString();
                 _configId = "CertReqConfig" + timeid.ToString();
-                var keyVaultServiceClient = KeyVaultServiceClient.Get(_configId, _serviceConfig, _clientConfig, _logger);
+                var keyVaultServiceClient = KeyVaultTestServiceClient.Get(_configId, _serviceConfig, _clientConfig, _logger);
                 _keyVaultCertificateGroup = new KeyVaultCertificateGroup(keyVaultServiceClient, _serviceConfig, _clientConfig, _logger);
                 _keyVaultCertificateGroup.PurgeAsync(_configId, _groupId).Wait();
                 CertificateGroup = _keyVaultCertificateGroup;

@@ -3,21 +3,28 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
+namespace Microsoft.Azure.IIoT.OpcUa.Vault.Services {
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB;
     using Autofac;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
     using Serilog;
     using System;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Helper to initialize all objects
+    /// </summary>
     public class WarmStartDatabase : IStartable {
 
-        public WarmStartDatabase(
-            IDocumentDBRepository repository,
+        /// <summary>
+        /// Create starter
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="certificateRequest"></param>
+        /// <param name="applicationDatabase"></param>
+        /// <param name="logger"></param>
+        public WarmStartDatabase(IDocumentDBRepository repository,
             ICertificateRequest certificateRequest,
-            IApplicationsDatabase applicationDatabase,
-            ILogger logger
-            ) {
+            IApplicationsDatabase applicationDatabase, ILogger logger) {
             _repository = repository;
             _certificateRequest = certificateRequest;
             _applicationDatabase = applicationDatabase;

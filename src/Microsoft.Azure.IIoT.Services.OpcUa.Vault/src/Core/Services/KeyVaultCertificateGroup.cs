@@ -4,12 +4,11 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
+namespace Microsoft.Azure.IIoT.OpcUa.Vault.Services {
     using Microsoft.AspNetCore.Http;
     using Microsoft.Azure.IIoT.Auth.Clients;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.KeyVault;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.KeyVault;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
     using Newtonsoft.Json;
     using Opc.Ua;
@@ -103,11 +102,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                 }
                 authority += _clientConfig.TenantId;
                 var serviceClientCredentials =
-                    new KeyVaultCredentials(
-                        token,
-                        authority,
-                        _servicesConfig.KeyVaultResourceId,
-                        _clientConfig.AppId,
+                    new KeyVaultCredentials(token, authority,
+                        _servicesConfig.KeyVaultResourceId, _clientConfig.AppId,
                         _clientConfig.AppSecret);
                 var keyVaultServiceClient = new KeyVaultServiceClient(
                     _groupSecret, _servicesConfig.KeyVaultBaseUrl, true, _logger);

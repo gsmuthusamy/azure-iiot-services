@@ -41,13 +41,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1 {
             else {
                 options.AddPolicy(Policies.CanWrite, policy =>
                     policy.RequireAuthenticatedUser()
-                    .Require(WriterRights));
+                        .Require(WriterRights));
                 options.AddPolicy(Policies.CanSign, policy =>
                     policy.RequireAuthenticatedUser()
-                    .Require(ApproverRights));
+                        .Require(ApproverRights));
                 options.AddPolicy(Policies.CanManage, policy =>
                     policy.RequireAuthenticatedUser()
-                    .Require(AdminRights));
+                        .Require(AdminRights));
             }
         }
 
@@ -56,7 +56,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1 {
         /// </summary>
         public static bool AdminRights(AuthorizationHandlerContext context) {
             return
-                context.User.IsInRole(Roles.Administrator) ||
+                context.User.IsInRole(Roles.Admin) ||
                 context.User.HasClaim(c => c.Type == Claims.Execute);
         }
 
@@ -65,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1 {
         /// </summary>
         public static bool ApproverRights(AuthorizationHandlerContext context) {
             return
-                context.User.IsInRole(Roles.Approver) ||
+                context.User.IsInRole(Roles.Sign) ||
                 context.User.HasClaim(c => c.Type == Claims.Execute);
         }
 
@@ -74,9 +74,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1 {
         /// </summary>
         public static bool WriterRights(AuthorizationHandlerContext context) {
             return
-                context.User.IsInRole(Roles.Writer) ||
-                context.User.IsInRole(Roles.Administrator) ||
-                context.User.IsInRole(Roles.Approver) ||
+                context.User.IsInRole(Roles.Write) ||
+                context.User.IsInRole(Roles.Admin) ||
+                context.User.IsInRole(Roles.Sign) ||
                 context.User.HasClaim(c => c.Type == Claims.Execute);
         }
     }

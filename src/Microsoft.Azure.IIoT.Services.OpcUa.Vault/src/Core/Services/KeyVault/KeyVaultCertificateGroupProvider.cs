@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.KeyVault {
+namespace Microsoft.Azure.IIoT.OpcUa.Vault.KeyVault {
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Microsoft.Azure.KeyVault.Models;
     using Newtonsoft.Json;
     using Opc.Ua;
@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.KeyVault {
     using System.Security.Cryptography.X509Certificates;
     using System.Threading;
     using System.Threading.Tasks;
-    using static Microsoft.Azure.IIoT.Services.OpcUa.Vault.KeyVault.KeyVaultCertFactory;
+    using static Microsoft.Azure.IIoT.OpcUa.Vault.KeyVault.KeyVaultCertFactory;
 
     /// <summary>
     /// The certificate provider for a group where the Issuer CA cert and Crl are stored in KeyVault.

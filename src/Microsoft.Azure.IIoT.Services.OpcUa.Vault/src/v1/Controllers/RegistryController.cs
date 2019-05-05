@@ -4,18 +4,19 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Azure.IIoT.OpcUa.Api.Registry;
-    using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Models;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Api.Registry;
+    using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
 
     /// <summary>
     /// Registry sync services.
@@ -134,7 +135,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
 
 
         private RegistryApplicationStatusType TestApplicationStatus(ApplicationInfoApiModel registry,
-            Application application) {
+            ApplicationDocument application) {
             if (string.Equals(registry.ApplicationUri, application.ApplicationUri)) {
                 if ((int)registry.ApplicationType != (int)application.ApplicationType ||
                     !string.Equals(registry.ApplicationName, application.ApplicationName) ||
@@ -178,23 +179,23 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
             return modelResult;
         }
 
-        private Application NewApplicationFromRegistry(ApplicationInfoApiModel record) {
+        private ApplicationDocument NewApplicationFromRegistry(ApplicationInfoApiModel record) {
             var applicationNames = new[] {
                 new ApplicationName {
                     Text = record.ApplicationName,
                     Locale = record.Locale
                 }
             };
-            var newApplication = new Application() {
+            var newApplication = new ApplicationDocument() {
                 ApplicationName = record.ApplicationName,
                 ApplicationNames = applicationNames,
-                ApplicationType = (Types.ApplicationType)record.ApplicationType,
+                ApplicationType = (Microsoft.Azure.IIoT.OpcUa.Vault.Types.ApplicationType)record.ApplicationType,
                 ApplicationUri = record.ApplicationUri,
                 DiscoveryUrls = record.DiscoveryUrls.ToArray(),
                 AuthorityId = User.Identity.Name,
                 ProductUri = record.ProductUri,
                 RegistryId = record.ApplicationId,
-                ApplicationState = Types.ApplicationState.New,
+                ApplicationState = Microsoft.Azure.IIoT.OpcUa.Vault.Types.ApplicationState.New,
                 CreateTime = DateTime.UtcNow
             };
             if (record.ApplicationType != IIoT.OpcUa.Api.Registry.Models.ApplicationType.Client) {

@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
+    using Microsoft.Azure.IIoT.OpcUa.Vault;
     using Microsoft.AspNetCore.Mvc;
     using System;
     using System.Security.Cryptography.X509Certificates;
@@ -22,8 +23,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
         /// Create the controller.
         /// </summary>
         /// <param name="certificateGroups"></param>
-        public CertificateController(
-            ICertificateGroup certificateGroups) {
+        public CertificateController(ICertificateGroup certificateGroups) {
             _certificateGroups = certificateGroups;
         }
 

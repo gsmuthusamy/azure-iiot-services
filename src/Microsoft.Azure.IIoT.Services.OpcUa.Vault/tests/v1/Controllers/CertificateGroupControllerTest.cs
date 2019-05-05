@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.v1.Controllers {
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers;
     using Moq;

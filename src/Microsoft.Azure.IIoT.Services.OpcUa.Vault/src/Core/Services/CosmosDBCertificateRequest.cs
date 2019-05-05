@@ -3,11 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types;
+namespace Microsoft.Azure.IIoT.OpcUa.Vault.Services {
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Types;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.KeyVault.Models;
@@ -20,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
     using System.Security.Cryptography.X509Certificates;
     using System.Text;
     using System.Threading.Tasks;
-    using CertificateRequest = CosmosDB.Models.CertificateRequest;
+    using CertificateRequestDocument = CosmosDB.Models.CertificateRequestDocument;
 
     /// <summary>
     /// Cosmos db certificate request service
@@ -42,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             _applicationsDatabase = database;
             _certificateGroup = certificateGroup;
             _logger = logger;
-            _certificateRequests = new DocumentDBCollection<CosmosDB.Models.CertificateRequest>(
+            _certificateRequests = new DocumentDBCollection<CosmosDB.Models.CertificateRequestDocument>(
                 db, config.CosmosDBCollection);
             // set unique key in CosmosDB for Certificate ID ()
             // db.UniqueKeyPolicy.UniqueKeys.Add(new UniqueKey { Paths = new Collection<string> { "/" + nameof(CertificateRequest.ClassType), "/" + nameof(CertificateRequest.ID) } });
@@ -84,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             if (string.IsNullOrEmpty(certificateTypeId)) {
                 //TODO
             }
-            var request = new CertificateRequest {
+            var request = new CertificateRequestDocument {
                 RequestId = Guid.NewGuid(),
                 AuthorityId = authorityId,
                 ID = _certRequestIdCounter++,
@@ -184,7 +183,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                 }
             }
 
-            var request = new CertificateRequest {
+            var request = new CertificateRequestDocument {
                 RequestId = Guid.NewGuid(),
                 AuthorityId = authorityId,
                 ID = _certRequestIdCounter++,
@@ -609,7 +608,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         /// <inheritdoc/>
         public async Task<(string, ReadRequestResultModel[])> QueryPageAsync(string appId,
             CertificateRequestState? state, string nextPageLink, int? maxResults) {
-            IEnumerable<CertificateRequest> requests;
+            IEnumerable<CertificateRequestDocument> requests;
             var queryParameters = new SqlParameterCollection();
             var query = "SELECT * FROM CertificateRequest r WHERE ";
             if (appId == null && state == null) {
@@ -652,7 +651,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                 var sqlQuerySpec = new SqlQuerySpec {
                     QueryText = "SELECT TOP 1 * FROM Applications a WHERE a.ClassType = @classType ORDER BY a.ID DESC",
                     Parameters = new SqlParameterCollection {
-                        new SqlParameter("@classType", CertificateRequest.ClassTypeName)
+                        new SqlParameter("@classType", CertificateRequestDocument.ClassTypeName)
                     }
                 };
                 var maxIDEnum = await _certificateRequests.GetAsync(sqlQuerySpec);
@@ -689,7 +688,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         internal ICertificateGroup _certificateGroup;
         private readonly ILogger _logger;
         private int _certRequestIdCounter = 1;
-        private readonly DateTime _queryCounterResetTime = DateTime.UtcNow;
-        private readonly IDocumentDBCollection<CertificateRequest> _certificateRequests;
+        private readonly IDocumentDBCollection<CertificateRequestDocument> _certificateRequests;
     }
 }

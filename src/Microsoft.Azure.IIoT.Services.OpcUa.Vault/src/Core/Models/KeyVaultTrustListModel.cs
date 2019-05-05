@@ -4,12 +4,17 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models {
+namespace Microsoft.Azure.IIoT.OpcUa.Vault.Models {
     using Opc.Ua;
     using System.Collections.Generic;
     using System.Security.Cryptography.X509Certificates;
 
+    /// <summary>
+    /// Trust list model
+    /// </summary>
     public class KeyVaultTrustListModel {
+
+
         public string Group { get; }
         public X509Certificate2Collection IssuerCertificates { get; set; }
         public IList<X509CRL> IssuerCrls { get; set; }

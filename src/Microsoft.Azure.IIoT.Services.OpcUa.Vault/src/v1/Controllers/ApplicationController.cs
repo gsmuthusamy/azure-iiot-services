@@ -4,12 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Swagger;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -194,7 +195,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
                 (uint)query.ApplicationType,
                 query.ProductUri,
                 query.ServerCapabilities,
-                (Types.QueryApplicationState?)query.ApplicationState
+                (Microsoft.Azure.IIoT.OpcUa.Vault.Types.QueryApplicationState?)query.ApplicationState
                 );
             return new QueryApplicationsByIdResponseApiModel(result);
         }
@@ -227,7 +228,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
                 (uint)query.ApplicationType,
                 query.ProductUri,
                 query.ServerCapabilities,
-                (Types.QueryApplicationState?)query.ApplicationState,
+                (Microsoft.Azure.IIoT.OpcUa.Vault.Types.QueryApplicationState?)query.ApplicationState,
                 nextPageLink,
                 pageSize);
             return new QueryApplicationsResponseApiModel(result);

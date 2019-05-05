@@ -5,15 +5,15 @@
 
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Azure.IIoT.Http;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Swagger;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Azure.IIoT.Http;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
@@ -33,8 +33,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
         /// </summary>
         /// <param name="certificateRequest"></param>
         /// <param name="servicesConfig"></param>
-        public CertificateRequestController(
-            ICertificateRequest certificateRequest,
+        public CertificateRequestController(ICertificateRequest certificateRequest,
             IVaultConfig servicesConfig) {
             _certificateRequest = certificateRequest;
             _servicesConfig = servicesConfig;
@@ -246,7 +245,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
             ReadRequestResultModel[] results;
             (nextPageLink, results) = await _certificateRequest.QueryPageAsync(
                 appId,
-                (Types.CertificateRequestState?)requestState,
+                (Microsoft.Azure.IIoT.OpcUa.Vault.Types.CertificateRequestState?)requestState,
                 nextPageLink,
                 pageSize);
             return new CertificateRequestQueryResponseApiModel(results, nextPageLink);

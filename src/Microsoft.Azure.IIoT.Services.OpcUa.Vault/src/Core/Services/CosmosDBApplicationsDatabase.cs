@@ -4,15 +4,15 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
+namespace Microsoft.Azure.IIoT.OpcUa.Vault.Services {
     using Autofac;
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Services;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Types;
     using Serilog;
     using System;
     using System.Collections.Generic;
@@ -33,18 +33,22 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         private readonly ILifetimeScope _scope = null;
         private int _appIdCounter = 1;
 
-        public CosmosDBApplicationsDatabase(
-            ILifetimeScope scope,
-            IVaultConfig config,
-            IDocumentDBRepository db,
-            ILogger logger) {
+        public CosmosDBApplicationsDatabase(ILifetimeScope scope,
+            IVaultConfig config, IDocumentDBRepository db, ILogger logger) {
             _scope = scope;
             _autoApprove = config.ApplicationsAutoApprove;
             _logger = logger;
-            _logger.Debug("Creating new instance of `CosmosDBApplicationsDatabase` service " + config.CosmosDBCollection);
+            _logger.Debug("Creating new instance of `CosmosDBApplicationsDatabase` service " +
+                config.CosmosDBCollection);
             // set unique key in CosmosDB for application ID
-            db.UniqueKeyPolicy.UniqueKeys.Add(new UniqueKey { Paths = new Collection<string> { "/" + nameof(Application.ClassType), "/" + nameof(Application.ID) } });
-            _applications = new DocumentDBCollection<Application>(db, config.CosmosDBCollection);
+            db.UniqueKeyPolicy.UniqueKeys.Add(new UniqueKey {
+                Paths = new Collection<string> {
+                    "/" + nameof(ApplicationDocument.ClassType),
+                    "/" + nameof(ApplicationDocument.ID)
+                }
+            });
+            _applications = new DocumentDBCollection<ApplicationDocument>(
+                db, config.CosmosDBCollection);
         }
 
         public async Task InitializeAsync() {
@@ -53,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         }
 
         /// <inheritdoc/>
-        public async Task<Application> RegisterApplicationAsync(Application application) {
+        public async Task<ApplicationDocument> RegisterApplicationAsync(ApplicationDocument application) {
             var applicationId = VerifyRegisterApplication(application);
             if (Guid.Empty != applicationId) {
                 return await UpdateApplicationAsync(application.ApplicationId.ToString(), application);
@@ -94,13 +98,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         }
 
         /// <inheritdoc/>
-        public Task<Application> GetApplicationAsync(string applicationId) {
+        public Task<ApplicationDocument> GetApplicationAsync(string applicationId) {
             var appId = ToGuidAndVerify(applicationId);
             return _applications.GetAsync(appId);
         }
 
         /// <inheritdoc/>
-        public async Task<Application> UpdateApplicationAsync(string applicationId, Application application) {
+        public async Task<ApplicationDocument> UpdateApplicationAsync(string applicationId,
+            ApplicationDocument application) {
             if (application == null) {
                 throw new ArgumentNullException(nameof(application), "The application must be provided");
             }
@@ -116,7 +121,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
 
                 var record = await _applications.GetAsync(appGuid);
                 if (record == null) {
-                    throw new ResourceNotFoundException("A record with the specified application id does not exist.");
+                    throw new ResourceNotFoundException(
+                        "A record with the specified application id does not exist.");
                 }
 
                 if (record.ID == 0) {
@@ -144,10 +150,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         }
 
         /// <inheritdoc/>
-        public async Task<Application> ApproveApplicationAsync(string applicationId, bool approved, bool force) {
+        public async Task<ApplicationDocument> ApproveApplicationAsync(string applicationId, bool approved, bool force) {
             var appId = ToGuidAndVerify(applicationId);
             bool retryUpdate;
-            Application record;
+            ApplicationDocument record;
             do {
                 retryUpdate = false;
 
@@ -178,11 +184,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         }
 
         /// <inheritdoc/>
-        public async Task<Application> UnregisterApplicationAsync(string applicationId) {
+        public async Task<ApplicationDocument> UnregisterApplicationAsync(string applicationId) {
             var appId = ToGuidAndVerify(applicationId);
             bool retryUpdate;
             var first = true;
-            Application record;
+            ApplicationDocument record;
             do {
                 retryUpdate = false;
 
@@ -259,7 +265,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         }
 
         /// <inheritdoc/>
-        public async Task<IList<Application>> ListApplicationAsync(string applicationUri) {
+        public async Task<IList<ApplicationDocument>> ListApplicationAsync(string applicationUri) {
             if (string.IsNullOrEmpty(applicationUri)) {
                 throw new ArgumentNullException(nameof(applicationUri),
                     "The applicationUri must be provided.");
@@ -277,7 +283,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             queryParameters.Add(new SqlParameter("@applicationState",
                 ApplicationState.Approved.ToString()));
             query += " AND a.ClassType = @classType";
-            queryParameters.Add(new SqlParameter("@classType", Application.ClassTypeName));
+            queryParameters.Add(new SqlParameter("@classType", ApplicationDocument.ClassTypeName));
             var sqlQuerySpec = new SqlQuerySpec {
                 QueryText = query,
                 Parameters = queryParameters
@@ -301,7 +307,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             var lastCounterResetTime = DateTime.MinValue;
             uint nextRecordId = 0;
 
-            var records = new List<Application>();
+            var records = new List<ApplicationDocument>();
 
             var matchQuery = false;
             var complexQuery =
@@ -388,7 +394,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             string productUri, IList<string> serverCapabilities,
             QueryApplicationState? applicationState, string nextPageLink,
             int? maxRecordsToReturn) {
-            var records = new List<Application>();
+            var records = new List<ApplicationDocument>();
             var matchQuery = false;
             var complexQuery =
                 !string.IsNullOrEmpty(applicationName) ||
@@ -408,7 +414,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             }
             var sqlQuerySpec = CreateServerQuery(0, 0, applicationState);
             do {
-                IEnumerable<Application> applications;
+                IEnumerable<ApplicationDocument> applications;
                 (nextPageLink, applications) = await _applications.GetPageAsync(
                     sqlQuerySpec, nextPageLink, maxRecordsToReturn - records.Count);
 
@@ -503,7 +509,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                 }
             }
             query += " AND a.ClassType = @classType";
-            queryParameters.Add(new SqlParameter("@classType", Application.ClassTypeName));
+            queryParameters.Add(new SqlParameter("@classType", ApplicationDocument.ClassTypeName));
             query += " ORDER BY a.ID";
             var sqlQuerySpec = new SqlQuerySpec {
                 QueryText = query,
@@ -517,7 +523,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         /// </summary>
         /// <param name="application">The application</param>
         /// <returns>The application Guid.</returns>
-        private Guid VerifyRegisterApplication(Application application) {
+        private Guid VerifyRegisterApplication(ApplicationDocument application) {
             if (application == null) {
                 throw new ArgumentNullException(nameof(application));
             }
@@ -585,7 +591,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         /// Returns server capabilities as comma separated string.
         /// </summary>
         /// <param name="application">The application record.</param>
-        public static string ServerCapabilities(Application application) {
+        public static string ServerCapabilities(ApplicationDocument application) {
             if ((int)application.ApplicationType != (int)ApplicationType.Client) {
                 if (application.ServerCapabilities == null || application.ServerCapabilities.Length == 0) {
                     throw new ArgumentException("At least one Server Capability must be provided.", nameof(application.ServerCapabilities));
@@ -642,7 +648,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                 // find new ID for QueryServers
                 var sqlQuerySpec = new SqlQuerySpec {
                     QueryText = "SELECT TOP 1 * FROM Applications a WHERE a.ClassType = @classType ORDER BY a.ID DESC",
-                    Parameters = new SqlParameterCollection { new SqlParameter("@classType", Application.ClassTypeName) }
+                    Parameters = new SqlParameterCollection { new SqlParameter("@classType", ApplicationDocument.ClassTypeName) }
                 };
                 var maxIDEnum = await _applications.GetAsync(sqlQuerySpec);
                 var maxID = maxIDEnum.SingleOrDefault();
@@ -652,6 +658,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                 return 1;
             }
         }
-        private readonly IDocumentDBCollection<Application> _applications;
+        private readonly IDocumentDBCollection<ApplicationDocument> _applications;
     }
 }

@@ -4,15 +4,15 @@
 //  See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models {
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
+namespace Microsoft.Azure.IIoT.OpcUa.Vault.Models {
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
 
     public sealed class QueryApplicationsResponseModel {
-        public Application[] Applications { get; set; }
+        public ApplicationDocument[] Applications { get; set; }
 
         public string NextPageLink { get; set; }
 
-        public QueryApplicationsResponseModel(Application[] applications,
+        public QueryApplicationsResponseModel(ApplicationDocument[] applications,
             string nextPagelink) {
             Applications = applications;
             NextPageLink = NextPageLink;

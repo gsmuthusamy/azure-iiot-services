@@ -6,7 +6,9 @@
 
 using Microsoft.Azure.IIoT.Auth.Clients;
 using Microsoft.Azure.IIoT.Auth.Runtime;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
+using Microsoft.Azure.IIoT.OpcUa.Vault;
+using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB;
+using Microsoft.Azure.IIoT.OpcUa.Vault.Services;
 using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
 using Microsoft.Extensions.Configuration;
 using Serilog;

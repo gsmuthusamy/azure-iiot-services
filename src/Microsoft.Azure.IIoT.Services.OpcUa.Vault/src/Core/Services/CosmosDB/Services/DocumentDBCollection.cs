@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB {
+namespace Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Services {
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Azure.Documents.Linq;
@@ -14,36 +14,41 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB {
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Cosmos db based document collection
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class DocumentDBCollection<T> : IDocumentDBCollection<T> where T : class {
-        /// <inheritdoc/>
-        public const int DefaultMaxItemCount = 10;
-        public DocumentCollection Collection { get; private set; }
-        private readonly IDocumentDBRepository _db;
-        private readonly string _collectionId;
-        private const int kRequestLevelLowest = 400;
 
         /// <inheritdoc/>
-        public DocumentDBCollection(IDocumentDBRepository db) : this(db, typeof(T).Name) {
+        public DocumentCollection Collection { get; private set; }
+
+        /// <summary>
+        /// Create collection
+        /// </summary>
+        /// <param name="db"></param>
+        public DocumentDBCollection(IDocumentDBRepository db) :
+            this(db, typeof(T).Name) {
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Create collection
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="collectionId"></param>
         public DocumentDBCollection(IDocumentDBRepository db, string collectionId) {
             if (string.IsNullOrEmpty(collectionId)) {
                 throw new ArgumentNullException("collectionId must be set");
             }
-            if (db == null) {
-                throw new ArgumentNullException(nameof(db));
-            }
-
             _collectionId = collectionId;
-            _db = db;
+            _db = db ?? throw new ArgumentNullException(nameof(db));
         }
 
         /// <inheritdoc/>
         public async Task<T> GetAsync(Guid id) {
             try {
-                Document document = await _db.Client.ReadDocumentAsync(UriFactory.CreateDocumentUri(_db.DatabaseId, _collectionId, id.ToString()));
+                Document document = await _db.Client.ReadDocumentAsync(
+                    UriFactory.CreateDocumentUri(_db.DatabaseId, _collectionId, id.ToString()));
                 return (T)(dynamic)document;
             }
             catch (DocumentClientException e) {
@@ -151,7 +156,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB {
 
         /// <inheritdoc/>
         public async Task<Document> CreateAsync(T item) {
-            return await _db.Client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_db.DatabaseId, _collectionId), item);
+            return await _db.Client.CreateDocumentAsync(
+                UriFactory.CreateDocumentCollectionUri(_db.DatabaseId, _collectionId), item);
         }
 
         /// <inheritdoc/>
@@ -163,19 +169,22 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB {
                 }
             };
 
-            return await _db.Client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_db.DatabaseId, _collectionId, id.ToString()), item, ac);
+            return await _db.Client.ReplaceDocumentAsync(
+                UriFactory.CreateDocumentUri(_db.DatabaseId, _collectionId, id.ToString()), item, ac);
         }
 
         /// <inheritdoc/>
         public Task DeleteAsync(Guid id) {
-            return _db.Client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(_db.DatabaseId, _collectionId, id.ToString()));
+            return _db.Client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(
+                _db.DatabaseId, _collectionId, id.ToString()));
         }
 
         /// <inheritdoc/>
         public async Task CreateCollectionIfNotExistsAsync() {
             try {
                 await _db.CreateRepositoryIfNotExistsAsync();
-                Collection = await _db.Client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(_db.DatabaseId, _collectionId));
+                Collection = await _db.Client.ReadDocumentCollectionAsync(
+                    UriFactory.CreateDocumentCollectionUri(_db.DatabaseId, _collectionId));
             }
             catch (DocumentClientException e) {
                 if (e.StatusCode == System.Net.HttpStatusCode.NotFound) {
@@ -192,5 +201,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB {
                 }
             }
         }
+
+        public const int DefaultMaxItemCount = 10;
+        private readonly IDocumentDBRepository _db;
+        private readonly string _collectionId;
+        private const int kRequestLevelLowest = 400;
     }
 }

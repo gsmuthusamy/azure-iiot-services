@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB.Models;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using System.Collections.Generic;
 
@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
         /// </summary>
         /// <param name="applications"></param>
         /// <param name="nextPageLink"></param>
-        public QueryApplicationsResponseApiModel(IList<Application> applications,
+        public QueryApplicationsResponseApiModel(IList<ApplicationDocument> applications,
             string nextPageLink = null) {
             var applicationsList = new List<ApplicationRecordApiModel>();
             foreach (var application in applications) {
@@ -59,7 +59,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
         /// </summary>
         /// <param name="applications"></param>
         /// <param name="nextPageLink"></param>
-        public QueryApplicationsResponseApiModel(IList<ApplicationRecordApiModel> applications, string nextPageLink = null) {
+        public QueryApplicationsResponseApiModel(IList<ApplicationRecordApiModel> applications,
+            string nextPageLink = null) {
             Applications = applications;
             NextPageLink = nextPageLink;
         }

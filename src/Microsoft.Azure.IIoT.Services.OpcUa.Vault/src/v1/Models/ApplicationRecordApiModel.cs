@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
@@ -120,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
         /// Create model
         /// </summary>
         /// <param name="application"></param>
-        public ApplicationRecordApiModel(CosmosDB.Models.Application application) {
+        public ApplicationRecordApiModel(ApplicationDocument application) {
             ApplicationId = application.ApplicationId != Guid.Empty ?
                 application.ApplicationId.ToString() : null;
             Id = application.ID;
@@ -145,23 +146,23 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
         /// Convert to service model
         /// </summary>
         /// <returns></returns>
-        public CosmosDB.Models.Application ToServiceModel() {
-            var application = new CosmosDB.Models.Application {
+        public ApplicationDocument ToServiceModel() {
+            var application = new ApplicationDocument {
                 // ID and State are ignored, readonly
                 ApplicationId = ApplicationId != null ? new Guid(ApplicationId) : Guid.Empty,
                 ApplicationUri = ApplicationUri,
                 ApplicationName = ApplicationName,
-                ApplicationType = (Types.ApplicationType)ApplicationType
+                ApplicationType = (Microsoft.Azure.IIoT.OpcUa.Vault.Types.ApplicationType)ApplicationType
             };
             if (ApplicationNames != null) {
-                var applicationNames = new List<CosmosDB.Models.ApplicationName>();
+                var applicationNames = new List<ApplicationName>();
                 foreach (var applicationNameModel in ApplicationNames) {
                     applicationNames.Add(applicationNameModel.ToServiceModel());
                 }
                 application.ApplicationNames = applicationNames.ToArray();
             }
             application.ProductUri = ProductUri;
-            application.DiscoveryUrls = DiscoveryUrls != null ? DiscoveryUrls.ToArray() : null;
+            application.DiscoveryUrls = DiscoveryUrls?.ToArray();
             application.ServerCapabilities = ServerCapabilities;
             application.GatewayServerUri = GatewayServerUri;
             application.DiscoveryProfileUri = DiscoveryProfileUri;

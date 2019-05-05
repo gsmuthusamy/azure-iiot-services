@@ -5,8 +5,9 @@
 
 
 using Microsoft.Azure.IIoT.Exceptions;
+using Microsoft.Azure.IIoT.OpcUa.Vault;
+using Microsoft.Azure.IIoT.OpcUa.Vault.Types;
 using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers;
-using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types;
 using Serilog;
 using System;
 using System.Collections.Generic;

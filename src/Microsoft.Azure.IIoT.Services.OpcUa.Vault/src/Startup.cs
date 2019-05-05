@@ -9,9 +9,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
     using Microsoft.Azure.IIoT.Services;
     using Microsoft.Azure.IIoT.Services.Diagnostics;
     using Microsoft.Azure.IIoT.Services.Auth;
+    using Microsoft.Azure.IIoT.Services.Auth.Clients;
     using Microsoft.Azure.IIoT.Services.Cors;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Services;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB;
     using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Clients;
+    using Microsoft.Azure.IIoT.Http.Auth;
+    using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.KeyVault;
     using Microsoft.Azure.Services.AppAuthentication;
     using Microsoft.Extensions.Configuration;
@@ -207,6 +211,24 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             builder.RegisterType<CorsSetup>()
                 .AsImplementedInterfaces().SingleInstance();
 
+            // Register http client module
+            builder.RegisterModule<HttpClientModule>();
+
+            // ... with bearer auth
+            if (Config.AuthRequired) {
+                builder.RegisterType<BehalfOfTokenProvider>()
+                    .AsImplementedInterfaces().SingleInstance();
+                builder.RegisterType<DistributedTokenCache>()
+                    .AsImplementedInterfaces().SingleInstance();
+                builder.RegisterType<HttpBearerAuthentication>()
+                    .AsImplementedInterfaces().SingleInstance();
+            }
+
+           // builder.RegisterType<v1.Auth.IIoTHttpClient>()
+           //     .AsImplementedInterfaces().SingleInstance();
+           // builder.RegisterType<v1.Auth.IIoTTokenProvider>()
+           //     .AsImplementedInterfaces().SingleInstance();
+
             // Register endpoint services and ...
             builder.RegisterType<KeyVaultCertificateGroup>()
                 .AsImplementedInterfaces().SingleInstance();
@@ -221,10 +243,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
 
             // Registry (optional)
             builder.RegisterType<RegistryServiceClient>()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<v1.Auth.IIoTHttpClient>()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<v1.Auth.IIoTTokenProvider>()
                 .AsImplementedInterfaces().SingleInstance();
         }
     }

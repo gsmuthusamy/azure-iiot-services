@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB {
+namespace Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Services {
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Azure.IIoT.Utils;
@@ -13,12 +13,17 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB {
     using System.Collections.ObjectModel;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Cosmos db document repository
+    /// </summary>
     public class DocumentDBRepository : IDocumentDBRepository {
 
         /// <inheritdoc/>
         public UniqueKeyPolicy UniqueKeyPolicy { get; }
+
         /// <inheritdoc/>
         public DocumentClient Client { get; }
+
         /// <inheritdoc/>
         public string DatabaseId { get; }
 
@@ -36,6 +41,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB {
                 cs.SharedAccessKey, serializerSettings: SerializerSettings());
         }
 
+        /// <inheritdoc/>
         public async Task CreateRepositoryIfNotExistsAsync() {
             try {
                 await Client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(DatabaseId));
@@ -50,14 +56,16 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB {
             }
         }
 
+        /// <summary>
+        /// Used settings
+        /// </summary>
+        /// <returns></returns>
         private JsonSerializerSettings SerializerSettings() {
             return new JsonSerializerSettings {
                 TypeNameHandling = TypeNameHandling.None,
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                Converters = new List<JsonConverter>
-                {
-                    new Newtonsoft.Json.Converters.StringEnumConverter()
-                    {
+                Converters = new List<JsonConverter> {
+                    new Newtonsoft.Json.Converters.StringEnumConverter {
                         NamingStrategy = null,
                         AllowIntegerValues = true
                     }

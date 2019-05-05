@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -23,14 +24,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
     [Produces("application/json")]
     [Authorize(Policy = Policies.CanRead)]
     public sealed class CertificateGroupController : Controller {
-        private readonly ICertificateGroup _certificateGroups;
 
         /// <summary>
         /// Create the controller.
         /// </summary>
         /// <param name="certificateGroups"></param>
-        public CertificateGroupController(
-            ICertificateGroup certificateGroups) {
+        public CertificateGroupController(ICertificateGroup certificateGroups) {
             _certificateGroups = certificateGroups;
         }
 
@@ -258,5 +257,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
                 await onBehalfOfCertificateGroups.CreateIssuerCACertificateAsync(group));
         }
 
+        private readonly ICertificateGroup _certificateGroups;
     }
 }

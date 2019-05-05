@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.CosmosDB {
+namespace Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB {
     using Microsoft.Azure.Documents;
     using System;
     using System.Collections.Generic;

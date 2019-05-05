@@ -82,7 +82,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
         /// <param name="privateKey"></param>
         /// <param name="authorityId"></param>
         public FetchRequestResultApiModel(string requestId, string applicationId,
-            Types.CertificateRequestState state, string certificateGroupId,
+            Microsoft.Azure.IIoT.OpcUa.Vault.Types.CertificateRequestState state, string certificateGroupId,
             string certificateTypeId, byte[] signedCertificate,
             string privateKeyFormat, byte[] privateKey, string authorityId) {
             RequestId = requestId;

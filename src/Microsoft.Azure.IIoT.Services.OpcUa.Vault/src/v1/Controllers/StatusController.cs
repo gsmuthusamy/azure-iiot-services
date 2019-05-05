@@ -4,11 +4,12 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
     using Serilog;
     using System;
     using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
             var applicationMessage = "Alive and well";
             try {
                 var apps = await _applicationDatabase.QueryApplicationsByIdAsync(
-                    0, 1, null, null, 0, null, null, Types.QueryApplicationState.Any);
+                    0, 1, null, null, 0, null, null, Microsoft.Azure.IIoT.OpcUa.Vault.Types.QueryApplicationState.Any);
                 applicationOk = apps != null;
             }
             catch (Exception ex) {

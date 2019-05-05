@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types {
+namespace Microsoft.Azure.IIoT.OpcUa.Vault.Types {
     public enum ApplicationState {
         New = 0,
         Approved = 1,
@@ -11,6 +11,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Types {
         Unregistered = 3,
         Deleted = 4
     }
-
 }
 

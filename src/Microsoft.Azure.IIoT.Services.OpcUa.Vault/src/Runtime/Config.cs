@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         internal Config(string serviceId,
             IConfigurationRoot configuration) :
             base(configuration) {
-            _vault = new ServiceConfig(configuration);
+            _vault = new VaultConfig(configuration);
             _swagger = new SwaggerConfig(configuration, serviceId);
             _registry = new RegistryConfig(configuration);
             _auth = new AuthConfig(configuration, serviceId);

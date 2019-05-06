@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.WebService {
     using System.Net;
     using Xunit;
     using Xunit.Abstractions;
+
     public class ServiceStatusTest {
         private readonly ITestOutputHelper _log;
         private readonly IHttpClient _httpClient;
@@ -34,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.WebService {
             host.Start();
 
             // Act
-            var request = new HttpRequest(address + "/v1/status");
+            var request = new HttpRequest(address + "/v2/status");
             request.AddHeader("X-Foo", "Bar");
             var response = _httpClient.GetAsync(request).Result;
 
@@ -54,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.WebService {
 
             using (var server = new TestServer(hostBuilder)) {
                 // Act
-                var request = server.CreateRequest("/v1/status");
+                var request = server.CreateRequest("/v2/status");
                 request.AddHeader("X-Foo", "Bar");
                 var response = request.GetAsync().Result;
 

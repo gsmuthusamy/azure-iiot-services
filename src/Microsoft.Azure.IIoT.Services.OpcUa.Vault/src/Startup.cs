@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
     using Microsoft.Azure.IIoT.Services.Cors;
     using Microsoft.Azure.IIoT.Services.Diagnostics;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2;
     using Microsoft.Azure.KeyVault;
     using Microsoft.Azure.Services.AppAuthentication;
     using Microsoft.Extensions.Configuration;
@@ -225,11 +225,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                 builder.RegisterType<HttpBearerAuthentication>()
                     .AsImplementedInterfaces().SingleInstance();
             }
-
-            // builder.RegisterType<v1.Auth.IIoTHttpClient>()
-            //     .AsImplementedInterfaces().SingleInstance();
-            // builder.RegisterType<v1.Auth.IIoTTokenProvider>()
-            //     .AsImplementedInterfaces().SingleInstance();
 
             // Register endpoint services and ...
             builder.RegisterType<KeyVaultCertificateGroup>()

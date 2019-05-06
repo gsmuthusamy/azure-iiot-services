@@ -13,6 +13,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Swashbuckle.AspNetCore.Swagger;
 
     /// <summary>
     /// Application services.

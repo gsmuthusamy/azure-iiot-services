@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Swagger;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
@@ -14,6 +13,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
     using Microsoft.AspNetCore.Mvc;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
+    using Swashbuckle.AspNetCore.Swagger;
 
     /// <summary>
     /// Certificate Group services.

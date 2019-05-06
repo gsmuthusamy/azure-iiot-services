@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.v1.Controllers {
             // *Act*:     execute an action in the system under test (SUT)
             // *Assert*:  verify that the test succeeded
             var id = "Default";
-            var configuration = new CertificateGroupConfigurationModel() {
+            var configuration = new CertificateGroupConfigurationModel {
                 Id = id
             };
 

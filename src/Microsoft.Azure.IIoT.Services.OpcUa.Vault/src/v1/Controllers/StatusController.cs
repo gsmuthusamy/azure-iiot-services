@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
             var applicationMessage = "Alive and well";
             try {
                 var apps = await _applicationDatabase.QueryApplicationsByIdAsync(
-                    0, 1, null, null, 0, null, null, Microsoft.Azure.IIoT.OpcUa.Vault.Types.QueryApplicationState.Any);
+                    0, 1, null, null, 0, null, null, Microsoft.Azure.IIoT.OpcUa.Vault.Models.QueryApplicationState.Any);
                 applicationOk = apps != null;
             }
             catch (Exception ex) {

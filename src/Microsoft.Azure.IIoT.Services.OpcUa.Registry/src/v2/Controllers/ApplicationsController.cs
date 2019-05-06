@@ -174,7 +174,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// token</param>
         /// <returns>Sites</returns>
         [HttpGet("sites")]
-        [AutoRestExtension(ContinuationTokenLinkName = "continuationToken")]
+        [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<ApplicationSiteListApiModel> GetListOfSitesAsync(
             [FromQuery] string continuationToken,
             [FromQuery] int? pageSize) {
@@ -210,7 +210,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// in x-ms-continuation header.
         /// </returns>
         [HttpGet]
-        [AutoRestExtension(ContinuationTokenLinkName = "continuationToken")]
+        [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<ApplicationInfoListApiModel> GetListOfApplicationsAsync(
             [FromQuery] string continuationToken,
             [FromQuery] int? pageSize) {

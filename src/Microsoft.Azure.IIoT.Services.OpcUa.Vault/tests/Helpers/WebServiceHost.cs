@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers {
     using System;
-    public class WebServiceHost {
+    public static class WebServiceHost {
         public static string GetBaseAddress() {
             var port = new Random().Next(40000, 60000);
             var baseAddress = "http://127.0.0.1:" + port;

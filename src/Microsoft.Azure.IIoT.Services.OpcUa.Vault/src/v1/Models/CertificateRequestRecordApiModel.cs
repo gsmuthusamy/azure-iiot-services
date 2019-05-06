@@ -5,6 +5,7 @@
 
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -83,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
         /// <param name="domainNames"></param>
         /// <param name="privateKeyFormat"></param>
         public CertificateRequestRecordApiModel(string requestId,
-            string applicationId, Microsoft.Azure.IIoT.OpcUa.Vault.Types.CertificateRequestState state,
+            string applicationId, Microsoft.Azure.IIoT.OpcUa.Vault.Models.CertificateRequestState state,
             string certificateGroupId, string certificateTypeId,
             bool signingRequest, string subjectName,
             IList<string> domainNames, string privateKeyFormat) {

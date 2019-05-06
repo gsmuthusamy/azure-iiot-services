@@ -34,8 +34,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers.Http
 
     public class HttpClient : IHttpClient
     {
-        private readonly ITestOutputHelper log;
-        private readonly bool logCanContainCredentials;
+        private readonly ITestOutputHelper _log;
+        private readonly bool _logCanContainCredentials;
 
         public HttpClient()
         {
@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers.Http
 
         public HttpClient(ITestOutputHelper logger)
         {
-            this.log = logger;
+            _log = logger;
 
             try
             {
@@ -51,52 +51,52 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers.Http
                 var envSetting = Environment
                     .GetEnvironmentVariable("IIOT_ENABLE_UNSAFE_LOGS")
                     .ToLowerInvariant();
-                this.logCanContainCredentials = envSetting == "true";
+                _logCanContainCredentials = envSetting == "true";
             }
             catch (Exception)
             {
-                this.logCanContainCredentials = false;
+                _logCanContainCredentials = false;
             }
         }
 
         public async Task<IHttpResponse> GetAsync(IHttpRequest request)
         {
-            return await this.SendAsync(request, HttpMethod.Get);
+            return await SendAsync(request, HttpMethod.Get);
         }
 
         public async Task<IHttpResponse> PostAsync(IHttpRequest request)
         {
-            return await this.SendAsync(request, HttpMethod.Post);
+            return await SendAsync(request, HttpMethod.Post);
         }
 
         public async Task<IHttpResponse> PutAsync(IHttpRequest request)
         {
-            return await this.SendAsync(request, HttpMethod.Put);
+            return await SendAsync(request, HttpMethod.Put);
         }
 
         public async Task<IHttpResponse> PatchAsync(IHttpRequest request)
         {
-            return await this.SendAsync(request, new HttpMethod("PATCH"));
+            return await SendAsync(request, new HttpMethod("PATCH"));
         }
 
         public async Task<IHttpResponse> DeleteAsync(IHttpRequest request)
         {
-            return await this.SendAsync(request, HttpMethod.Delete);
+            return await SendAsync(request, HttpMethod.Delete);
         }
 
         public async Task<IHttpResponse> HeadAsync(IHttpRequest request)
         {
-            return await this.SendAsync(request, HttpMethod.Head);
+            return await SendAsync(request, HttpMethod.Head);
         }
 
         public async Task<IHttpResponse> OptionsAsync(IHttpRequest request)
         {
-            return await this.SendAsync(request, HttpMethod.Options);
+            return await SendAsync(request, HttpMethod.Options);
         }
 
         private async Task<IHttpResponse> SendAsync(IHttpRequest request, HttpMethod httpMethod)
         {
-            this.LogRequest(request, httpMethod);
+            LogRequest(request, httpMethod);
 
             var clientHandler = new HttpClientHandler();
             using (var client = new System.Net.Http.HttpClient(clientHandler))
@@ -123,7 +123,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers.Http
                         Content = await response.Content.ReadAsStringAsync(),
                     };
 
-                    this.LogResponse(result);
+                    LogResponse(result);
 
                     return result;
                 }
@@ -166,55 +166,55 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers.Http
 
         private void LogRequest(IHttpRequest request, HttpMethod httpMethod)
         {
-            if (this.log == null) return;
+            if (_log == null) return;
 
-            this.log.WriteLine("### REQUEST ##############################");
-            this.log.WriteLine("# Method: " + httpMethod);
-            this.log.WriteLine("# URI: " + request.Uri);
-            this.log.WriteLine("# Timeout: " + request.Options.Timeout);
+            _log.WriteLine("### REQUEST ##############################");
+            _log.WriteLine("# Method: " + httpMethod);
+            _log.WriteLine("# URI: " + request.Uri);
+            _log.WriteLine("# Timeout: " + request.Options.Timeout);
 
-            var headers = this.HeadersToString(request.Headers);
+            var headers = HeadersToString(request.Headers);
             if (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put)
             {
-                headers = headers.Trim() + this.HeadersToString(request.Content.Headers);
+                headers = headers.Trim() + HeadersToString(request.Content.Headers);
             }
-            this.log.WriteLine("# Headers:\n" + headers);
+            _log.WriteLine("# Headers:\n" + headers);
 
             if (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put)
             {
-                this.LogContent(request.Content.ReadAsStringAsync().Result);
+                LogContent(request.Content.ReadAsStringAsync().Result);
             }
         }
 
         private void LogResponse(IHttpResponse response)
         {
-            if (this.log == null) return;
+            if (_log == null) return;
 
-            this.log.WriteLine("### RESPONSE ##############################");
-            this.log.WriteLine("# Status code: " + (int) response.StatusCode + " " + response.StatusCode);
-            this.log.WriteLine("# Headers:\n" + this.HeadersToString(response.Headers));
-            this.LogContent(response.Content);
+            _log.WriteLine("### RESPONSE ##############################");
+            _log.WriteLine("# Status code: " + (int) response.StatusCode + " " + response.StatusCode);
+            _log.WriteLine("# Headers:\n" + HeadersToString(response.Headers));
+            LogContent(response.Content);
         }
 
         private void LogContent(string content)
         {
-            if (this.logCanContainCredentials)
+            if (_logCanContainCredentials)
             {
-                this.log.WriteLine("# Content: **LOG ENABLED** (see dev. setup to hide sensitive content)");
+                _log.WriteLine("# Content: **LOG ENABLED** (see dev. setup to hide sensitive content)");
                 try
                 {
                     var o = JsonConvert.DeserializeObject(content);
                     var s = JsonConvert.SerializeObject(o, Formatting.Indented);
-                    this.log.WriteLine(s);
+                    _log.WriteLine(s);
                 }
                 catch (Exception)
                 {
-                    this.log.WriteLine(content);
+                    _log.WriteLine(content);
                 }
             }
             else
             {
-                this.log.WriteLine("# Content: **HIDDEN** (see dev. setup to unhide sensitive content)");
+                _log.WriteLine("# Content: **HIDDEN** (see dev. setup to unhide sensitive content)");
             }
         }
 
@@ -226,7 +226,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers.Http
             var result = "";
             foreach (var pair in h)
             {
-                if (this.logCanContainCredentials || !restricted.Contains(pair.Key.ToLowerInvariant()))
+                if (_logCanContainCredentials || !restricted.Contains(pair.Key.ToLowerInvariant()))
                 {
                     result = pair.Value.Aggregate(result, (current, s) => current + "  " + pair.Key + ": " + s + "\n");
                 }

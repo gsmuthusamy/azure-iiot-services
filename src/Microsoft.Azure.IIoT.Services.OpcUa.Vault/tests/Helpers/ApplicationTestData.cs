@@ -40,31 +40,31 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
             IssuerCertificates = null;
         }
 
-        public ApplicationDocument Model;
-        public ApplicationRecordDataType ApplicationRecord;
-        public NodeId CertificateGroupId;
-        public NodeId CertificateTypeId;
-        public NodeId CertificateRequestId;
-        public StringCollection DomainNames;
-        public string Subject;
-        public string PrivateKeyFormat;
-        public string PrivateKeyPassword;
-        public byte[] Certificate;
-        public byte[] PrivateKey;
-        public byte[][] IssuerCertificates;
-        public IList<string> RequestIds;
+        public ApplicationDocument Model { get; set; }
+        public ApplicationRecordDataType ApplicationRecord { get; set; }
+        public NodeId CertificateGroupId { get; set; }
+        public NodeId CertificateTypeId { get; set; }
+        public NodeId CertificateRequestId { get; set; }
+        public StringCollection DomainNames { get; set; }
+        public string Subject { get; set; }
+        public string PrivateKeyFormat { get; set; }
+        public string PrivateKeyPassword { get; set; }
+        public byte[] Certificate { get; set; }
+        public byte[] PrivateKey { get; set; }
+        public byte[][] IssuerCertificates { get; set; }
+        public IList<string> RequestIds { get; set; }
 
         /// <summary>
         /// Convert the Server Capability array representation to a comma separated string.
         /// </summary>
         public static string ServerCapabilities(string[] serverCapabilities)
         {
-            StringBuilder capabilities = new StringBuilder();
+            var capabilities = new StringBuilder();
             if (serverCapabilities != null)
             {
                 foreach (var capability in serverCapabilities)
                 {
-                    if (String.IsNullOrEmpty(capability))
+                    if (string.IsNullOrEmpty(capability))
                     {
                         continue;
                     }
@@ -103,9 +103,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
         /// <returns></returns>
         public static string ServerCapabilities(ApplicationDocument application)
         {
-            if ((int)application.ApplicationType != (int)Microsoft.Azure.IIoT.OpcUa.Vault.Types.ApplicationType.Client)
+            if ((int)application.ApplicationType != (int)ApplicationType.Client)
             {
-                if (application.ServerCapabilities == null || application.ServerCapabilities.Length == 0)
+                if (string.IsNullOrEmpty(application.ServerCapabilities))
                 {
                     throw new ArgumentException("At least one Server Capability must be provided.", nameof(application.ServerCapabilities));
                 }
@@ -113,14 +113,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
 
             // TODO validate against specified capabilites.
 
-            StringBuilder capabilities = new StringBuilder();
+            var capabilities = new StringBuilder();
             if (application.ServerCapabilities != null)
             {
                 var sortedCaps = application.ServerCapabilities.Split(",").ToList();
                 sortedCaps.Sort();
                 foreach (var capability in sortedCaps)
                 {
-                    if (String.IsNullOrEmpty(capability))
+                    if (string.IsNullOrEmpty(capability))
                     {
                         continue;
                     }
@@ -158,40 +158,40 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
 
         public ApplicationTestData RandomApplicationTestData()
         {
-            Opc.Ua.ApplicationType appType = (Opc.Ua.ApplicationType)_randomSource.NextInt32((int)Opc.Ua.ApplicationType.ClientAndServer);
-            string pureAppName = _dataGenerator.GetRandomString("en");
+            var appType = (ApplicationType)_randomSource.NextInt32((int)ApplicationType.ClientAndServer);
+            var pureAppName = _dataGenerator.GetRandomString("en");
             pureAppName = Regex.Replace(pureAppName, @"[^\w\d\s]", "");
-            string pureAppUri = Regex.Replace(pureAppName, @"[^\w\d]", "");
-            string appName = "UA " + pureAppName;
+            var pureAppUri = Regex.Replace(pureAppName, @"[^\w\d]", "");
+            var appName = "UA " + pureAppName;
             StringCollection domainNames = RandomDomainNames();
-            string localhost = domainNames[0];
-            string privateKeyFormat = _randomSource.NextInt32(1) == 0 ? "PEM" : "PFX";
-            string appUri = ("urn:localhost:opcfoundation.org:" + pureAppUri.ToLower()).Replace("localhost", localhost);
-            string prodUri = "http://opcfoundation.org/UA/" + pureAppUri;
-            StringCollection discoveryUrls = new StringCollection();
-            StringCollection serverCapabilities = new StringCollection();
+            var localhost = domainNames[0];
+            var privateKeyFormat = _randomSource.NextInt32(1) == 0 ? "PEM" : "PFX";
+            var appUri = ("urn:localhost:opcfoundation.org:" + pureAppUri.ToLower()).Replace("localhost", localhost);
+            var prodUri = "http://opcfoundation.org/UA/" + pureAppUri;
+            var discoveryUrls = new StringCollection();
+            var serverCapabilities = new StringCollection();
             switch (appType)
             {
-                case Opc.Ua.ApplicationType.Client:
+                case ApplicationType.Client:
                     appName += " Client";
                     break;
-                case Opc.Ua.ApplicationType.ClientAndServer:
+                case ApplicationType.ClientAndServer:
                     appName += " Client and";
-                    goto case Opc.Ua.ApplicationType.Server;
-                case Opc.Ua.ApplicationType.Server:
+                    goto case ApplicationType.Server;
+                case ApplicationType.Server:
                     appName += " Server";
-                    int port = (_dataGenerator.GetRandomInt16() & 0x1fff) + 50000;
+                    var port = (_dataGenerator.GetRandomInt16() & 0x1fff) + 50000;
                     discoveryUrls = RandomDiscoveryUrl(domainNames, port, pureAppUri);
                     serverCapabilities = RandomServerCapabilities();
                     break;
             }
-            ApplicationTestData testData = new ApplicationTestData
+            var testData = new ApplicationTestData
             {
                 Model = new ApplicationDocument
                 {
                     ApplicationUri = appUri,
                     ApplicationName = appName,
-                    ApplicationType = (Microsoft.Azure.IIoT.OpcUa.Vault.Types.ApplicationType)appType,
+                    ApplicationType = (IIoT.OpcUa.Registry.Models.ApplicationType)appType,
                     ProductUri = prodUri,
                     ServerCapabilities = ApplicationTestData.ServerCapabilities(serverCapabilities.ToArray()),
                     ApplicationNames = new ApplicationName[] { new ApplicationName { Locale = "en-us", Text = appName } },
@@ -216,7 +216,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
 
         private string RandomLocalHost()
         {
-            string localhost = Regex.Replace(_dataGenerator.GetRandomSymbol("en").Trim().ToLower(), @"[^\w\d]", "");
+            var localhost = Regex.Replace(_dataGenerator.GetRandomSymbol("en").Trim().ToLower(), @"[^\w\d]", "");
             if (localhost.Length >= 12)
             {
                 localhost = localhost.Substring(0, 12);
@@ -226,9 +226,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
 
         private string[] RandomDomainNames()
         {
-            int count = _randomSource.NextInt32(8) + 1;
-            string[] result = new string[count];
-            for (int i = 0; i < count; i++)
+            var count = _randomSource.NextInt32(8) + 1;
+            var result = new string[count];
+            for (var i = 0; i < count; i++)
             {
                 result[i] = RandomLocalHost();
             }
@@ -237,10 +237,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
 
         private StringCollection RandomDiscoveryUrl(StringCollection domainNames, int port, string appUri)
         {
-            StringCollection result = new StringCollection();
-            foreach (string name in domainNames)
+            var result = new StringCollection();
+            foreach (var name in domainNames)
             {
-                int random = _randomSource.NextInt32(7);
+                var random = _randomSource.NextInt32(7);
                 if ((result.Count == 0) || (random & 1) == 0)
                 {
                     result.Add(string.Format("opc.tcp://{0}:{1}/{2}", name, port++.ToString(), appUri));
@@ -260,7 +260,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
         private StringCollection RandomServerCapabilities()
         {
             var serverCapabilities = new StringCollection();
-            int capabilities = _randomSource.NextInt32(8);
+            var capabilities = _randomSource.NextInt32(8);
             foreach (var cap in _serverCapabilities)
             {
                 if (_randomSource.NextInt32(100) > 50)
@@ -275,10 +275,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests
             return serverCapabilities;
         }
 
-        private int _randomStart = 1;
+        private readonly int _randomStart;
         private RandomSource _randomSource;
         private DataGenerator _dataGenerator;
-        private Opc.Ua.Gds.Client.ServerCapabilities _serverCapabilities;
+        private readonly Opc.Ua.Gds.Client.ServerCapabilities _serverCapabilities;
     }
 
 }

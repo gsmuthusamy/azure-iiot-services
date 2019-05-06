@@ -49,6 +49,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
         [JsonProperty(PropertyName = "certificate")]
         public string Certificate { get; set; }
 
+        /// <summary>
+        /// Create certificate from cert
+        /// </summary>
+        /// <param name="certificate"></param>
+        /// <param name="withCertificate"></param>
         public X509Certificate2ApiModel(X509Certificate2 certificate,
             bool withCertificate = true) {
             if (withCertificate) {

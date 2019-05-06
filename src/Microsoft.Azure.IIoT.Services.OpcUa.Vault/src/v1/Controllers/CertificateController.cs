@@ -34,12 +34,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
         /// <param name="cert"></param>
         /// <returns>The Issuer Ca cert as a file</returns>
         [HttpGet("issuer/{serial}/{cert}")]
-        [Produces(ContentType.Cert)]
+        [Produces(ContentEncodings.MimeTypeCert)]
         public async Task<ActionResult> GetIssuerCertAsync(string serial, string cert) {
             try {
                 serial = serial.ToLower();
                 cert = cert.ToLower();
-                if (cert.EndsWith(".cer")) {
+                if (cert.EndsWith(".cer", StringComparison.OrdinalIgnoreCase)) {
                     var groupId = cert.Substring(0, cert.Length - 4);
                     // find isser cert with serial no.
 
@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
                         foreach (var certVersion in certVersions) {
                             if (serial.Equals(certVersion.SerialNumber, StringComparison.OrdinalIgnoreCase)) {
                                 var byteArray = certVersion.RawData;
-                                return new FileContentResult(byteArray, ContentType.Cert) {
+                                return new FileContentResult(byteArray, ContentEncodings.MimeTypeCert) {
                                     FileDownloadName = certVersion.GetFileNameOrDefault(groupId) + ".cer"
                                 };
                             }
@@ -77,7 +77,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
         /// Get Issuer CRL in CRL Distribution Endpoint.
         /// </summary>
         [HttpGet("crl/{serial}/{crl}")]
-        [Produces(ContentType.Crl)]
+        [Produces(ContentEncodings.MimeTypeCrl)]
         public async Task<ActionResult> GetIssuerCrlAsync(string serial, string crl) {
             try {
                 serial = serial.ToLower();
@@ -96,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
                                 var crlBinary = await _certificateGroups.GetIssuerCACrlChainAsync(
                                     groupId, thumbPrint);
                                 var byteArray = crlBinary[0].RawData;
-                                return new FileContentResult(byteArray, ContentType.Crl) {
+                                return new FileContentResult(byteArray, ContentEncodings.MimeTypeCrl) {
                                     FileDownloadName = cert.GetFileNameOrDefault(groupId) + ".crl"
                                 };
                             }

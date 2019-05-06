@@ -48,22 +48,22 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers.Http
 
     public class HttpRequest : IHttpRequest
     {
-        private readonly MediaTypeHeaderValue defaultMediaType = new MediaTypeHeaderValue("application/json");
-        private readonly Encoding defaultEncoding = new UTF8Encoding();
+        private readonly MediaTypeHeaderValue _defaultMediaType = new MediaTypeHeaderValue("application/json");
+        private readonly Encoding _defaultEncoding = new UTF8Encoding();
 
         // Http***Headers classes don't have a public ctor, so we use this class
         // to hold the headers, this is also used for PUT/POST requests body
-        private readonly HttpRequestMessage requestContent = new HttpRequestMessage();
+        private readonly HttpRequestMessage _requestContent = new HttpRequestMessage();
 
         public Uri Uri { get; set; }
 
-        public HttpHeaders Headers => this.requestContent.Headers;
+        public HttpHeaders Headers => _requestContent.Headers;
 
         public MediaTypeHeaderValue ContentType { get; private set; }
 
         public HttpRequestOptions Options { get; } = new HttpRequestOptions();
 
-        public HttpContent Content => this.requestContent.Content;
+        public HttpContent Content => _requestContent.Content;
 
         public HttpRequest()
         {
@@ -71,79 +71,79 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.Helpers.Http
 
         public HttpRequest(Uri uri)
         {
-            this.Uri = uri;
+            Uri = uri;
         }
 
         public HttpRequest(string uri)
         {
-            this.SetUriFromString(uri);
+            SetUriFromString(uri);
         }
 
         public void AddHeader(string name, string value)
         {
-            if (!this.Headers.TryAddWithoutValidation(name, value))
+            if (!Headers.TryAddWithoutValidation(name, value))
             {
                 if (name.ToLowerInvariant() != "content-type")
                 {
                     throw new ArgumentOutOfRangeException(name, "Invalid header name");
                 }
 
-                this.ContentType = new MediaTypeHeaderValue(value);
+                ContentType = new MediaTypeHeaderValue(value);
             }
         }
 
         public void SetUriFromString(string uri)
         {
-            this.Uri = new Uri(uri);
+            Uri = new Uri(uri);
         }
 
         public void SetContent(string content)
         {
-            this.SetContent(content, this.defaultEncoding, this.defaultMediaType);
+            SetContent(content, _defaultEncoding, _defaultMediaType);
         }
 
         public void SetContent(string content, Encoding encoding)
         {
-            this.SetContent(content, encoding, this.defaultMediaType);
+            SetContent(content, encoding, _defaultMediaType);
         }
 
         public void SetContent(string content, Encoding encoding, string mediaType)
         {
-            this.SetContent(content, encoding, new MediaTypeHeaderValue(mediaType));
+            SetContent(content, encoding, new MediaTypeHeaderValue(mediaType));
         }
 
         public void SetContent(string content, Encoding encoding, MediaTypeHeaderValue mediaType)
         {
-            this.requestContent.Content = new StringContent(content, encoding, mediaType.MediaType);
-            this.ContentType = mediaType;
+            _requestContent.Content = new StringContent(content, encoding, mediaType.MediaType);
+            ContentType = mediaType;
         }
 
         public void SetContent(StringContent stringContent)
         {
-            this.requestContent.Content = stringContent;
-            this.ContentType = stringContent.Headers.ContentType;
+            _requestContent.Content = stringContent;
+            ContentType = stringContent.Headers.ContentType;
         }
 
         public void SetContent<T>(T sourceObject)
         {
-            this.SetContent(sourceObject, this.defaultEncoding, this.defaultMediaType);
+            SetContent(sourceObject, _defaultEncoding, _defaultMediaType);
         }
 
         public void SetContent<T>(T sourceObject, Encoding encoding)
         {
-            this.SetContent(sourceObject, encoding, this.defaultMediaType);
+            SetContent(sourceObject, encoding, _defaultMediaType);
         }
 
         public void SetContent<T>(T sourceObject, Encoding encoding, string mediaType)
         {
-            this.SetContent(sourceObject, encoding, new MediaTypeHeaderValue(mediaType));
+            SetContent(sourceObject, encoding, new MediaTypeHeaderValue(mediaType));
         }
 
         public void SetContent<T>(T sourceObject, Encoding encoding, MediaTypeHeaderValue mediaType)
         {
             var content = JsonConvertEx.SerializeObject(sourceObject);
-            this.requestContent.Content = new StringContent(content, encoding, mediaType.MediaType);
-            this.ContentType = mediaType;
+            _requestContent.Content = new StringContent(content, encoding, mediaType.MediaType);
+            ContentType = mediaType;
         }
     }
 }

@@ -5,7 +5,6 @@
 
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Swagger;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Auth;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Filters;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models;
@@ -17,6 +16,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Swashbuckle.AspNetCore.Swagger;
 
     /// <summary>
     /// Certificate Request services.
@@ -245,7 +245,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
             ReadRequestResultModel[] results;
             (nextPageLink, results) = await _certificateRequest.QueryPageAsync(
                 appId,
-                (Microsoft.Azure.IIoT.OpcUa.Vault.Types.CertificateRequestState?)requestState,
+                (Microsoft.Azure.IIoT.OpcUa.Vault.Models.CertificateRequestState?)requestState,
                 nextPageLink,
                 pageSize);
             return new CertificateRequestQueryResponseApiModel(results, nextPageLink);
@@ -303,7 +303,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Controllers {
                 if (!Enum.TryParse(typeof(CertificateRequestState), requestState, true, out var tryParse)) {
                     throw new ArgumentOutOfRangeException(nameof(requestState),
                         "The argument must be a valid state of a CertificateRequest.");
-                };
+                }
                 parsedState = (CertificateRequestState)tryParse;
             }
             return parsedState;

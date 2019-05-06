@@ -26,6 +26,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
         [JsonProperty(PropertyName = "nextPageLink")]
         public string NextPageLink { get; set; }
 
+        /// <summary>
+        /// Create model
+        /// </summary>
+        /// <param name="requests"></param>
+        /// <param name="nextPageLink"></param>
         public CertificateRequestQueryResponseApiModel(IList<ReadRequestResultModel> requests,
             string nextPageLink) {
             var requestList = new List<CertificateRequestRecordApiModel>();
@@ -44,6 +49,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
             Requests = requestList;
             NextPageLink = nextPageLink;
         }
-
     }
 }

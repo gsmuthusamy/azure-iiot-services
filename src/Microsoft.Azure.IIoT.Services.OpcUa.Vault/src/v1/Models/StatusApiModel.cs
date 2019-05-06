@@ -31,13 +31,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
         /// Current time
         /// </summary>
         [JsonProperty(PropertyName = "currentTime")]
-        public string CurrentTime => DateTimeOffset.UtcNow.ToString(DateFormat);
+        public string CurrentTime => DateTimeOffset.UtcNow.ToString(kDateFormat);
 
         /// <summary>
         /// Service start time
         /// </summary>
         [JsonProperty(PropertyName = "startTime")]
-        public string StartTime => Uptime.Start.ToString(DateFormat);
+        public string StartTime => Uptime.Start.ToString(kDateFormat);
 
         /// <summary>
         /// Uptime
@@ -53,7 +53,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
         [JsonProperty(PropertyName = "uid")]
         public string UID => Uptime.ProcessId;
 
-        /// <summary>A property bag with details about the service</summary>
+        /// <summary>
+        /// A property bag with details about the service
+        /// </summary>
         [JsonProperty(PropertyName = "properties")]
         public Dictionary<string, string> Properties => new Dictionary<string, string>
         {
@@ -61,14 +63,19 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
             { "Debugger", System.Diagnostics.Debugger.IsAttached ? "Attached" : "Detached"}
         };
 
-        /// <summary>A property bag with details about the internal dependencies</summary>
+        /// <summary>
+        /// A property bag with details about the internal dependencies
+        /// </summary>
         [JsonProperty(PropertyName = "dependencies")]
         public Dictionary<string, string> Dependencies => new Dictionary<string, string>
         {
-            { "ApplicationDatabase", appMessage },
-            { "KeyVault", kvMessage }
+            { "ApplicationDatabase", _appMessage },
+            { "KeyVault", _kvMessage }
         };
 
+        /// <summary>
+        /// Meta data
+        /// </summary>
         [JsonProperty(PropertyName = "$metadata")]
         public Dictionary<string, string> Metadata => new Dictionary<string, string>
         {
@@ -76,19 +83,27 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
             { "$uri", "/" + VersionInfo.PATH + "/status" }
         };
 
+        /// <summary>
+        /// Create model
+        /// </summary>
+        /// <param name="appOk"></param>
+        /// <param name="appMessage"></param>
+        /// <param name="kvOk"></param>
+        /// <param name="kvMessage"></param>
         public StatusApiModel(bool appOk, string appMessage, bool kvOk, string kvMessage) {
             Status = appOk && kvOk ? "OK" : "ERROR";
-            this.appMessage = appOk ? "OK" : "ERROR";
+            _appMessage = appOk ? "OK" : "ERROR";
             if (!string.IsNullOrEmpty(appMessage)) {
-                this.appMessage += ":" + appMessage;
+                _appMessage += ":" + appMessage;
             }
-            this.kvMessage = kvOk ? "OK" : "ERROR";
+            _kvMessage = kvOk ? "OK" : "ERROR";
             if (!string.IsNullOrEmpty(kvMessage)) {
-                this.kvMessage += ":" + kvMessage;
+                _kvMessage += ":" + kvMessage;
             }
         }
-        private const string DateFormat = "yyyy-MM-dd'T'HH:mm:sszzz";
-        private readonly string appMessage;
-        private readonly string kvMessage;
+
+        private const string kDateFormat = "yyyy-MM-dd'T'HH:mm:sszzz";
+        private readonly string _appMessage;
+        private readonly string _kvMessage;
     }
 }

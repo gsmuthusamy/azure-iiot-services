@@ -4,7 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
+    using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Models;
     using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
@@ -152,7 +154,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1.Models {
                 ApplicationId = ApplicationId != null ? new Guid(ApplicationId) : Guid.Empty,
                 ApplicationUri = ApplicationUri,
                 ApplicationName = ApplicationName,
-                ApplicationType = (Microsoft.Azure.IIoT.OpcUa.Vault.Types.ApplicationType)ApplicationType
+                ApplicationType = (IIoT.OpcUa.Registry.Models.ApplicationType)ApplicationType
             };
             if (ApplicationNames != null) {
                 var applicationNames = new List<ApplicationName>();

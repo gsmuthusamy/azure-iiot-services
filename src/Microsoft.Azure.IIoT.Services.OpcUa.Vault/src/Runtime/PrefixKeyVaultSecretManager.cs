@@ -3,11 +3,10 @@
 // license information.
 //
 
-using Microsoft.Azure.KeyVault.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.AzureKeyVault;
-
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
+    using Microsoft.Azure.KeyVault.Models;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Configuration.AzureKeyVault;
 
     /// <summary>
     /// Secret manager
@@ -15,16 +14,22 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
     public class PrefixKeyVaultSecretManager : IKeyVaultSecretManager {
         private readonly string _prefix;
 
+        /// <summary>
+        /// Create secret manager
+        /// </summary>
+        /// <param name="prefix"></param>
         public PrefixKeyVaultSecretManager(string prefix) {
             _prefix = $"{prefix}-";
         }
 
+        /// <inheritdoc/>
         public bool Load(SecretItem secret) {
             // Load a vault secret when its secret name starts with the
             // prefix. Other secrets won't be loaded.
-            return secret.Identifier.Name.StartsWith(_prefix);
+            return secret.Identifier.Name.StartsWith(_prefix, System.StringComparison.Ordinal);
         }
 
+        /// <inheritdoc/>
         public string GetKey(SecretBundle secret) {
             // Remove the prefix from the secret name and replace two
             // dashes in any name with the KeyDelimiter, which is the
@@ -35,5 +40,4 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
                 .Replace("--", ConfigurationPath.KeyDelimiter);
         }
     }
-
 }

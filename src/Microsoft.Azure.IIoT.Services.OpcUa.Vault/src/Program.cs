@@ -17,6 +17,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
     /// Application entry point
     /// </summary>
     public class Program {
+
+        /// <summary>
+        /// Main entry point
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static int Main(string[] args) {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()

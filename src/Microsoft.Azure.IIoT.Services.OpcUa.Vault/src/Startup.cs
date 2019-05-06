@@ -4,32 +4,32 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1;
+    using Autofac;
+    using Autofac.Extensions.DependencyInjection;
+    using AutofacSerilogIntegration;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.Http.Auth;
+    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Clients;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Services;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Services;
     using Microsoft.Azure.IIoT.Services;
-    using Microsoft.Azure.IIoT.Services.Diagnostics;
     using Microsoft.Azure.IIoT.Services.Auth;
     using Microsoft.Azure.IIoT.Services.Auth.Clients;
     using Microsoft.Azure.IIoT.Services.Cors;
-    using Microsoft.Azure.IIoT.OpcUa.Vault.Services;
-    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB;
-    using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Clients;
-    using Microsoft.Azure.IIoT.Http.Auth;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Services.Diagnostics;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v1;
     using Microsoft.Azure.KeyVault;
     using Microsoft.Azure.Services.AppAuthentication;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Autofac;
-    using Autofac.Extensions.DependencyInjection;
-    using AutofacSerilogIntegration;
     using Newtonsoft.Json;
+    using Serilog;
     using Swashbuckle.AspNetCore.Swagger;
     using System;
-    using Serilog;
     using ILogger = Serilog.ILogger;
 
     /// <summary>
@@ -62,7 +62,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
 
             var configBuilder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", true, true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
                 .AddFromDotEnvFile()
                 .AddEnvironmentVariables();
@@ -94,7 +94,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                     }
                 }
             }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch {
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
             config = configBuilder.Build();
             Config = new Config(config);
@@ -224,10 +226,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                     .AsImplementedInterfaces().SingleInstance();
             }
 
-           // builder.RegisterType<v1.Auth.IIoTHttpClient>()
-           //     .AsImplementedInterfaces().SingleInstance();
-           // builder.RegisterType<v1.Auth.IIoTTokenProvider>()
-           //     .AsImplementedInterfaces().SingleInstance();
+            // builder.RegisterType<v1.Auth.IIoTHttpClient>()
+            //     .AsImplementedInterfaces().SingleInstance();
+            // builder.RegisterType<v1.Auth.IIoTTokenProvider>()
+            //     .AsImplementedInterfaces().SingleInstance();
 
             // Register endpoint services and ...
             builder.RegisterType<KeyVaultCertificateGroup>()

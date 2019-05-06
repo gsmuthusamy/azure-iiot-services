@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests {
     using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
     using Xunit;
-    public class X509TestUtils {
+    public static class X509TestUtils {
         public static void VerifyApplicationCertIntegrity(
             X509Certificate2 newCert,
             byte[] privateKey,
@@ -49,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests {
                 TrustedCertificates = issuerCertIdCollection
             };
             certValidator.Update(trustedStore, issuerStore, null);
-            Assert.Throws<Opc.Ua.ServiceResultException>(() => certValidator.Validate(newCert));
+            Assert.Throws<ServiceResultException>(() => certValidator.Validate(newCert));
             issuerStore.TrustedCertificates = issuerCertIdCollection;
             certValidator.Update(issuerStore, trustedStore, null);
             certValidator.Validate(newCert);
@@ -60,9 +60,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests {
 
             Assert.NotNull(signedCert);
             Assert.False(signedCert.HasPrivateKey);
-            Assert.True(Opc.Ua.Utils.CompareDistinguishedName(testApp.Subject, signedCert.Subject));
-            Assert.False(Opc.Ua.Utils.CompareDistinguishedName(signedCert.Issuer, signedCert.Subject));
-            Assert.True(Opc.Ua.Utils.CompareDistinguishedName(signedCert.Issuer, issuerCert.Subject));
+            Assert.True(Utils.CompareDistinguishedName(testApp.Subject, signedCert.Subject));
+            Assert.False(Utils.CompareDistinguishedName(signedCert.Issuer, signedCert.Subject));
+            Assert.True(Utils.CompareDistinguishedName(signedCert.Issuer, issuerCert.Subject));
 
             // test basic constraints
             var constraints = FindBasicConstraintsExtension(signedCert);
@@ -105,12 +105,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests {
             var subjectAlternateName = FindSubjectAltName(signedCert);
             Assert.NotNull(subjectAlternateName);
             Assert.False(subjectAlternateName.Critical);
-            var domainNames = Opc.Ua.Utils.GetDomainsFromCertficate(signedCert);
+            var domainNames = Utils.GetDomainsFromCertficate(signedCert);
             foreach (var domainName in testApp.DomainNames) {
                 Assert.Contains(domainName, domainNames, StringComparer.OrdinalIgnoreCase);
             }
             Assert.True(subjectAlternateName.Uris.Count == 1);
-            var applicationUri = Opc.Ua.Utils.GetApplicationUriFromCertificate(signedCert);
+            var applicationUri = Utils.GetApplicationUriFromCertificate(signedCert);
             Assert.True(testApp.ApplicationRecord.ApplicationUri == applicationUri);
 
             var issuerCertIdCollection = new CertificateIdentifierCollection();
@@ -125,7 +125,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests {
                 TrustedCertificates = issuerCertIdCollection
             };
             certValidator.Update(trustedStore, issuerStore, null);
-            Assert.Throws<Opc.Ua.ServiceResultException>(() => certValidator.Validate(signedCert));
+            Assert.Throws<ServiceResultException>(() => certValidator.Validate(signedCert));
             issuerStore.TrustedCertificates = issuerCertIdCollection;
             certValidator.Update(issuerStore, trustedStore, null);
             certValidator.Validate(signedCert);
@@ -248,12 +248,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests {
 
         public static void DeleteDirectory(string storePath) {
             try {
-                var fullStorePath = Opc.Ua.Utils.ReplaceSpecialFolderNames(storePath);
+                var fullStorePath = Utils.ReplaceSpecialFolderNames(storePath);
                 if (Directory.Exists(fullStorePath)) {
                     Directory.Delete(fullStorePath, true);
                 }
             }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch {
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                 // intentionally ignore errors
             }
         }

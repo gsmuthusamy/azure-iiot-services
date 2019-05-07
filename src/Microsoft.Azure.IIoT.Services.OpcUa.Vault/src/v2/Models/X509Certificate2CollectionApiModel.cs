@@ -5,14 +5,44 @@
 
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
     /// Certificate collection
     /// </summary>
     public sealed class X509Certificate2CollectionApiModel {
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public X509Certificate2CollectionApiModel() {
+        }
+
+        /// <summary>
+        /// Create collection
+        /// </summary>
+        /// <param name="model"></param>
+        public X509Certificate2CollectionApiModel(X509CertificateCollectionModel model) {
+            Chain = model?.Chain?
+                .Select(c => new X509Certificate2ApiModel(c))
+                .ToList();
+            NextPageLink = model?.NextPageLink;
+        }
+
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        /// <returns></returns>
+        public X509CertificateCollectionModel ToServiceModel() {
+            return new X509CertificateCollectionModel {
+                Chain = Chain?.Select(c => c.ToServiceModel()).ToList(),
+                NextPageLink = NextPageLink
+            };
+        }
 
         /// <summary>
         /// Chain
@@ -25,21 +55,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "nextPageLink")]
         public string NextPageLink { get; set; }
-
-        /// <summary>
-        /// Create collection
-        /// </summary>
-        /// <param name="certificateCollection"></param>
-        /// <param name="nextPageLink"></param>
-        public X509Certificate2CollectionApiModel(
-            X509Certificate2Collection certificateCollection, string nextPageLink = null) {
-            var chain = new List<X509Certificate2ApiModel>();
-            foreach (var cert in certificateCollection) {
-                var certApiModel = new X509Certificate2ApiModel(cert);
-                chain.Add(certApiModel);
-            }
-            Chain = chain;
-            NextPageLink = nextPageLink;
-        }
     }
 }

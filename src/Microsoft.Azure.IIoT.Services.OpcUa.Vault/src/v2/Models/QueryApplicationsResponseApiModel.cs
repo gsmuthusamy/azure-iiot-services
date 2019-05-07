@@ -8,11 +8,42 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Application query response
     /// </summary>
     public sealed class QueryApplicationsResponseApiModel {
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public QueryApplicationsResponseApiModel() {
+        }
+
+        /// <summary>
+        /// Create model
+        /// </summary>
+        /// <param name="model"></param>
+        public QueryApplicationsResponseApiModel(QueryApplicationsResponseModel model) {
+            Applications = model.Applications?
+                .Select(a => new ApplicationRecordApiModel(a))
+                .ToList();
+            NextPageLink = model.NextPageLink;
+        }
+
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        /// <returns></returns>
+        public QueryApplicationsResponseModel ToServiceModel() {
+            return new QueryApplicationsResponseModel {
+                NextPageLink = NextPageLink,
+                Applications = Applications?
+                    .Select(a => a.ToServiceModel())
+                    .ToList()
+            };
+        }
 
         /// <summary>
         /// Found applications
@@ -25,44 +56,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "nextPageLink")]
         public string NextPageLink { get; set; }
-
-        /// <summary>
-        /// Create model
-        /// </summary>
-        /// <param name="model"></param>
-        public QueryApplicationsResponseApiModel(QueryApplicationsResponseModel model) {
-            var applicationsList = new List<ApplicationRecordApiModel>();
-            foreach (var application in model.Applications) {
-                applicationsList.Add(new ApplicationRecordApiModel(application));
-            }
-            Applications = applicationsList;
-            NextPageLink = model.NextPageLink;
-        }
-
-        /// <summary>
-        /// Create model
-        /// </summary>
-        /// <param name="applications"></param>
-        /// <param name="nextPageLink"></param>
-        public QueryApplicationsResponseApiModel(IList<ApplicationDocument> applications,
-            string nextPageLink = null) {
-            var applicationsList = new List<ApplicationRecordApiModel>();
-            foreach (var application in applications) {
-                applicationsList.Add(new ApplicationRecordApiModel(application));
-            }
-            Applications = applicationsList;
-            NextPageLink = nextPageLink;
-        }
-
-        /// <summary>
-        /// Create model
-        /// </summary>
-        /// <param name="applications"></param>
-        /// <param name="nextPageLink"></param>
-        public QueryApplicationsResponseApiModel(IList<ApplicationRecordApiModel> applications,
-            string nextPageLink = null) {
-            Applications = applications;
-            NextPageLink = nextPageLink;
-        }
     }
 }

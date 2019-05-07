@@ -14,6 +14,50 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     public sealed class CertificateGroupConfigurationApiModel {
 
         /// <summary>
+        /// Default constructor
+        /// </summary>
+        public CertificateGroupConfigurationApiModel() {
+        }
+
+        /// <summary>
+        /// Create configuration model
+        /// </summary>
+        /// <param name="config"></param>
+        public CertificateGroupConfigurationApiModel(
+            CertificateGroupConfigurationModel config) {
+            Id = config.Id;
+            CertificateType = config.CertificateType;
+            SubjectName = config.SubjectName;
+            DefaultCertificateLifetime = config.DefaultCertificateLifetime;
+            DefaultCertificateKeySize = config.DefaultCertificateKeySize;
+            DefaultCertificateHashSize = config.DefaultCertificateHashSize;
+            IssuerCACertificateLifetime = config.IssuerCACertificateLifetime;
+            IssuerCACertificateKeySize = config.IssuerCACertificateKeySize;
+            IssuerCACertificateHashSize = config.IssuerCACertificateHashSize;
+            IssuerCACrlDistributionPoint = config.IssuerCACrlDistributionPoint;
+            IssuerCAAuthorityInformationAccess = config.IssuerCAAuthorityInformationAccess;
+        }
+
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        /// <returns></returns>
+        public CertificateGroupConfigurationModel ToServiceModel() =>
+            new CertificateGroupConfigurationModel {
+                Id = Id,
+                CertificateType = CertificateType,
+                SubjectName = SubjectName,
+                DefaultCertificateLifetime = DefaultCertificateLifetime,
+                DefaultCertificateKeySize = DefaultCertificateKeySize,
+                DefaultCertificateHashSize = DefaultCertificateHashSize,
+                IssuerCACertificateLifetime = IssuerCACertificateLifetime,
+                IssuerCACertificateKeySize = IssuerCACertificateKeySize,
+                IssuerCACertificateHashSize = IssuerCACertificateHashSize,
+                IssuerCACrlDistributionPoint = IssuerCACrlDistributionPoint,
+                IssuerCAAuthorityInformationAccess = IssuerCAAuthorityInformationAccess
+            };
+
+        /// <summary>
         /// The name of the certificate group, ofter referred to as group id.
         /// </summary>
         [JsonProperty(PropertyName = "name")]
@@ -100,51 +144,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "issuerCAAuthorityInformationAccess")]
         public string IssuerCAAuthorityInformationAccess { get; set; }
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public CertificateGroupConfigurationApiModel() {
-        }
-
-        /// <summary>
-        /// Create configuration model
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="config"></param>
-        public CertificateGroupConfigurationApiModel(string id, CertificateGroupConfigurationModel config) {
-            Id = id;
-            CertificateType = config.CertificateType;
-            SubjectName = config.SubjectName;
-            DefaultCertificateLifetime = config.DefaultCertificateLifetime;
-            DefaultCertificateKeySize = config.DefaultCertificateKeySize;
-            DefaultCertificateHashSize = config.DefaultCertificateHashSize;
-            IssuerCACertificateLifetime = config.IssuerCACertificateLifetime;
-            IssuerCACertificateKeySize = config.IssuerCACertificateKeySize;
-            IssuerCACertificateHashSize = config.IssuerCACertificateHashSize;
-            IssuerCACrlDistributionPoint = config.IssuerCACrlDistributionPoint;
-            IssuerCAAuthorityInformationAccess = config.IssuerCAAuthorityInformationAccess;
-        }
-
-        /// <summary>
-        /// Convert to service model
-        /// </summary>
-        /// <returns></returns>
-        public CertificateGroupConfigurationModel ToServiceModel() {
-            var serviceModel = new CertificateGroupConfigurationModel {
-                Id = Id,
-                CertificateType = CertificateType,
-                SubjectName = SubjectName,
-                DefaultCertificateLifetime = DefaultCertificateLifetime,
-                DefaultCertificateKeySize = DefaultCertificateKeySize,
-                DefaultCertificateHashSize = DefaultCertificateHashSize,
-                IssuerCACertificateLifetime = IssuerCACertificateLifetime,
-                IssuerCACertificateKeySize = IssuerCACertificateKeySize,
-                IssuerCACertificateHashSize = IssuerCACertificateHashSize,
-                IssuerCACrlDistributionPoint = IssuerCACrlDistributionPoint,
-                IssuerCAAuthorityInformationAccess = IssuerCAAuthorityInformationAccess
-            };
-            return serviceModel;
-        }
     }
 }

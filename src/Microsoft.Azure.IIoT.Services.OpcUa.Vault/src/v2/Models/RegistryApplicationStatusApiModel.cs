@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
 
     /// <summary>

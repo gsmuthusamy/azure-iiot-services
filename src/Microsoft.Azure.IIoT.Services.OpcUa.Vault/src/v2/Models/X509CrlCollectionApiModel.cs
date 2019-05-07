@@ -5,13 +5,45 @@
 
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Crl collection model
     /// </summary>
     public sealed class X509CrlCollectionApiModel {
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public X509CrlCollectionApiModel() {
+        }
+
+        /// <summary>
+        /// Create api model
+        /// </summary>
+        /// <param name="model"></param>
+        public X509CrlCollectionApiModel(X509CrlCollectionModel model) {
+            Chain = model?.Chain?
+                .Select(c => new X509CrlApiModel(c))
+                .ToList();
+            NextPageLink = model?.NextPageLink;
+        }
+
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        /// <returns></returns>
+        public X509CrlCollectionModel ToServiceModel() {
+            return new X509CrlCollectionModel {
+                Chain = Chain?
+                    .Select(c => c.ToServiceModel())
+                    .ToList(),
+                NextPageLink = NextPageLink
+            };
+        }
 
         /// <summary>
         /// Chain
@@ -24,18 +56,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "nextPageLink")]
         public string NextPageLink { get; set; }
-
-        /// <summary>
-        /// Create collection model
-        /// </summary>
-        /// <param name="crls"></param>
-        public X509CrlCollectionApiModel(IList<Opc.Ua.X509CRL> crls) {
-            var chain = new List<X509CrlApiModel>();
-            foreach (var crl in crls) {
-                var crlApiModel = new X509CrlApiModel(crl);
-                chain.Add(crlApiModel);
-            }
-            Chain = chain;
-        }
     }
 }

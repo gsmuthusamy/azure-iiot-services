@@ -162,14 +162,17 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpGet("find/{applicationUri}")]
         [AutoRestExtension(NextPageLinkName = "nextPageLink")]
         public async Task<QueryApplicationsResponseApiModel> ListApplicationsAsync(
-            string applicationUri,
-            [FromQuery] string nextPageLink,
-            [FromQuery] int? pageSize) {
+            string applicationUri, [FromQuery] string nextPageLink, [FromQuery] int? pageSize) {
+
+            var results = await _applicationDatabase.ListApplicationAsync(applicationUri);
             var modelResult = new List<ApplicationRecordApiModel>();
-            foreach (var record in await _applicationDatabase.ListApplicationAsync(applicationUri)) {
+            foreach (var record in results) {
                 modelResult.Add(new ApplicationRecordApiModel(record));
             }
-            return new QueryApplicationsResponseApiModel(modelResult, null);
+            return new QueryApplicationsResponseApiModel {
+                Applications = modelResult,
+                NextPageLink = null
+            };
         }
 
         /// <summary>

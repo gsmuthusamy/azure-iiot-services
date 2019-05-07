@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
     using System;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
+    using System.Linq;
 
     /// <summary>
     /// Certificate CRL Distribution Point and Authority Information Access services.
@@ -43,27 +44,22 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                     var groupId = cert.Substring(0, cert.Length - 4);
                     // find isser cert with serial no.
 
-                    X509Certificate2Collection certVersions;
-                    string nextPageLink;
-                    (certVersions, nextPageLink) =
-                        await _certificateGroups.GetIssuerCACertificateVersionsAsync(groupId, false);
-                    while (certVersions != null && certVersions.Count > 0) {
-                        foreach (var certVersion in certVersions) {
+                    var result = await _certificateGroups.GetIssuerCACertificateVersionsAsync(
+                        groupId, false);
+                    while (result.Chain != null && result.Chain.Count > 0) {
+                        foreach (var certVersion in result.Chain) {
                             if (serial.Equals(certVersion.SerialNumber, StringComparison.OrdinalIgnoreCase)) {
-                                var byteArray = certVersion.RawData;
+                                var byteArray = certVersion.Certificate;
                                 return new FileContentResult(byteArray, ContentEncodings.MimeTypeCert) {
                                     FileDownloadName = certVersion.GetFileNameOrDefault(groupId) + ".cer"
                                 };
                             }
                         }
-                        if (nextPageLink != null) {
-                            (certVersions, nextPageLink) =
-                                await _certificateGroups.GetIssuerCACertificateVersionsAsync(
-                                    groupId, false, nextPageLink);
+                        if (result.NextPageLink == null) {
+                            break;
                         }
-                        else {
-                            certVersions = null;
-                        }
+                        result = await _certificateGroups.GetIssuerCACertificateVersionsAsync(
+                            groupId, false, result.NextPageLink);
                     }
                 }
             }
@@ -85,30 +81,28 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 if (crl.EndsWith(".crl")) {
                     var groupId = crl.Substring(0, crl.Length - 4);
                     // find isser cert with serial no.
-                    X509Certificate2Collection certVersions;
-                    string nextPageLink;
-                    (certVersions, nextPageLink) =
-                        await _certificateGroups.GetIssuerCACertificateVersionsAsync(groupId, false);
-                    while (certVersions != null && certVersions.Count > 0) {
-                        foreach (var cert in certVersions) {
+                    var result = await _certificateGroups.GetIssuerCACertificateVersionsAsync(
+                        groupId, false);
+                    while (result.Chain != null && result.Chain.Count > 0) {
+                        foreach (var cert in result.Chain) {
                             if (serial.Equals(cert.SerialNumber, StringComparison.OrdinalIgnoreCase)) {
                                 var thumbPrint = cert.Thumbprint;
                                 var crlBinary = await _certificateGroups.GetIssuerCACrlChainAsync(
                                     groupId, thumbPrint);
-                                var byteArray = crlBinary[0].RawData;
+                                var byteArray = crlBinary.Chain?.FirstOrDefault()?.RawData;
+                                if (byteArray == null) {
+                                    break;
+                                }
                                 return new FileContentResult(byteArray, ContentEncodings.MimeTypeCrl) {
                                     FileDownloadName = cert.GetFileNameOrDefault(groupId) + ".crl"
                                 };
                             }
                         }
-                        if (nextPageLink != null) {
-                            (certVersions, nextPageLink) =
-                                await _certificateGroups.GetIssuerCACertificateVersionsAsync
-                                (groupId, false, nextPageLink);
+                        if (result.NextPageLink == null) {
+                            break;
                         }
-                        else {
-                            certVersions = null;
-                        }
+                        result = await _certificateGroups.GetIssuerCACertificateVersionsAsync(
+                            groupId, false, result.NextPageLink);
                     }
                 }
             }

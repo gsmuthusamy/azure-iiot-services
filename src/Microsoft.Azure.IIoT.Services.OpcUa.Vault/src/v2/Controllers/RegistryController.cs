@@ -17,6 +17,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
 
     /// <summary>
     /// Registry sync services.
@@ -135,7 +136,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
 
 
         private RegistryApplicationStatusType TestApplicationStatus(ApplicationInfoApiModel registry,
-            ApplicationDocument application) {
+            ApplicationRecordModel application) {
             if (string.Equals(registry.ApplicationUri, application.ApplicationUri)) {
                 if ((int)registry.ApplicationType != (int)application.ApplicationType ||
                     !string.Equals(registry.ApplicationName, application.ApplicationName) ||
@@ -181,24 +182,24 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             return modelResult;
         }
 
-        private ApplicationDocument NewApplicationFromRegistry(ApplicationInfoApiModel record) {
+        private ApplicationRecordModel NewApplicationFromRegistry(ApplicationInfoApiModel record) {
             var applicationNames = new[] {
-                new ApplicationName {
+                new ApplicationNameModel {
                     Text = record.ApplicationName,
                     Locale = record.Locale
                 }
             };
-            var newApplication = new ApplicationDocument {
+            var newApplication = new ApplicationRecordModel {
                 ApplicationName = record.ApplicationName,
-                ApplicationNames = applicationNames,
+               // ApplicationNames = applicationNames,
                 ApplicationType = (IIoT.OpcUa.Registry.Models.ApplicationType)record.ApplicationType,
                 ApplicationUri = record.ApplicationUri,
                 DiscoveryUrls = record.DiscoveryUrls.ToArray(),
                 AuthorityId = User.Identity.Name,
                 ProductUri = record.ProductUri,
-                RegistryId = record.ApplicationId,
-                ApplicationState = Microsoft.Azure.IIoT.OpcUa.Vault.Models.ApplicationState.New,
-                CreateTime = DateTime.UtcNow
+               // RegistryId = record.ApplicationId,
+               // ApplicationState = Microsoft.Azure.IIoT.OpcUa.Vault.Models.ApplicationState.New,
+               // CreateTime = DateTime.UtcNow
             };
             if (record.ApplicationType != IIoT.OpcUa.Api.Registry.Models.ApplicationType.Client) {
                 if (record.Capabilities != null) {

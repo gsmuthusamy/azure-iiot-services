@@ -4,11 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
-    using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Models;
-    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Registry.Models;
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
@@ -17,6 +15,57 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     /// Record service model
     /// </summary>
     public sealed class ApplicationRecordApiModel {
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public ApplicationRecordApiModel() {
+        }
+
+        /// <summary>
+        /// Create model
+        /// </summary>
+        /// <param name="model"></param>
+        public ApplicationRecordApiModel(ApplicationRecordModel model) {
+            ApplicationId = model.ApplicationId;
+            Id = model.Id;
+            State = model.State;
+            ApplicationUri = model.ApplicationUri;
+            ApplicationName = model.ApplicationName;
+            ApplicationType = model.ApplicationType;
+            ApplicationNames = model.ApplicationNames?
+                .Select(n => new ApplicationNameApiModel(n))
+                .ToList();
+            ProductUri = model.ProductUri;
+            DiscoveryUrls = model.DiscoveryUrls;
+            ServerCapabilities = model.ServerCapabilities;
+            GatewayServerUri = model.GatewayServerUri;
+            DiscoveryProfileUri = model.DiscoveryProfileUri;
+        }
+
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        /// <returns></returns>
+        public ApplicationRecordModel ToServiceModel() {
+            return new ApplicationRecordModel {
+                ApplicationId = ApplicationId,
+                ApplicationUri = ApplicationUri,
+                ApplicationName = ApplicationName,
+                ApplicationType = ApplicationType,
+                ProductUri = ProductUri,
+                ApplicationNames = ApplicationNames?
+                    .Select(n => n.ToServiceModel())
+                    .ToList(),
+                DiscoveryUrls = DiscoveryUrls?
+                    .ToList(),
+                ServerCapabilities = ServerCapabilities,
+                GatewayServerUri = GatewayServerUri,
+                DiscoveryProfileUri = DiscoveryProfileUri,
+                Id = Id,
+                State = State
+            };
+        }
 
         /// <summary>
         /// Application id
@@ -93,82 +142,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         public string DiscoveryProfileUri { get; set; }
 
         /// <summary>
-        /// Default constructor
+        /// Authority
         /// </summary>
-        public ApplicationRecordApiModel() {
-            Id = 0;
-            State = ApplicationState.New;
-        }
-
-        /// <summary>
-        /// Create model
-        /// </summary>
-        /// <param name="model"></param>
-        public ApplicationRecordApiModel(ApplicationRecordApiModel model) {
-            ApplicationId = model.ApplicationId;
-            Id = model.Id;
-            State = model.State;
-            ApplicationUri = model.ApplicationUri;
-            ApplicationName = model.ApplicationName;
-            ApplicationType = model.ApplicationType;
-            ApplicationNames = model.ApplicationNames;
-            ProductUri = model.ProductUri;
-            DiscoveryUrls = model.DiscoveryUrls;
-            ServerCapabilities = model.ServerCapabilities;
-            GatewayServerUri = model.GatewayServerUri;
-            DiscoveryProfileUri = model.DiscoveryProfileUri;
-        }
-
-        /// <summary>
-        /// Create model
-        /// </summary>
-        /// <param name="application"></param>
-        public ApplicationRecordApiModel(ApplicationDocument application) {
-            ApplicationId = application.ApplicationId != Guid.Empty ?
-                application.ApplicationId.ToString() : null;
-            Id = application.ID;
-            State = (ApplicationState)application.ApplicationState;
-            ApplicationUri = application.ApplicationUri;
-            ApplicationName = application.ApplicationName;
-            ApplicationType = (ApplicationType)application.ApplicationType;
-            var applicationNames = new List<ApplicationNameApiModel>();
-            foreach (var applicationName in application.ApplicationNames) {
-                var applicationNameModel = new ApplicationNameApiModel(applicationName);
-                applicationNames.Add(applicationNameModel);
-            }
-            ApplicationNames = applicationNames;
-            ProductUri = application.ProductUri;
-            DiscoveryUrls = application.DiscoveryUrls;
-            ServerCapabilities = application.ServerCapabilities;
-            GatewayServerUri = application.GatewayServerUri;
-            DiscoveryProfileUri = application.DiscoveryProfileUri;
-        }
-
-        /// <summary>
-        /// Convert to service model
-        /// </summary>
-        /// <returns></returns>
-        public ApplicationDocument ToServiceModel() {
-            var application = new ApplicationDocument {
-                // ID and State are ignored, readonly
-                ApplicationId = ApplicationId != null ? new Guid(ApplicationId) : Guid.Empty,
-                ApplicationUri = ApplicationUri,
-                ApplicationName = ApplicationName,
-                ApplicationType = (IIoT.OpcUa.Registry.Models.ApplicationType)ApplicationType
-            };
-            if (ApplicationNames != null) {
-                var applicationNames = new List<ApplicationName>();
-                foreach (var applicationNameModel in ApplicationNames) {
-                    applicationNames.Add(applicationNameModel.ToServiceModel());
-                }
-                application.ApplicationNames = applicationNames.ToArray();
-            }
-            application.ProductUri = ProductUri;
-            application.DiscoveryUrls = DiscoveryUrls?.ToArray();
-            application.ServerCapabilities = ServerCapabilities;
-            application.GatewayServerUri = GatewayServerUri;
-            application.DiscoveryProfileUri = DiscoveryProfileUri;
-            return application;
-        }
+        [JsonProperty(PropertyName = "authorityId")]
+        public string AuthorityId { get; set; }
     }
 }

@@ -13,6 +13,44 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     public sealed class TrustListApiModel {
 
         /// <summary>
+        /// Default constructor
+        /// </summary>
+        public TrustListApiModel() {
+        }
+
+        /// <summary>
+        /// Create model
+        /// </summary>
+        /// <param name="trustList"></param>
+        public TrustListApiModel(TrustListModel trustList) {
+            GroupId = trustList.GroupId;
+            IssuerCertificates = new X509Certificate2CollectionApiModel(
+                trustList.IssuerCertificates);
+            IssuerCrls = new X509CrlCollectionApiModel(
+                trustList.IssuerCrls);
+            TrustedCertificates = new X509Certificate2CollectionApiModel(
+                trustList.TrustedCertificates);
+            TrustedCrls = new X509CrlCollectionApiModel(
+                trustList.TrustedCrls);
+            NextPageLink = trustList.NextPageLink;
+        }
+
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        /// <returns></returns>
+        public TrustListModel ToServiceModel() {
+            return new TrustListModel {
+                GroupId = GroupId,
+                IssuerCertificates = IssuerCertificates?.ToServiceModel(),
+                IssuerCrls = IssuerCrls?.ToServiceModel(),
+                NextPageLink = NextPageLink,
+                TrustedCertificates = TrustedCertificates?.ToServiceModel(),
+                TrustedCrls = TrustedCrls?.ToServiceModel()
+            };
+        }
+
+        /// <summary>
         /// Group id
         /// </summary>
         [JsonProperty(PropertyName = "groupId")]
@@ -47,22 +85,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "nextPageLink")]
         public string NextPageLink { get; set; }
-
-        /// <summary>
-        /// Create model
-        /// </summary>
-        /// <param name="keyVaultTrustList"></param>
-        public TrustListApiModel(KeyVaultTrustListModel keyVaultTrustList) {
-            GroupId = keyVaultTrustList.Group;
-            IssuerCertificates = new X509Certificate2CollectionApiModel(
-                keyVaultTrustList.IssuerCertificates);
-            IssuerCrls = new X509CrlCollectionApiModel(
-                keyVaultTrustList.IssuerCrls);
-            TrustedCertificates = new X509Certificate2CollectionApiModel(
-                keyVaultTrustList.TrustedCertificates);
-            TrustedCrls = new X509CrlCollectionApiModel(
-                keyVaultTrustList.TrustedCrls);
-            NextPageLink = keyVaultTrustList.NextPageLink;
-        }
     }
 }

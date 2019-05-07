@@ -4,14 +4,48 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using System;
-    using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
     /// Certificate model
     /// </summary>
     public sealed class X509Certificate2ApiModel {
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public X509Certificate2ApiModel() {
+        }
+
+        /// <summary>
+        /// Create api model
+        /// </summary>
+        /// <param name="model"></param>
+        public X509Certificate2ApiModel(X509CertificateModel model) {
+            Certificate = model.Certificate;
+            Thumbprint = model.Thumbprint;
+            SerialNumber = model.SerialNumber;
+            NotBefore = model.NotBefore;
+            NotAfter = model.NotAfter;
+            Subject = model.Subject;
+        }
+
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        /// <returns></returns>
+        public X509CertificateModel ToServiceModel() {
+            return new X509CertificateModel {
+                Certificate = Certificate,
+                NotAfter = NotAfter,
+                NotBefore = NotBefore,
+                SerialNumber = SerialNumber,
+                Subject = Subject,
+                Thumbprint = Thumbprint
+            };
+        }
 
         /// <summary>
         /// Subject
@@ -47,31 +81,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Raw data
         /// </summary>
         [JsonProperty(PropertyName = "certificate")]
-        public string Certificate { get; set; }
-
-        /// <summary>
-        /// Create certificate from cert
-        /// </summary>
-        /// <param name="certificate"></param>
-        /// <param name="withCertificate"></param>
-        public X509Certificate2ApiModel(X509Certificate2 certificate,
-            bool withCertificate = true) {
-            if (withCertificate) {
-                Certificate = Convert.ToBase64String(certificate.RawData);
-            }
-            Thumbprint = certificate.Thumbprint;
-            SerialNumber = certificate.SerialNumber;
-            NotBefore = certificate.NotBefore;
-            NotAfter = certificate.NotAfter;
-            Subject = certificate.Subject;
-        }
-
-        /// <summary>
-        /// Convert to service model
-        /// </summary>
-        /// <returns></returns>
-        public X509Certificate2 ToServiceModel() {
-            return new X509Certificate2(Convert.FromBase64String(Certificate));
-        }
+        public byte[] Certificate { get; set; }
     }
 }

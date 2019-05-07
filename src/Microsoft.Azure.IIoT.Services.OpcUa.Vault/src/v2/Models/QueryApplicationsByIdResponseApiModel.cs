@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "nextRecordId")]
         [Required]
-        public int NextRecordId { get; set; }
+        public uint NextRecordId { get; set; }
 
         /// <summary>
         /// Create query response

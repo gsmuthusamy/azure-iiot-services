@@ -5,13 +5,39 @@
 
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
-    using System;
 
     /// <summary>
     /// A X509 certificate revocation list.
     /// </summary>
     public sealed class X509CrlApiModel {
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public X509CrlApiModel() {
+        }
+
+        /// <summary>
+        /// Create crl
+        /// </summary>
+        /// <param name="model"></param>
+        public X509CrlApiModel(X509CrlModel model) {
+            RawData = model.RawData;
+            Issuer = model.Issuer;
+        }
+
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        /// <returns></returns>
+        public X509CrlModel ToServiceModel() {
+            return new X509CrlModel {
+                RawData = RawData,
+                Issuer = Issuer
+            };
+        }
 
         /// <summary>
         /// The Issuer name of the revocation list.
@@ -20,26 +46,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         public string Issuer { get; set; }
 
         /// <summary>
-        /// The base64 encoded X509 certificate revocation list.
+        /// The certificate revocation list.
         /// </summary>
         [JsonProperty(PropertyName = "crl")]
-        public string Crl { get; set; }
-
-        /// <summary>
-        /// Create crl
-        /// </summary>
-        /// <param name="crl"></param>
-        public X509CrlApiModel(Opc.Ua.X509CRL crl) {
-            Crl = Convert.ToBase64String(crl.RawData);
-            Issuer = crl.Issuer;
-        }
-
-        /// <summary>
-        /// Convert to service model
-        /// </summary>
-        /// <returns></returns>
-        public Opc.Ua.X509CRL ToServiceModel() {
-            return new Opc.Ua.X509CRL(Convert.FromBase64String(Crl));
-        }
+        public byte[] RawData { get; set; }
     }
 }

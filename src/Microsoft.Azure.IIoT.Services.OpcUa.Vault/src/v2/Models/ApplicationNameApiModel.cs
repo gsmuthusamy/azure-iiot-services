@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
-    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Create from model
         /// </summary>
         /// <param name="applicationName"></param>
-        public ApplicationNameApiModel(ApplicationName applicationName) {
+        public ApplicationNameApiModel(ApplicationNameModel applicationName) {
             Locale = applicationName.Locale;
             Text = applicationName.Text;
         }
@@ -44,8 +44,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Convert to service model
         /// </summary>
         /// <returns></returns>
-        public ApplicationName ToServiceModel() {
-            var applicationName = new ApplicationName {
+        public ApplicationNameModel ToServiceModel() {
+            var applicationName = new ApplicationNameModel {
                 Locale = Locale,
                 Text = Text
             };

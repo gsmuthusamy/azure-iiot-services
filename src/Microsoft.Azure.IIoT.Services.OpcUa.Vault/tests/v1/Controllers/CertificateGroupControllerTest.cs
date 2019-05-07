@@ -10,8 +10,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.v2.Controllers {
     using Xunit.Abstractions;
 
     public class CertificateGroupControllerTest {
-        /// <summary>The test logger</summary>
-        private readonly ITestOutputHelper _log;
 
         private readonly Mock<ICertificateGroup> _group;
         private readonly CertificateGroupController _target;
@@ -24,9 +22,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.v2.Controllers {
         // 1. First try to reduce the complexity of the class under test
         // 2. If #1 is not possible, use a context object, e.g.
         //      see https://dzone.com/articles/introducing-unit-testing
-        public CertificateGroupControllerTest(ITestOutputHelper log) {
-            // This is a logger, in case we want to output some text during the test
-            _log = log;
+        public CertificateGroupControllerTest() {
 
             // This is a dependency of the controller, that we mock, so that
             // we can test the class in isolation

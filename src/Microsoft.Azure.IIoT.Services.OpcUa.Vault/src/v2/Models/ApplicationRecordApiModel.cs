@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <param name="model"></param>
         public ApplicationRecordApiModel(ApplicationRecordModel model) {
             ApplicationId = model.ApplicationId;
-            Id = model.Id;
+            Id = model.RecordId;
             State = model.State;
             ApplicationUri = model.ApplicationUri;
             ApplicationName = model.ApplicationName;
@@ -62,7 +62,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
                 ServerCapabilities = ServerCapabilities,
                 GatewayServerUri = GatewayServerUri,
                 DiscoveryProfileUri = DiscoveryProfileUri,
-                Id = Id,
+                RecordId = Id,
                 State = State
             };
         }

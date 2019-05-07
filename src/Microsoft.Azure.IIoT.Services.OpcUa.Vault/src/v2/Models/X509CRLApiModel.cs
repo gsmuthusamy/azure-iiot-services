@@ -7,6 +7,7 @@
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// A X509 certificate revocation list.
@@ -24,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         /// <param name="model"></param>
         public X509CrlApiModel(X509CrlModel model) {
-            RawData = model.RawData;
+            Crl = model.Crl;
             Issuer = model.Issuer;
         }
 
@@ -34,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <returns></returns>
         public X509CrlModel ToServiceModel() {
             return new X509CrlModel {
-                RawData = RawData,
+                Crl = Crl,
                 Issuer = Issuer
             };
         }
@@ -49,6 +50,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// The certificate revocation list.
         /// </summary>
         [JsonProperty(PropertyName = "crl")]
-        public byte[] RawData { get; set; }
+        public JToken Crl { get; set; }
     }
 }

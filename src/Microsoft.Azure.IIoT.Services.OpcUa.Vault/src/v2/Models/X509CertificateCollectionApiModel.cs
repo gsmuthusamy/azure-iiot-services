@@ -9,26 +9,25 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
     /// Certificate collection
     /// </summary>
-    public sealed class X509Certificate2CollectionApiModel {
+    public sealed class X509CertificateCollectionApiModel {
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public X509Certificate2CollectionApiModel() {
+        public X509CertificateCollectionApiModel() {
         }
 
         /// <summary>
         /// Create collection
         /// </summary>
         /// <param name="model"></param>
-        public X509Certificate2CollectionApiModel(X509CertificateCollectionModel model) {
+        public X509CertificateCollectionApiModel(X509CertificateCollectionModel model) {
             Chain = model?.Chain?
-                .Select(c => new X509Certificate2ApiModel(c))
+                .Select(c => new X509CertificateApiModel(c))
                 .ToList();
             NextPageLink = model?.NextPageLink;
         }
@@ -48,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Chain
         /// </summary>
         [JsonProperty(PropertyName = "chain")]
-        public IList<X509Certificate2ApiModel> Chain { get; set; }
+        public IList<X509CertificateApiModel> Chain { get; set; }
 
         /// <summary>
         /// Next link

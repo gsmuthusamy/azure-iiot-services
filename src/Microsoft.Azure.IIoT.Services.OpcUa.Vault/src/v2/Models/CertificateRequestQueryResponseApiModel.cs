@@ -8,11 +8,23 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Response model
     /// </summary>
     public sealed class CertificateRequestQueryResponseApiModel {
+
+        /// <summary>
+        /// Create model
+        /// </summary>
+        /// <param name="model"></param>
+        public CertificateRequestQueryResponseApiModel(CertificateRequestQueryResultModel model) {
+            Requests = model.Requests?
+                .Select(r => new CertificateRequestRecordApiModel(r))
+                .ToList();
+            NextPageLink = model.NextPageLink;
+        }
 
         /// <summary>
         /// The query result.
@@ -25,29 +37,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "nextPageLink")]
         public string NextPageLink { get; set; }
-
-        /// <summary>
-        /// Create model
-        /// </summary>
-        /// <param name="requests"></param>
-        /// <param name="nextPageLink"></param>
-        public CertificateRequestQueryResponseApiModel(IList<ReadRequestResultModel> requests,
-            string nextPageLink) {
-            var requestList = new List<CertificateRequestRecordApiModel>();
-            foreach (var request in requests) {
-                requestList.Add(new CertificateRequestRecordApiModel(
-                    request.RequestId,
-                    request.ApplicationId,
-                    request.State,
-                    request.CertificateGroupId,
-                    request.CertificateTypeId,
-                    request.SigningRequest,
-                    request.SubjectName,
-                    request.DomainNames,
-                    request.PrivateKeyFormat));
-            }
-            Requests = requestList;
-            NextPageLink = nextPageLink;
-        }
     }
 }

@@ -185,21 +185,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <returns></returns>
         [HttpPost("querybyid")]
         public async Task<QueryApplicationsByIdResponseApiModel> QueryApplicationsByIdAsync(
-            [FromBody] QueryApplicationsByIdApiModel query) {
+            [FromBody] QueryApplicationsByIdRequestApiModel query) {
             if (query == null) {
                 // query all
-                query = new QueryApplicationsByIdApiModel(0, 0, null, null, 0, null, null, null);
+                query = new QueryApplicationsByIdRequestApiModel();
             }
             var result = await _applicationDatabase.QueryApplicationsByIdAsync(
-                query.StartingRecordId,
-                query.MaxRecordsToReturn,
-                query.ApplicationName,
-                query.ApplicationUri,
-                (uint)query.ApplicationType,
-                query.ProductUri,
-                query.ServerCapabilities,
-                (Microsoft.Azure.IIoT.OpcUa.Vault.Models.QueryApplicationState?)query.ApplicationState
-                );
+                query.ToServiceModel());
             return new QueryApplicationsByIdResponseApiModel(result);
         }
 
@@ -218,22 +210,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpPost("query")]
         [AutoRestExtension(NextPageLinkName = "nextPageLink")]
         public async Task<QueryApplicationsResponseApiModel> QueryApplicationsAsync(
-            [FromBody] QueryApplicationsApiModel query,
-            [FromQuery] string nextPageLink,
+            [FromBody] QueryApplicationsRequestApiModel query, [FromQuery] string nextPageLink,
             [FromQuery] int? pageSize) {
             if (query == null) {
                 // query all
-                query = new QueryApplicationsApiModel(null, null, 0, null, null, null);
+                query = new QueryApplicationsRequestApiModel();
             }
             var result = await _applicationDatabase.QueryApplicationsAsync(
-                query.ApplicationName,
-                query.ApplicationUri,
-                (uint)query.ApplicationType,
-                query.ProductUri,
-                query.ServerCapabilities,
-                (Microsoft.Azure.IIoT.OpcUa.Vault.Models.QueryApplicationState?)query.ApplicationState,
-                nextPageLink,
-                pageSize);
+                query.ToServiceModel(), nextPageLink, pageSize);
             return new QueryApplicationsResponseApiModel(result);
         }
 

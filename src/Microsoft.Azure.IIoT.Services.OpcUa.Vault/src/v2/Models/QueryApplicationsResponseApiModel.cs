@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Create model
         /// </summary>
         /// <param name="model"></param>
-        public QueryApplicationsResponseApiModel(QueryApplicationsResponseModel model) {
+        public QueryApplicationsResponseApiModel(QueryApplicationsResultModel model) {
             Applications = model.Applications?
                 .Select(a => new ApplicationRecordApiModel(a))
                 .ToList();
@@ -36,8 +36,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Convert to service model
         /// </summary>
         /// <returns></returns>
-        public QueryApplicationsResponseModel ToServiceModel() {
-            return new QueryApplicationsResponseModel {
+        public QueryApplicationsResultModel ToServiceModel() {
+            return new QueryApplicationsResultModel {
                 NextPageLink = NextPageLink,
                 Applications = Applications?
                     .Select(a => a.ToServiceModel())

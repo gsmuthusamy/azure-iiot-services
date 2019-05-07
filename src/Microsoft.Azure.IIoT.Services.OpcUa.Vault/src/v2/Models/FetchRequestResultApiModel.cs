@@ -7,13 +7,51 @@
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
-    using System;
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
     /// Fetch results
     /// </summary>
     public sealed class FetchRequestResultApiModel {
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public FetchRequestResultApiModel() {
+        }
+
+        /// <summary>
+        /// Create fetch request
+        /// </summary>
+        /// <param name="model"></param>
+        public FetchRequestResultApiModel(FetchRequestResultModel model) {
+            RequestId = model.RequestId;
+            ApplicationId = model.ApplicationId;
+            State = model.State;
+            CertificateGroupId = model.CertificateGroupId;
+            CertificateTypeId = model.CertificateTypeId;
+            SignedCertificate = model.SignedCertificate;
+            PrivateKeyFormat = model.PrivateKeyFormat;
+            PrivateKey = model.PrivateKey;
+            AuthorityId = model.AuthorityId;
+        }
+
+        /// <summary>
+        /// Create fetch request
+        /// </summary>
+        public FetchRequestResultModel ToServiceModel() {
+            return new FetchRequestResultModel {
+                RequestId = RequestId,
+                ApplicationId = ApplicationId,
+                State = State,
+                CertificateGroupId = CertificateGroupId,
+                CertificateTypeId = CertificateTypeId,
+                SignedCertificate = SignedCertificate,
+                PrivateKeyFormat = PrivateKeyFormat,
+                PrivateKey = PrivateKey,
+                AuthorityId = AuthorityId
+            };
+        }
 
         /// <summary>
         /// Request id
@@ -50,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Signed certificate
         /// </summary>
         [JsonProperty(PropertyName = "signedCertificate")]
-        public string SignedCertificate { get; set; }
+        public byte[] SignedCertificate { get; set; }
 
         /// <summary>
         /// Format
@@ -62,41 +100,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Private key
         /// </summary>
         [JsonProperty(PropertyName = "privateKey")]
-        public string PrivateKey { get; set; }
+        public byte[] PrivateKey { get; set; }
 
         /// <summary>
         /// Auth id
         /// </summary>
         [JsonProperty(PropertyName = "authorityId")]
         public string AuthorityId { get; set; }
-
-        /// <summary>
-        /// Create fetch request
-        /// </summary>
-        /// <param name="requestId"></param>
-        /// <param name="applicationId"></param>
-        /// <param name="state"></param>
-        /// <param name="certificateGroupId"></param>
-        /// <param name="certificateTypeId"></param>
-        /// <param name="signedCertificate"></param>
-        /// <param name="privateKeyFormat"></param>
-        /// <param name="privateKey"></param>
-        /// <param name="authorityId"></param>
-        public FetchRequestResultApiModel(string requestId, string applicationId,
-            Microsoft.Azure.IIoT.OpcUa.Vault.Models.CertificateRequestState state, string certificateGroupId,
-            string certificateTypeId, byte[] signedCertificate,
-            string privateKeyFormat, byte[] privateKey, string authorityId) {
-            RequestId = requestId;
-            ApplicationId = applicationId;
-            State = (CertificateRequestState)state;
-            CertificateGroupId = certificateGroupId;
-            CertificateTypeId = certificateTypeId;
-            SignedCertificate = (signedCertificate != null) ?
-                Convert.ToBase64String(signedCertificate) : null;
-            PrivateKeyFormat = privateKeyFormat;
-            PrivateKey = (privateKey != null) ? Convert.ToBase64String(privateKey) : null;
-            AuthorityId = authorityId;
-        }
-
     }
 }

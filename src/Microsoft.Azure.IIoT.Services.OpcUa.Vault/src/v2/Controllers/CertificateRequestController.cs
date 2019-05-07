@@ -31,12 +31,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <summary>
         /// Create controller with service.
         /// </summary>
-        /// <param name="certificateRequest"></param>
-        /// <param name="servicesConfig"></param>
-        public CertificateRequestController(ICertificateRequest certificateRequest,
-            IVaultConfig servicesConfig) {
-            _certificateRequest = certificateRequest;
-            _servicesConfig = servicesConfig;
+        /// <param name="certificateServices"></param>
+        /// <param name="userRequests"></param>
+        /// <param name="config"></param>
+        public CertificateRequestController(ICertificateAuthority certificateServices,
+            IUserImpersonation<ICertificateAuthority> userRequests, IVaultConfig config) {
+            _certificateServices = certificateServices;
+            _userRequests = userRequests;
+            _config = config;
         }
 
         /// <summary>
@@ -50,17 +52,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <returns>The certificate request id</returns>
         [HttpPost("sign")]
         [Authorize(Policy = Policies.CanWrite)]
-        public async Task<string> CreateSigningRequestAsync([FromBody] CreateSigningRequestApiModel signingRequest) {
+        public async Task<string> CreateSigningRequestAsync(
+            [FromBody] CreateSigningRequestApiModel signingRequest) {
             if (signingRequest == null) {
                 throw new ArgumentNullException(nameof(signingRequest));
             }
             var authorityId = User.Identity.Name;
-            return await _certificateRequest.StartSigningRequestAsync(
-                signingRequest.ApplicationId,
-                signingRequest.CertificateGroupId,
-                signingRequest.CertificateTypeId,
-                signingRequest.ToServiceModel(),
-                authorityId);
+            return await _certificateServices.StartSigningRequestAsync(
+                signingRequest.ToServiceModel(), authorityId);
         }
 
         /// <summary>
@@ -70,7 +69,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// The request is in the 'New' state after this call.
         /// Requires Writer or Manager role.
         /// </remarks>
-        /// <param name="newKeyPairRequest">The new key pair request parameters</param>
+        /// <param name="newKeyPairRequest">The new key pair request parameters
+        /// </param>
         /// <returns>The certificate request id</returns>
         [HttpPost("keypair")]
         [Authorize(Policy = Policies.CanWrite)]
@@ -79,16 +79,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             if (newKeyPairRequest == null) {
                 throw new ArgumentNullException(nameof(newKeyPairRequest));
             }
-            var authorityId = User.Identity.Name;
-            return await _certificateRequest.StartNewKeyPairRequestAsync(
-                newKeyPairRequest.ApplicationId,
-                newKeyPairRequest.CertificateGroupId,
-                newKeyPairRequest.CertificateTypeId,
-                newKeyPairRequest.SubjectName,
-                newKeyPairRequest.DomainNames,
-                newKeyPairRequest.PrivateKeyFormat,
-                newKeyPairRequest.PrivateKeyPassword,
-                authorityId);
+            var requestId = await _certificateServices.StartNewKeyPairRequestAsync(
+                newKeyPairRequest.ToServiceModel(), User.Identity.Name);
+            return requestId;
         }
 
         /// <summary>
@@ -108,23 +101,42 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// Approver needs signing rights in KeyVault.
         /// </remarks>
         /// <param name="requestId">The certificate request id</param>
-        /// <param name="rejected">if the request is rejected(true) or approved(false)</param>
         /// <returns></returns>
-        [HttpPost("{requestId}/{rejected}/approve")]
+        [HttpPost("{requestId}/approve")]
         [Authorize(Policy = Policies.CanSign)]
-        public async Task ApproveCertificateRequestAsync(string requestId, bool rejected) {
+        public async Task ApproveCertificateRequestAsync(string requestId) {
             // for auto approve the service app id must have signing rights in keyvault
-            var onBehalfOfCertificateRequest = await _certificateRequest.SendOnBehalfOfRequestAsync(Request);
-            await onBehalfOfCertificateRequest.ApproveAsync(requestId, rejected);
+            var ca = await _userRequests.ImpersonateAsync(Request);
+            await ca.ApproveAsync(requestId, false);
+        }
+
+        /// <summary>
+        /// Reject the certificate request.
+        /// </summary>
+        /// <remarks>
+        /// The request is in the 'Rejected' state after this call.
+        /// Requires Approver role.
+        /// Approver needs signing rights in KeyVault.
+        /// </remarks>
+        /// <param name="requestId">The certificate request id</param>
+        /// <returns></returns>
+        [HttpPost("{requestId}/reject")]
+        [Authorize(Policy = Policies.CanSign)]
+        public async Task RejectCertificateRequestAsync(string requestId) {
+            // for auto approve the service app id must have signing rights in keyvault
+            var ca = await _userRequests.ImpersonateAsync(Request);
+            await ca.ApproveAsync(requestId, true);
         }
 
         /// <summary>
         /// Accept request and delete the private key.
         /// </summary>
         /// <remarks>
-        /// By accepting the request the requester takes ownership of the certificate
-        /// and the private key, if requested. A private key with metadata is deleted from KeyVault.
-        /// The public certificate remains in the database for sharing public key information
+        /// By accepting the request the requester takes ownership of the
+        /// certificate and the private key, if requested. A private key with
+        /// metadata is deleted from KeyVault.
+        /// The public certificate remains in the database for sharing public
+        /// key information
         /// or for later revocation once the application is deleted.
         /// The request is in the 'Accepted' state after this call.
         /// Requires Writer role.
@@ -133,7 +145,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpPost("{requestId}/accept")]
         [Authorize(Policy = Policies.CanWrite)]
         public async Task AcceptCertificateRequestAsync(string requestId) {
-            await _certificateRequest.AcceptAsync(requestId);
+            await _certificateServices.AcceptAsync(requestId);
         }
 
         /// <summary>
@@ -143,7 +155,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// If the request is in the 'Approved' or 'Accepted' state,
         /// the request is set in the 'Deleted' state.
         /// A deleted request is marked for revocation.
-        /// The public certificate is still available for the revocation procedure.
+        /// The public certificate is still available for the revocation
+        /// procedure.
         /// If the request is in the 'New' or 'Rejected' state,
         /// the request is set in the 'Removed' state.
         /// The request is in the 'Deleted' or 'Removed'state after this call.
@@ -153,7 +166,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpDelete("{requestId}")]
         [Authorize(Policy = Policies.CanManage)]
         public async Task DeleteCertificateRequestAsync(string requestId) {
-            await _certificateRequest.DeleteAsync(requestId);
+            await _certificateServices.DeleteAsync(requestId);
         }
 
         /// <summary>
@@ -171,7 +184,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [Authorize(Policy = Policies.CanManage)]
         public async Task PurgeCertificateRequestAsync(string requestId) {
             // may require elevated rights to delete pk
-            await _certificateRequest.PurgeAsync(requestId);
+            await _certificateServices.PurgeAsync(requestId);
         }
 
         /// <summary>
@@ -191,8 +204,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpPost("{requestId}/revoke")]
         [Authorize(Policy = Policies.CanSign)]
         public async Task RevokeCertificateRequestAsync(string requestId) {
-            var onBehalfOfCertificateRequest = await _certificateRequest.SendOnBehalfOfRequestAsync(Request);
-            await onBehalfOfCertificateRequest.RevokeAsync(requestId);
+            var ca = await _userRequests.ImpersonateAsync(Request);
+            await ca.RevokeAsync(requestId);
         }
 
         /// <summary>
@@ -214,8 +227,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpPost("{group}/revokegroup")]
         [Authorize(Policy = Policies.CanSign)]
         public async Task RevokeCertificateGroupAsync(string group, bool? allVersions) {
-            var onBehalfOfCertificateRequest = await _certificateRequest.SendOnBehalfOfRequestAsync(Request);
-            await onBehalfOfCertificateRequest.RevokeGroupAsync(group, allVersions ?? true);
+            var ca = await _userRequests.ImpersonateAsync(Request);
+            await ca.RevokeGroupAsync(group, allVersions ?? true);
         }
 
         /// <summary>
@@ -234,21 +247,15 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpGet("query")]
         [AutoRestExtension(NextPageLinkName = "nextPageLink")]
         public async Task<CertificateRequestQueryResponseApiModel> QueryCertificateRequestsAsync(
-            string appId,
-            CertificateRequestState? requestState,
-            [FromQuery] string nextPageLink,
+            string appId, CertificateRequestState? requestState, [FromQuery] string nextPageLink,
             [FromQuery] int? pageSize) {
             if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
                 pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
                     .FirstOrDefault());
             }
-            ReadRequestResultModel[] results;
-            (nextPageLink, results) = await _certificateRequest.QueryPageAsync(
-                appId,
-                (Microsoft.Azure.IIoT.OpcUa.Vault.Models.CertificateRequestState?)requestState,
-                nextPageLink,
-                pageSize);
-            return new CertificateRequestQueryResponseApiModel(results, nextPageLink);
+            var result = await _certificateServices.QueryPageAsync(appId,
+                requestState, nextPageLink, pageSize);
+            return new CertificateRequestQueryResponseApiModel(result);
         }
 
         /// <summary>
@@ -259,11 +266,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpGet("{requestId}")]
         public async Task<CertificateRequestRecordApiModel> GetCertificateRequestAsync(
             string requestId) {
-            var result = await _certificateRequest.ReadAsync(requestId);
-            return new CertificateRequestRecordApiModel(requestId, result.ApplicationId,
-                result.State, result.CertificateGroupId, result.CertificateTypeId,
-                result.SigningRequest, result.SubjectName, result.DomainNames,
-                result.PrivateKeyFormat);
+            var result = await _certificateServices.ReadAsync(requestId);
+            return new CertificateRequestRecordApiModel(result);
         }
 
         /// <summary>
@@ -288,28 +292,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [Authorize(Policy = Policies.CanWrite)]
         public async Task<FetchRequestResultApiModel> FetchCertificateRequestResultAsync(
             string requestId, string applicationId) {
-            var result = await _certificateRequest.FetchRequestAsync(requestId, applicationId);
-            return new FetchRequestResultApiModel(requestId, applicationId, result.State,
-                result.CertificateGroupId, result.CertificateTypeId, result.SignedCertificate,
-                result.PrivateKeyFormat, result.PrivateKey, result.AuthorityId);
+            var result = await _certificateServices.FetchRequestAsync(requestId, applicationId);
+            return new FetchRequestResultApiModel(result);
         }
 
-        /// <summary>
-        /// Parse the certificate state parameter.
-        /// </summary>
-        private CertificateRequestState? ParseCertificateState(string requestState) {
-            CertificateRequestState? parsedState = null;
-            if (!string.IsNullOrWhiteSpace(requestState)) {
-                if (!Enum.TryParse(typeof(CertificateRequestState), requestState, true, out var tryParse)) {
-                    throw new ArgumentOutOfRangeException(nameof(requestState),
-                        "The argument must be a valid state of a CertificateRequest.");
-                }
-                parsedState = (CertificateRequestState)tryParse;
-            }
-            return parsedState;
-        }
-
-        private readonly ICertificateRequest _certificateRequest;
-        private readonly IVaultConfig _servicesConfig;
+        private readonly ICertificateAuthority _certificateServices;
+        private readonly IUserImpersonation<ICertificateAuthority> _userRequests;
+        private readonly IVaultConfig _config;
     }
 }

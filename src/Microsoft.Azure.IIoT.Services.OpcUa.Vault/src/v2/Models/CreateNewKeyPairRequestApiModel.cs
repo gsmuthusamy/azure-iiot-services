@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using System.Collections.Generic;
 
@@ -11,6 +12,41 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     /// New key pair request
     /// </summary>
     public sealed class CreateNewKeyPairRequestApiModel {
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public CreateNewKeyPairRequestApiModel() {
+        }
+
+        /// <summary>
+        /// Create new request
+        /// </summary>
+        /// <param name="model"></param>
+        public CreateNewKeyPairRequestApiModel(CreateNewKeyPairRequestModel model) {
+            ApplicationId = model.ApplicationId;
+            CertificateGroupId = model.CertificateGroupId;
+            CertificateTypeId = model.CertificateTypeId;
+            SubjectName = model.SubjectName;
+            DomainNames = model.DomainNames;
+            PrivateKeyFormat = model.PrivateKeyFormat;
+            PrivateKeyPassword = model.PrivateKeyPassword;
+        }
+
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        public CreateNewKeyPairRequestModel ToServiceModel() {
+            return new CreateNewKeyPairRequestModel {
+                ApplicationId = ApplicationId,
+                CertificateGroupId = CertificateGroupId,
+                CertificateTypeId = CertificateTypeId,
+                SubjectName = SubjectName,
+                DomainNames = DomainNames,
+                PrivateKeyFormat = PrivateKeyFormat,
+                PrivateKeyPassword = PrivateKeyPassword
+            };
+        }
 
         /// <summary>
         /// Application id
@@ -53,28 +89,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "privateKeyPassword")]
         public string PrivateKeyPassword { get; set; }
-
-        /// <summary>
-        /// Create new request
-        /// </summary>
-        /// <param name="applicationId"></param>
-        /// <param name="certificateGroupId"></param>
-        /// <param name="certificateTypeId"></param>
-        /// <param name="subjectName"></param>
-        /// <param name="domainNames"></param>
-        /// <param name="privateKeyFormat"></param>
-        /// <param name="privateKeyPassword"></param>
-        public CreateNewKeyPairRequestApiModel(string applicationId,
-            string certificateGroupId, string certificateTypeId,
-            string subjectName, IList<string> domainNames,
-            string privateKeyFormat, string privateKeyPassword) {
-            ApplicationId = applicationId;
-            CertificateGroupId = certificateGroupId;
-            CertificateTypeId = certificateTypeId;
-            SubjectName = subjectName;
-            DomainNames = domainNames;
-            PrivateKeyFormat = privateKeyFormat;
-            PrivateKeyPassword = privateKeyPassword;
-        }
     }
 }

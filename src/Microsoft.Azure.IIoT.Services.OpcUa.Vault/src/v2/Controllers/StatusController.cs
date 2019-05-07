@@ -13,6 +13,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
     using Serilog;
     using System;
     using System.Threading.Tasks;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
 
     /// <summary>
     /// The status service.
@@ -31,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <param name="certificateGroups"></param>
         /// <param name="logger"></param>
         public StatusController(IApplicationsDatabase applicationDatabase,
-            ICertificateGroup certificateGroups, ILogger logger) {
+            IVaultClient certificateGroups, ILogger logger) {
             _applicationDatabase = applicationDatabase;
             _certificateGroups = certificateGroups;
             _logger = logger;
@@ -46,7 +47,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             var applicationMessage = "Alive and well";
             try {
                 var apps = await _applicationDatabase.QueryApplicationsByIdAsync(
-                    0, 1, null, null, 0, null, null, Microsoft.Azure.IIoT.OpcUa.Vault.Models.QueryApplicationState.Any);
+                    new QueryApplicationsByIdRequestModel {
+                        MaxRecordsToReturn = 1,
+                        ApplicationState = QueryApplicationState.Any
+                    });
                 applicationOk = apps != null;
             }
             catch (Exception ex) {
@@ -59,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             bool kvOk;
             var kvMessage = "Alive and well";
             try {
-                var groups = await _certificateGroups.GetCertificateGroupIdsAsync();
+                var groups = await _certificateGroups.GetGroupIdsAsync();
                 kvOk = groups.Length > 0;
                 kvMessage = string.Join(",", groups);
             }
@@ -74,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         }
 
         private readonly ILogger _logger;
-        private readonly ICertificateGroup _certificateGroups;
+        private readonly IVaultClient _certificateGroups;
         private readonly IApplicationsDatabase _applicationDatabase;
     }
 }

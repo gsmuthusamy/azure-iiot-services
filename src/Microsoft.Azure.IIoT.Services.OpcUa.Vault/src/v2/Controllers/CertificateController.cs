@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Filters;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Microsoft.Azure.IIoT.OpcUa.Vault;
     using Microsoft.AspNetCore.Mvc;
     using System;
@@ -24,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// Create the controller.
         /// </summary>
         /// <param name="certificateGroups"></param>
-        public CertificateController(ICertificateGroup certificateGroups) {
+        public CertificateController(IVaultClient certificateGroups) {
             _certificateGroups = certificateGroups;
         }
 
@@ -49,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                     while (result.Chain != null && result.Chain.Count > 0) {
                         foreach (var certVersion in result.Chain) {
                             if (serial.Equals(certVersion.SerialNumber, StringComparison.OrdinalIgnoreCase)) {
-                                var byteArray = certVersion.Certificate;
+                                var byteArray = certVersion.ToRawData();
                                 return new FileContentResult(byteArray, ContentEncodings.MimeTypeCert) {
                                     FileDownloadName = certVersion.GetFileNameOrDefault(groupId) + ".cer"
                                 };
@@ -89,7 +90,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                                 var thumbPrint = cert.Thumbprint;
                                 var crlBinary = await _certificateGroups.GetIssuerCACrlChainAsync(
                                     groupId, thumbPrint);
-                                var byteArray = crlBinary.Chain?.FirstOrDefault()?.RawData;
+                                var byteArray = crlBinary.Chain?.FirstOrDefault()?.ToRawData();
                                 if (byteArray == null) {
                                     break;
                                 }
@@ -112,6 +113,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             return new NotFoundResult();
         }
 
-        private readonly ICertificateGroup _certificateGroups;
+        private readonly IVaultClient _certificateGroups;
     }
 }

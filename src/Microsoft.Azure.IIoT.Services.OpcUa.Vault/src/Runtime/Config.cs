@@ -90,7 +90,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         /// <inheritdoc/>
         public string CosmosDBDatabase => _vault.CosmosDBDatabase;
         /// <inheritdoc/>
-        public string CosmosDBCollection => _vault.CosmosDBCollection;
+        public string CollectionName => _vault.CollectionName;
         /// <inheritdoc/>
         public bool ApplicationsAutoApprove => _vault.ApplicationsAutoApprove;
         /// <inheritdoc/>

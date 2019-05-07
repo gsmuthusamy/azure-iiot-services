@@ -6,24 +6,25 @@
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
     using System;
 
     /// <summary>
     /// Certificate model
     /// </summary>
-    public sealed class X509Certificate2ApiModel {
+    public sealed class X509CertificateApiModel {
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public X509Certificate2ApiModel() {
+        public X509CertificateApiModel() {
         }
 
         /// <summary>
         /// Create api model
         /// </summary>
         /// <param name="model"></param>
-        public X509Certificate2ApiModel(X509CertificateModel model) {
+        public X509CertificateApiModel(X509CertificateModel model) {
             Certificate = model.Certificate;
             Thumbprint = model.Thumbprint;
             SerialNumber = model.SerialNumber;
@@ -81,6 +82,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Raw data
         /// </summary>
         [JsonProperty(PropertyName = "certificate")]
-        public byte[] Certificate { get; set; }
+        public JToken Certificate { get; set; }
     }
 }

@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         /// <param name="model"></param>
         public QueryApplicationsByIdResponseApiModel(
-            QueryApplicationsByIdResponseModel model) {
+            QueryApplicationsByIdResultModel model) {
             var applicationsList = new List<ApplicationRecordApiModel>();
             foreach (var application in model.Applications) {
                 applicationsList.Add(new ApplicationRecordApiModel(application));

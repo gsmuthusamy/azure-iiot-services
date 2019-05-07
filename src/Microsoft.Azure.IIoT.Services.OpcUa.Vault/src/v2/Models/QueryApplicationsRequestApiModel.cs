@@ -11,7 +11,40 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     /// <summary>
     /// Query applications
     /// </summary>
-    public sealed class QueryApplicationsApiModel {
+    public sealed class QueryApplicationsRequestApiModel {
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public QueryApplicationsRequestApiModel() {
+        }
+
+        /// <summary>
+        /// Create query
+        /// </summary>
+        /// <param name="model"></param>
+        public QueryApplicationsRequestApiModel(QueryApplicationsRequestModel model) {
+            ApplicationName = model.ApplicationName;
+            ApplicationUri = model.ApplicationUri;
+            ApplicationType = model.ApplicationType;
+            ProductUri = model.ProductUri;
+            ServerCapabilities = model.ServerCapabilities;
+            ApplicationState = model.ApplicationState;
+        }
+
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        public QueryApplicationsRequestModel ToServiceModel() {
+            return new QueryApplicationsRequestModel {
+                ApplicationName = ApplicationName,
+                ApplicationUri = ApplicationUri,
+                ApplicationType = ApplicationType,
+                ProductUri = ProductUri,
+                ServerCapabilities = ServerCapabilities,
+                ApplicationState = ApplicationState
+            };
+        }
 
         /// <summary>
         /// Application name
@@ -48,26 +81,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "applicationState")]
         public QueryApplicationState? ApplicationState { get; set; }
-
-        /// <summary>
-        /// Create query
-        /// </summary>
-        /// <param name="applicationName"></param>
-        /// <param name="applicationUri"></param>
-        /// <param name="applicationType"></param>
-        /// <param name="productUri"></param>
-        /// <param name="serverCapabilities"></param>
-        /// <param name="applicationState"></param>
-        public QueryApplicationsApiModel(string applicationName,
-            string applicationUri, QueryApplicationType applicationType,
-            string productUri, IList<string> serverCapabilities,
-            QueryApplicationState? applicationState) {
-            ApplicationName = applicationName;
-            ApplicationUri = applicationUri;
-            ApplicationType = applicationType;
-            ProductUri = productUri;
-            ServerCapabilities = serverCapabilities;
-            ApplicationState = applicationState;
-        }
     }
 }

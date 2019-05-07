@@ -11,19 +11,56 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     /// <summary>
     /// Query by id
     /// </summary>
-    public sealed class QueryApplicationsByIdApiModel {
+    public sealed class QueryApplicationsByIdRequestApiModel {
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public QueryApplicationsByIdRequestApiModel() {
+        }
+
+        /// <summary>
+        /// Create query
+        /// </summary>
+        /// <param name="model"></param>
+        public QueryApplicationsByIdRequestApiModel(QueryApplicationsByIdRequestModel model) {
+            ApplicationName = model.ApplicationName;
+            ApplicationUri = model.ApplicationUri;
+            ApplicationType = model.ApplicationType;
+            ProductUri = model.ProductUri;
+            ServerCapabilities = model.ServerCapabilities;
+            ApplicationState = model.ApplicationState;
+            MaxRecordsToReturn = model.MaxRecordsToReturn;
+            StartingRecordId = model.StartingRecordId;
+        }
+
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        public QueryApplicationsByIdRequestModel ToServiceModel() {
+            return new QueryApplicationsByIdRequestModel {
+                ApplicationName = ApplicationName,
+                ApplicationUri = ApplicationUri,
+                ApplicationType = ApplicationType,
+                ProductUri = ProductUri,
+                ServerCapabilities = ServerCapabilities,
+                ApplicationState = ApplicationState,
+                MaxRecordsToReturn = MaxRecordsToReturn,
+                StartingRecordId = StartingRecordId
+            };
+        }
 
         /// <summary>
         /// Starting record id
         /// </summary>
         [JsonProperty(PropertyName = "startingRecordId")]
-        public uint StartingRecordId { get; set; }
+        public uint? StartingRecordId { get; set; }
 
         /// <summary>
         /// Max records to return
         /// </summary>
         [JsonProperty(PropertyName = "maxRecordsToReturn")]
-        public uint MaxRecordsToReturn { get; set; }
+        public uint? MaxRecordsToReturn { get; set; }
 
         /// <summary>
         /// Application name
@@ -60,32 +97,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "applicationState")]
         public QueryApplicationState? ApplicationState { get; set; }
-
-        /// <summary>
-        /// Create model
-        /// </summary>
-        /// <param name="startingRecordId"></param>
-        /// <param name="maxRecordsToReturn"></param>
-        /// <param name="applicationName"></param>
-        /// <param name="applicationUri"></param>
-        /// <param name="applicationType"></param>
-        /// <param name="productUri"></param>
-        /// <param name="serverCapabilities"></param>
-        /// <param name="applicationState"></param>
-        public QueryApplicationsByIdApiModel(uint startingRecordId,
-            uint maxRecordsToReturn, string applicationName,
-            string applicationUri, QueryApplicationType? applicationType,
-            string productUri, IList<string> serverCapabilities,
-            QueryApplicationState? applicationState) {
-            StartingRecordId = startingRecordId;
-            MaxRecordsToReturn = maxRecordsToReturn;
-            ApplicationName = applicationName;
-            ApplicationUri = applicationUri;
-            ApplicationType = applicationType;
-            ProductUri = productUri;
-            ServerCapabilities = serverCapabilities;
-            ApplicationState = applicationState;
-        }
-
     }
 }

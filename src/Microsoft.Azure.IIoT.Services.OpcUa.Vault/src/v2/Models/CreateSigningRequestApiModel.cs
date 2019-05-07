@@ -5,13 +5,45 @@
 
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
     using System;
 
     /// <summary>
     /// Signing request
     /// </summary>
     public sealed class CreateSigningRequestApiModel {
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public CreateSigningRequestApiModel() {
+        }
+
+        /// <summary>
+        /// Create signing request
+        /// </summary>
+        /// <param name="model"></param>
+        public CreateSigningRequestApiModel(CreateSigningRequestModel model) {
+            ApplicationId = model.ApplicationId;
+            CertificateGroupId = model.CertificateGroupId;
+            CertificateTypeId = model.CertificateTypeId;
+            CertificateRequest = model.CertificateRequest;
+        }
+
+        /// <summary>
+        /// Convert back to service model
+        /// </summary>
+        /// <returns></returns>
+        public CreateSigningRequestModel ToServiceModel() {
+            return new CreateSigningRequestModel {
+                CertificateTypeId = CertificateTypeId,
+                CertificateGroupId = CertificateGroupId,
+                CertificateRequest = CertificateRequest,
+                ApplicationId = ApplicationId
+            };
+        }
 
         /// <summary>
         /// Application id
@@ -32,46 +64,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         public string CertificateTypeId { get; set; }
 
         /// <summary>
-        /// Request string
+        /// Request
         /// </summary>
         [JsonProperty(PropertyName = "certificateRequest")]
-        public string CertificateRequest { get; set; }
-
-        /// <summary>
-        /// Create signing request
-        /// </summary>
-        /// <param name="applicationId"></param>
-        /// <param name="certificateGroupId"></param>
-        /// <param name="certificateTypeId"></param>
-        /// <param name="certificateRequest"></param>
-        public CreateSigningRequestApiModel(string applicationId,
-            string certificateGroupId, string certificateTypeId,
-            byte[] certificateRequest) {
-            ApplicationId = applicationId;
-            CertificateGroupId = certificateGroupId;
-            CertificateTypeId = certificateTypeId;
-            CertificateRequest = certificateRequest != null ?
-                Convert.ToBase64String(certificateRequest) : null;
-        }
-
-        /// <summary>
-        /// Convert back to service model
-        /// </summary>
-        /// <returns></returns>
-        public byte[] ToServiceModel() {
-            const string certRequestPemHeader = "-----BEGIN CERTIFICATE REQUEST-----";
-            const string certRequestPemFooter = "-----END CERTIFICATE REQUEST-----";
-            if (CertificateRequest != null) {
-                if (CertificateRequest.Contains(certRequestPemHeader, StringComparison.OrdinalIgnoreCase)) {
-                    var strippedCertificateRequest = CertificateRequest.Replace(
-                        certRequestPemHeader, "", StringComparison.OrdinalIgnoreCase);
-                    strippedCertificateRequest = strippedCertificateRequest.Replace(
-                        certRequestPemFooter, "", StringComparison.OrdinalIgnoreCase);
-                    return Convert.FromBase64String(strippedCertificateRequest);
-                }
-                return Convert.FromBase64String(CertificateRequest);
-            }
-            return null;
-        }
+        public JToken CertificateRequest { get; set; }
     }
 }

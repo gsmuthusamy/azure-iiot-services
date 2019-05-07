@@ -24,11 +24,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <param name="trustList"></param>
         public TrustListApiModel(TrustListModel trustList) {
             GroupId = trustList.GroupId;
-            IssuerCertificates = new X509Certificate2CollectionApiModel(
+            IssuerCertificates = new X509CertificateCollectionApiModel(
                 trustList.IssuerCertificates);
             IssuerCrls = new X509CrlCollectionApiModel(
                 trustList.IssuerCrls);
-            TrustedCertificates = new X509Certificate2CollectionApiModel(
+            TrustedCertificates = new X509CertificateCollectionApiModel(
                 trustList.TrustedCertificates);
             TrustedCrls = new X509CrlCollectionApiModel(
                 trustList.TrustedCrls);
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Issuer certificates
         /// </summary>
         [JsonProperty(PropertyName = "issuerCertificates")]
-        public X509Certificate2CollectionApiModel IssuerCertificates { get; set; }
+        public X509CertificateCollectionApiModel IssuerCertificates { get; set; }
 
         /// <summary>
         /// Issuer crls
@@ -72,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Trusted certificates
         /// </summary>
         [JsonProperty(PropertyName = "trustedCertificates")]
-        public X509Certificate2CollectionApiModel TrustedCertificates { get; set; }
+        public X509CertificateCollectionApiModel TrustedCertificates { get; set; }
 
         /// <summary>
         /// Trusted crls

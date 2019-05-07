@@ -9,11 +9,52 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Linq;
 
     /// <summary>
     /// Certificate request record model
     /// </summary>
     public sealed class CertificateRequestRecordApiModel {
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public CertificateRequestRecordApiModel() {
+        }
+
+        /// <summary>
+        /// Create model
+        /// </summary>
+        /// <param name="request"></param>
+        public CertificateRequestRecordApiModel(CertificateRequestRecordModel request) {
+            RequestId = request.RequestId;
+            ApplicationId = request.ApplicationId;
+            State = request.State;
+            CertificateGroupId = request.CertificateGroupId;
+            CertificateTypeId = request.CertificateTypeId;
+            SigningRequest = request.SigningRequest;
+            SubjectName = request.SubjectName;
+            DomainNames = request.DomainNames?.ToList();
+            PrivateKeyFormat = request.PrivateKeyFormat;
+        }
+
+        /// <summary>
+        /// To service model
+        /// </summary>
+        /// <returns></returns>
+        public CertificateRequestRecordModel ToServiceModel() {
+            return new CertificateRequestRecordModel {
+                RequestId = RequestId,
+                ApplicationId = ApplicationId,
+                State = State,
+                CertificateTypeId = CertificateTypeId,
+                DomainNames = DomainNames,
+                PrivateKeyFormat = PrivateKeyFormat,
+                SubjectName = SubjectName,
+                SigningRequest = SigningRequest,
+                CertificateGroupId = CertificateGroupId
+            };
+        }
 
         /// <summary>
         /// Request id
@@ -32,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "state")]
         [Required]
-        public CertificateRequestState State { get; }
+        public CertificateRequestState State { get; set; }
 
         /// <summary>
         /// Certificate group
@@ -51,7 +92,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "signingRequest")]
         [Required]
-        public bool SigningRequest { get; }
+        public bool SigningRequest { get; set; }
 
         /// <summary>
         /// Subject
@@ -70,33 +111,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "privateKeyFormat")]
         public string PrivateKeyFormat { get; set; }
-
-        /// <summary>
-        /// Create request model
-        /// </summary>
-        /// <param name="requestId"></param>
-        /// <param name="applicationId"></param>
-        /// <param name="state"></param>
-        /// <param name="certificateGroupId"></param>
-        /// <param name="certificateTypeId"></param>
-        /// <param name="signingRequest"></param>
-        /// <param name="subjectName"></param>
-        /// <param name="domainNames"></param>
-        /// <param name="privateKeyFormat"></param>
-        public CertificateRequestRecordApiModel(string requestId,
-            string applicationId, Microsoft.Azure.IIoT.OpcUa.Vault.Models.CertificateRequestState state,
-            string certificateGroupId, string certificateTypeId,
-            bool signingRequest, string subjectName,
-            IList<string> domainNames, string privateKeyFormat) {
-            RequestId = requestId;
-            ApplicationId = applicationId;
-            State = (CertificateRequestState)state;
-            CertificateGroupId = certificateGroupId;
-            CertificateTypeId = certificateTypeId;
-            SigningRequest = signingRequest;
-            SubjectName = subjectName;
-            DomainNames = domainNames;
-            PrivateKeyFormat = privateKeyFormat;
-        }
     }
 }

@@ -12,11 +12,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
     using Microsoft.Azure.IIoT.OpcUa.Vault;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
 
     /// <summary>
@@ -185,8 +183,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         private ApplicationRecordModel NewApplicationFromRegistry(ApplicationInfoApiModel record) {
             var applicationNames = new[] {
                 new ApplicationNameModel {
-                    Text = record.ApplicationName,
-                    Locale = record.Locale
+                    Name = record.ApplicationName,
+                   // Locale = record.LocalizedNames
                 }
             };
             var newApplication = new ApplicationRecordModel {
@@ -203,10 +201,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             };
             if (record.ApplicationType != IIoT.OpcUa.Api.Registry.Models.ApplicationType.Client) {
                 if (record.Capabilities != null) {
-                    newApplication.ServerCapabilities = string.Join(",", record.Capabilities);
+                    newApplication.Capabilities = string.Join(",", record.Capabilities);
                 }
                 else {
-                    newApplication.ServerCapabilities = "NA";
+                    newApplication.Capabilities = "NA";
                 }
             }
             return newApplication;

@@ -169,7 +169,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             foreach (var record in results) {
                 modelResult.Add(new ApplicationRecordApiModel(record));
             }
-            return new QueryApplicationsResponseApiModel {
+            return new QueryApplicationsResponseApiModel(null) {
                 Applications = modelResult,
                 NextPageLink = null
             };

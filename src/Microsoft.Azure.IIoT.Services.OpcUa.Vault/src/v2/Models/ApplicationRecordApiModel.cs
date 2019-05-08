@@ -28,17 +28,17 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <param name="model"></param>
         public ApplicationRecordApiModel(ApplicationRecordModel model) {
             ApplicationId = model.ApplicationId;
-            Id = model.RecordId;
+            RecordId = model.RecordId;
             State = model.State;
             ApplicationUri = model.ApplicationUri;
             ApplicationName = model.ApplicationName;
             ApplicationType = model.ApplicationType;
-            ApplicationNames = model.ApplicationNames?
+            ApplicationNames = model.LocalizedNames?
                 .Select(n => new ApplicationNameApiModel(n))
                 .ToList();
             ProductUri = model.ProductUri;
             DiscoveryUrls = model.DiscoveryUrls;
-            ServerCapabilities = model.ServerCapabilities;
+            ServerCapabilities = model.Capabilities;
             GatewayServerUri = model.GatewayServerUri;
             DiscoveryProfileUri = model.DiscoveryProfileUri;
         }
@@ -54,15 +54,15 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
                 ApplicationName = ApplicationName,
                 ApplicationType = ApplicationType,
                 ProductUri = ProductUri,
-                ApplicationNames = ApplicationNames?
+                LocalizedNames = ApplicationNames?
                     .Select(n => n.ToServiceModel())
                     .ToList(),
                 DiscoveryUrls = DiscoveryUrls?
                     .ToList(),
-                ServerCapabilities = ServerCapabilities,
+                Capabilities = ServerCapabilities,
                 GatewayServerUri = GatewayServerUri,
                 DiscoveryProfileUri = DiscoveryProfileUri,
-                RecordId = Id,
+                RecordId = RecordId,
                 State = State
             };
         }
@@ -77,7 +77,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Record id
         /// </summary>
         [JsonProperty(PropertyName = "id")]
-        public int Id { get; }
+        public uint RecordId { get; }
 
         /// <summary>
         /// State

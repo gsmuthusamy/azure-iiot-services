@@ -12,19 +12,19 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     /// <summary>
     /// Fetch results
     /// </summary>
-    public sealed class FetchRequestResultApiModel {
+    public sealed class FetchCertificateRequestResponseApiModel {
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public FetchRequestResultApiModel() {
+        public FetchCertificateRequestResponseApiModel() {
         }
 
         /// <summary>
         /// Create fetch request
         /// </summary>
         /// <param name="model"></param>
-        public FetchRequestResultApiModel(FetchRequestResultModel model) {
+        public FetchCertificateRequestResponseApiModel(FetchCertificateRequestResultModel model) {
             RequestId = model.RequestId;
             ApplicationId = model.ApplicationId;
             State = model.State;
@@ -39,8 +39,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <summary>
         /// Create fetch request
         /// </summary>
-        public FetchRequestResultModel ToServiceModel() {
-            return new FetchRequestResultModel {
+        public FetchCertificateRequestResultModel ToServiceModel() {
+            return new FetchCertificateRequestResultModel {
                 RequestId = RequestId,
                 ApplicationId = ApplicationId,
                 State = State,

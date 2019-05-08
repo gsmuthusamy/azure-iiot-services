@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <param name="applicationName"></param>
         public ApplicationNameApiModel(ApplicationNameModel applicationName) {
             Locale = applicationName.Locale;
-            Text = applicationName.Text;
+            Text = applicationName.Name;
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         public ApplicationNameModel ToServiceModel() {
             var applicationName = new ApplicationNameModel {
                 Locale = Locale,
-                Text = Text
+                Name = Text
             };
             return applicationName;
         }

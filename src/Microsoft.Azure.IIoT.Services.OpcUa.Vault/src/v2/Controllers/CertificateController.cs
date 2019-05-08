@@ -24,9 +24,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <summary>
         /// Create the controller.
         /// </summary>
-        /// <param name="certificateGroups"></param>
-        public CertificateController(IVaultClient certificateGroups) {
-            _certificateGroups = certificateGroups;
+        /// <param name="vault"></param>
+        public CertificateController(IVaultClient vault) {
+            _vault = vault;
         }
 
         /// <summary>
@@ -45,11 +45,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                     var groupId = cert.Substring(0, cert.Length - 4);
                     // find isser cert with serial no.
 
-                    var result = await _certificateGroups.GetIssuerCACertificateVersionsAsync(
+                    var result = await _vault.GetIssuerCACertificateVersionsAsync(
                         groupId, false);
                     while (result.Chain != null && result.Chain.Count > 0) {
                         foreach (var certVersion in result.Chain) {
-                            if (serial.Equals(certVersion.SerialNumber, StringComparison.OrdinalIgnoreCase)) {
+                            if (serial.EqualsIgnoreCase(certVersion.SerialNumber)) {
                                 var byteArray = certVersion.ToRawData();
                                 return new FileContentResult(byteArray, ContentEncodings.MimeTypeCert) {
                                     FileDownloadName = certVersion.GetFileNameOrDefault(groupId) + ".cer"
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                         if (result.NextPageLink == null) {
                             break;
                         }
-                        result = await _certificateGroups.GetIssuerCACertificateVersionsAsync(
+                        result = await _vault.GetIssuerCACertificateVersionsAsync(
                             groupId, false, result.NextPageLink);
                     }
                 }
@@ -82,13 +82,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 if (crl.EndsWith(".crl")) {
                     var groupId = crl.Substring(0, crl.Length - 4);
                     // find isser cert with serial no.
-                    var result = await _certificateGroups.GetIssuerCACertificateVersionsAsync(
+                    var result = await _vault.GetIssuerCACertificateVersionsAsync(
                         groupId, false);
                     while (result.Chain != null && result.Chain.Count > 0) {
                         foreach (var cert in result.Chain) {
-                            if (serial.Equals(cert.SerialNumber, StringComparison.OrdinalIgnoreCase)) {
+                            if (serial.EqualsIgnoreCase(cert.SerialNumber)) {
                                 var thumbPrint = cert.Thumbprint;
-                                var crlBinary = await _certificateGroups.GetIssuerCACrlChainAsync(
+                                var crlBinary = await _vault.GetIssuerCACrlChainAsync(
                                     groupId, thumbPrint);
                                 var byteArray = crlBinary.Chain?.FirstOrDefault()?.ToRawData();
                                 if (byteArray == null) {
@@ -102,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                         if (result.NextPageLink == null) {
                             break;
                         }
-                        result = await _certificateGroups.GetIssuerCACertificateVersionsAsync(
+                        result = await _vault.GetIssuerCACertificateVersionsAsync(
                             groupId, false, result.NextPageLink);
                     }
                 }
@@ -113,6 +113,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             return new NotFoundResult();
         }
 
-        private readonly IVaultClient _certificateGroups;
+        private readonly IVaultClient _vault;
     }
 }

@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             ApplicationType = model.ApplicationType;
             ApplicationUri = model.ApplicationUri;
             ApplicationName = model.ApplicationName;
-            Locale = model.Locale;
+            LocalizedNames = model.LocalizedNames;
             Certificate = model.Certificate;
             ProductUri = model.ProductUri;
             SiteId = model.SiteId;
@@ -42,6 +42,17 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             DiscoveryUrls = model.DiscoveryUrls;
             Capabilities = model.Capabilities;
             NotSeenSince = model.NotSeenSince;
+            State = model.State;
+            GatewayServerUri = model.GatewayServerUri;
+            RecordId = model.RecordId;
+            Created = model.Created == null ? null :
+                new RegistryOperationApiModel(model.Created);
+            Approved = model.Created == null ? null :
+                new RegistryOperationApiModel(model.Approved);
+            Updated = model.Created == null ? null :
+                new RegistryOperationApiModel(model.Updated);
+            Deleted = model.Created == null ? null :
+                new RegistryOperationApiModel(model.Deleted);
         }
 
         /// <summary>
@@ -53,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
                 ApplicationType = ApplicationType,
                 ApplicationUri = ApplicationUri,
                 ApplicationName = ApplicationName,
-                Locale = Locale,
+                LocalizedNames = LocalizedNames,
                 Certificate = Certificate,
                 ProductUri = ProductUri,
                 SiteId = SiteId,
@@ -62,9 +73,31 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
                 DiscoveryProfileUri = DiscoveryProfileUri,
                 DiscoveryUrls = DiscoveryUrls,
                 Capabilities = Capabilities,
-                NotSeenSince = NotSeenSince
+                NotSeenSince = NotSeenSince,
+                State = State,
+                GatewayServerUri = GatewayServerUri,
+                RecordId = RecordId,
+                Created = Created?.ToServiceModel(),
+                Approved = Approved?.ToServiceModel(),
+                Updated = Updated?.ToServiceModel(),
+                Deleted = Deleted?.ToServiceModel(),
             };
         }
+
+        /// <summary>
+        /// Record id
+        /// </summary>
+        [JsonProperty(PropertyName = "id",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
+        public uint? RecordId { get; set; }
+
+        /// <summary>
+        /// State
+        /// </summary>
+        [JsonProperty(PropertyName = "state")]
+        [DefaultValue(ApplicationState.New)]
+        public ApplicationState State { get; set; }
 
         /// <summary>
         /// Unique application id
@@ -94,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         public string ProductUri { get; set; }
 
         /// <summary>
-        /// Name of server
+        /// Default name of application
         /// </summary>
         [JsonProperty(PropertyName = "applicationName",
             NullValueHandling = NullValueHandling.Ignore)]
@@ -102,14 +135,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         public string ApplicationName { get; set; }
 
         /// <summary>
-        /// Locale of name - defaults to "en"
+        /// Localized Names of application keyed on locale
         /// </summary>
-        /// <example>en</example>
-        /// <example>de</example>
-        [JsonProperty(PropertyName = "locale",
+        [JsonProperty(PropertyName = "localizedNames",
             NullValueHandling = NullValueHandling.Ignore)]
         [DefaultValue(null)]
-        public string Locale { get; set; }
+        public Dictionary<string, string> LocalizedNames { get; set; }
 
         /// <summary>
         /// Application public cert
@@ -146,6 +177,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         public string DiscoveryProfileUri { get; set; }
 
         /// <summary>
+        /// Gateway server uri
+        /// </summary>
+        [JsonProperty(PropertyName = "gatewayServerUri",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
+        public string GatewayServerUri { get; set; }
+
+        /// <summary>
         /// Host addresses of server application or null
         /// </summary>
         [JsonProperty(PropertyName = "hostAddresses",
@@ -178,5 +217,37 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             NullValueHandling = NullValueHandling.Ignore)]
         [DefaultValue(null)]
         public DateTime? NotSeenSince { get; set; }
+
+        /// <summary>
+        /// Created
+        /// </summary>
+        [JsonProperty(PropertyName = "created",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
+        public RegistryOperationApiModel Created { get; set; }
+
+        /// <summary>
+        /// Approved
+        /// </summary>
+        [JsonProperty(PropertyName = "approved",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
+        public RegistryOperationApiModel Approved { get; set; }
+
+        /// <summary>
+        /// Updated
+        /// </summary>
+        [JsonProperty(PropertyName = "updated",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
+        public RegistryOperationApiModel Updated { get; set; }
+
+        /// <summary>
+        /// Deleted
+        /// </summary>
+        [JsonProperty(PropertyName = "deleted",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
+        public RegistryOperationApiModel Deleted { get; set; }
     }
 }

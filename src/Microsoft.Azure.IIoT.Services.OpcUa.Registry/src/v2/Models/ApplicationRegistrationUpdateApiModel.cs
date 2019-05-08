@@ -26,11 +26,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         public ApplicationRegistrationUpdateApiModel(ApplicationRegistrationUpdateModel model) {
             ProductUri = model.ProductUri;
             ApplicationName = model.ApplicationName;
-            Locale = model.Locale;
+            LocalizedNames = model.LocalizedNames;
             Certificate = model.Certificate;
             Capabilities = model.Capabilities;
             DiscoveryUrls = model.DiscoveryUrls;
             DiscoveryProfileUri = model.DiscoveryProfileUri;
+            GatewayServerUri = model.GatewayServerUri;
         }
 
         /// <summary>
@@ -40,11 +41,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         public ApplicationRegistrationUpdateModel ToServiceModel() {
             return new ApplicationRegistrationUpdateModel {
                 ApplicationName = ApplicationName,
-                Locale = Locale,
+                LocalizedNames = LocalizedNames,
                 ProductUri = ProductUri,
                 Certificate = Certificate,
                 Capabilities = Capabilities,
                 DiscoveryUrls = DiscoveryUrls,
+                GatewayServerUri = GatewayServerUri,
                 DiscoveryProfileUri = DiscoveryProfileUri
             };
         }
@@ -58,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         public string ProductUri { get; set; }
 
         /// <summary>
-        /// Application name
+        /// Default name of the server or client.
         /// </summary>
         [JsonProperty(PropertyName = "applicationName",
             NullValueHandling = NullValueHandling.Ignore)]
@@ -66,12 +68,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         public string ApplicationName { get; set; }
 
         /// <summary>
-        /// Locale of name - defaults to "en"
+        /// Localized names keyed off locale id.
+        /// To remove entry, set value for locale id to null.
         /// </summary>
-        [JsonProperty(PropertyName = "locale",
+        [JsonProperty(PropertyName = "localizedNames",
             NullValueHandling = NullValueHandling.Ignore)]
         [DefaultValue(null)]
-        public string Locale { get; set; }
+        public Dictionary<string, string> LocalizedNames { get; set; }
 
         /// <summary>
         /// Application public cert
@@ -104,5 +107,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             NullValueHandling = NullValueHandling.Ignore)]
         [DefaultValue(null)]
         public string DiscoveryProfileUri { get; set; }
+
+        /// <summary>
+        /// Gateway server uri
+        /// </summary>
+        [JsonProperty(PropertyName = "gatewayServerUri",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
+        public string GatewayServerUri { get; set; }
     }
 }

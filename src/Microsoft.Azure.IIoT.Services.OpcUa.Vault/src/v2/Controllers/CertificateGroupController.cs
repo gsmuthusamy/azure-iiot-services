@@ -27,8 +27,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <summary>
         /// Create the controller.
         /// </summary>
-        /// <param name="vaultClient"></param>
-        /// <param name="vaultUser"></param>
+        /// <param name="vaultClient">Service principal client</param>
+        /// <param name="vaultUser">On behalf client</param>
         public CertificateGroupController(IVaultClient vaultClient,
             IUserImpersonation<IVaultClient> vaultUser) {
             _vaultUser = vaultUser;
@@ -86,8 +86,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [Authorize(Policy = Policies.CanManage)]
         public async Task<CertificateGroupConfigurationApiModel> UpdateCertificateGroupConfigurationAsync(
             string group, [FromBody] CertificateGroupConfigurationApiModel config) {
-            var onBehalfOfCertificateGroups = await _vaultUser.ImpersonateAsync(Request);
-            var result = await onBehalfOfCertificateGroups.UpdateGroupConfigurationAsync(
+            var vaultClient = await _vaultUser.ImpersonateAsync(Request);
+            var result = await vaultClient.UpdateGroupConfigurationAsync(
                 group, config.ToServiceModel());
             return new CertificateGroupConfigurationApiModel(result);
         }
@@ -110,8 +110,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [Authorize(Policy = Policies.CanManage)]
         public async Task<CertificateGroupConfigurationApiModel> CreateCertificateGroupAsync(
             string group, string subject, string certType) {
-            var onBehalfOfCertificateGroups = await _vaultUser.ImpersonateAsync(Request);
-            var config = await onBehalfOfCertificateGroups.CreateGroupConfigurationAsync(
+            var vaultClient = await _vaultUser.ImpersonateAsync(Request);
+            var config = await vaultClient.CreateGroupConfigurationAsync(
                 group, subject, certType);
             return new CertificateGroupConfigurationApiModel(config);
         }
@@ -246,9 +246,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpPost("{group}/issuerca/create")]
         [Authorize(Policy = Policies.CanManage)]
         public async Task<X509CertificateApiModel> CreateCertificateGroupIssuerCACertAsync(string group) {
-            var onBehalfOfCertificateGroups = await _vaultUser.ImpersonateAsync(Request);
+            var vaultClient = await _vaultUser.ImpersonateAsync(Request);
             return new X509CertificateApiModel(
-                await onBehalfOfCertificateGroups.CreateIssuerCACertificateAsync(group));
+                await vaultClient.CreateIssuerCACertificateAsync(group));
         }
 
         private readonly IUserImpersonation<IVaultClient> _vaultUser;

@@ -29,15 +29,15 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
     public sealed class CertificateRequestController : Controller {
 
         /// <summary>
-        /// Create controller with service.
+        /// Create controller with services
         /// </summary>
-        /// <param name="certificateServices"></param>
-        /// <param name="userRequests"></param>
+        /// <param name="certificateServices">Service principal client</param>
+        /// <param name="userServices">On behalf client</param>
         /// <param name="config"></param>
         public CertificateRequestController(ICertificateAuthority certificateServices,
-            IUserImpersonation<ICertificateAuthority> userRequests, IVaultConfig config) {
+            IUserImpersonation<ICertificateAuthority> userServices, IVaultConfig config) {
             _certificateServices = certificateServices;
-            _userRequests = userRequests;
+            _userServices = userServices;
             _config = config;
         }
 
@@ -57,9 +57,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             if (signingRequest == null) {
                 throw new ArgumentNullException(nameof(signingRequest));
             }
-            var authorityId = User.Identity.Name;
             return await _certificateServices.StartSigningRequestAsync(
-                signingRequest.ToServiceModel(), authorityId);
+                signingRequest.ToServiceModel(), User.Identity.Name);
         }
 
         /// <summary>
@@ -79,9 +78,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             if (newKeyPairRequest == null) {
                 throw new ArgumentNullException(nameof(newKeyPairRequest));
             }
-            var requestId = await _certificateServices.StartNewKeyPairRequestAsync(
+            return await _certificateServices.StartNewKeyPairRequestAsync(
                 newKeyPairRequest.ToServiceModel(), User.Identity.Name);
-            return requestId;
         }
 
         /// <summary>
@@ -106,8 +104,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [Authorize(Policy = Policies.CanSign)]
         public async Task ApproveCertificateRequestAsync(string requestId) {
             // for auto approve the service app id must have signing rights in keyvault
-            var ca = await _userRequests.ImpersonateAsync(Request);
-            await ca.ApproveAsync(requestId, false);
+            var ca = await _userServices.ImpersonateAsync(Request);
+            await ca.ApproveAsync(requestId);
         }
 
         /// <summary>
@@ -124,8 +122,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [Authorize(Policy = Policies.CanSign)]
         public async Task RejectCertificateRequestAsync(string requestId) {
             // for auto approve the service app id must have signing rights in keyvault
-            var ca = await _userRequests.ImpersonateAsync(Request);
-            await ca.ApproveAsync(requestId, true);
+            var ca = await _userServices.ImpersonateAsync(Request);
+            await ca.RejectAsync(requestId);
         }
 
         /// <summary>
@@ -204,7 +202,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpPost("{requestId}/revoke")]
         [Authorize(Policy = Policies.CanSign)]
         public async Task RevokeCertificateRequestAsync(string requestId) {
-            var ca = await _userRequests.ImpersonateAsync(Request);
+            var ca = await _userServices.ImpersonateAsync(Request);
             await ca.RevokeAsync(requestId);
         }
 
@@ -227,7 +225,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpPost("{group}/revokegroup")]
         [Authorize(Policy = Policies.CanSign)]
         public async Task RevokeCertificateGroupAsync(string group, bool? allVersions) {
-            var ca = await _userRequests.ImpersonateAsync(Request);
+            var ca = await _userServices.ImpersonateAsync(Request);
             await ca.RevokeGroupAsync(group, allVersions ?? true);
         }
 
@@ -290,14 +288,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// </returns>
         [HttpGet("{requestId}/{applicationId}/fetch")]
         [Authorize(Policy = Policies.CanWrite)]
-        public async Task<FetchRequestResultApiModel> FetchCertificateRequestResultAsync(
+        public async Task<FetchCertificateRequestResponseApiModel> FetchCertificateRequestResultAsync(
             string requestId, string applicationId) {
             var result = await _certificateServices.FetchRequestAsync(requestId, applicationId);
-            return new FetchRequestResultApiModel(result);
+            return new FetchCertificateRequestResponseApiModel(result);
         }
 
         private readonly ICertificateAuthority _certificateServices;
-        private readonly IUserImpersonation<ICertificateAuthority> _userRequests;
+        private readonly IUserImpersonation<ICertificateAuthority> _userServices;
         private readonly IVaultConfig _config;
     }
 }

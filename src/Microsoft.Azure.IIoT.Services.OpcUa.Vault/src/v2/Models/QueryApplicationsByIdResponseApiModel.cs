@@ -16,6 +16,21 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     public sealed class QueryApplicationsByIdResponseApiModel {
 
         /// <summary>
+        /// Create query response
+        /// </summary>
+        /// <param name="model"></param>
+        public QueryApplicationsByIdResponseApiModel(
+            QueryApplicationsByIdResultModel model) {
+            var applicationsList = new List<ApplicationRecordApiModel>();
+            foreach (var application in model.Applications) {
+                applicationsList.Add(new ApplicationRecordApiModel(application));
+            }
+            Applications = applicationsList;
+            LastCounterResetTime = model.LastCounterResetTime;
+            NextRecordId = model.NextRecordId;
+        }
+
+        /// <summary>
         /// Applications found
         /// </summary>
         [JsonProperty(PropertyName = "applications")]
@@ -34,20 +49,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         [JsonProperty(PropertyName = "nextRecordId")]
         [Required]
         public uint NextRecordId { get; set; }
-
-        /// <summary>
-        /// Create query response
-        /// </summary>
-        /// <param name="model"></param>
-        public QueryApplicationsByIdResponseApiModel(
-            QueryApplicationsByIdResultModel model) {
-            var applicationsList = new List<ApplicationRecordApiModel>();
-            foreach (var application in model.Applications) {
-                applicationsList.Add(new ApplicationRecordApiModel(application));
-            }
-            Applications = applicationsList;
-            LastCounterResetTime = model.LastCounterResetTime;
-            NextRecordId = model.NextRecordId;
-        }
     }
 }

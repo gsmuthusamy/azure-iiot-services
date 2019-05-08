@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
-    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Models;
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using System.Collections.Generic;
@@ -16,33 +15,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     public sealed class QueryApplicationsResponseApiModel {
 
         /// <summary>
-        /// Default constructor
-        /// </summary>
-        public QueryApplicationsResponseApiModel() {
-        }
-
-        /// <summary>
         /// Create model
         /// </summary>
         /// <param name="model"></param>
         public QueryApplicationsResponseApiModel(QueryApplicationsResultModel model) {
-            Applications = model.Applications?
+            Applications = model?.Applications?
                 .Select(a => new ApplicationRecordApiModel(a))
                 .ToList();
-            NextPageLink = model.NextPageLink;
-        }
-
-        /// <summary>
-        /// Convert to service model
-        /// </summary>
-        /// <returns></returns>
-        public QueryApplicationsResultModel ToServiceModel() {
-            return new QueryApplicationsResultModel {
-                NextPageLink = NextPageLink,
-                Applications = Applications?
-                    .Select(a => a.ToServiceModel())
-                    .ToList()
-            };
+            NextPageLink = model?.NextPageLink;
         }
 
         /// <summary>

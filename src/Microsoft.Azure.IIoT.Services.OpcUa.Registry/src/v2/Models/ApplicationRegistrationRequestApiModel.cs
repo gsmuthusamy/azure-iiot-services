@@ -28,11 +28,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             ApplicationType = model.ApplicationType;
             ApplicationUri = model.ApplicationUri;
             ApplicationName = model.ApplicationName;
-            Locale = model.Locale;
+            LocalizedNames = model.LocalizedNames;
             ProductUri = model.ProductUri;
             DiscoveryProfileUri = model.DiscoveryProfileUri;
             DiscoveryUrls = model.DiscoveryUrls;
             Capabilities = model.Capabilities;
+            GatewayServerUri = model.GatewayServerUri;
         }
 
         /// <summary>
@@ -43,10 +44,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
                 ApplicationType = ApplicationType,
                 ApplicationUri = ApplicationUri,
                 ApplicationName = ApplicationName,
-                Locale = Locale,
+                LocalizedNames = LocalizedNames,
                 ProductUri = ProductUri,
                 DiscoveryProfileUri = DiscoveryProfileUri,
                 DiscoveryUrls = DiscoveryUrls,
+                GatewayServerUri = GatewayServerUri,
                 Capabilities = Capabilities
             };
         }
@@ -77,7 +79,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         public string ProductUri { get; set; }
 
         /// <summary>
-        /// Name of the server or client.
+        /// Default name of the server or client.
         /// </summary>
         [JsonProperty(PropertyName = "applicationName",
             NullValueHandling = NullValueHandling.Ignore)]
@@ -85,14 +87,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         public string ApplicationName { get; set; }
 
         /// <summary>
-        /// Locale of name
+        /// Localized names key off locale id.
         /// </summary>
-        /// <example>en</example>
-        /// <example>de</example>
-        [JsonProperty(PropertyName = "locale",
+        [JsonProperty(PropertyName = "localizedNames",
             NullValueHandling = NullValueHandling.Ignore)]
         [DefaultValue(null)]
-        public string Locale { get; set; }
+        public Dictionary<string, string> LocalizedNames { get; set; }
 
         /// <summary>
         /// The OPC UA defined capabilities of the server.
@@ -119,5 +119,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             NullValueHandling = NullValueHandling.Ignore)]
         [DefaultValue(null)]
         public string DiscoveryProfileUri { get; set; }
+
+        /// <summary>
+        /// Gateway server uri
+        /// </summary>
+        [JsonProperty(PropertyName = "gatewayServerUri",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
+        public string GatewayServerUri { get; set; }
     }
 }

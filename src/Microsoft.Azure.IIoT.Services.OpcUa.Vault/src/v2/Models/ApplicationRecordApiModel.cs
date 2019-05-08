@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Create model
         /// </summary>
         /// <param name="model"></param>
-        public ApplicationRecordApiModel(ApplicationRecordModel model) {
+        public ApplicationRecordApiModel(ApplicationInfoModel model) {
             ApplicationId = model.ApplicationId;
             RecordId = model.RecordId;
             State = model.State;
@@ -47,8 +47,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Convert to service model
         /// </summary>
         /// <returns></returns>
-        public ApplicationRecordModel ToServiceModel() {
-            return new ApplicationRecordModel {
+        public ApplicationInfoModel ToServiceModel() {
+            return new ApplicationInfoModel {
                 ApplicationId = ApplicationId,
                 ApplicationUri = ApplicationUri,
                 ApplicationName = ApplicationName,

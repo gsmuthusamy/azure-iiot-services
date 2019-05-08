@@ -134,7 +134,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
 
 
         private RegistryApplicationStatusType TestApplicationStatus(ApplicationInfoApiModel registry,
-            ApplicationRecordModel application) {
+            ApplicationInfoModel2 application) {
             if (string.Equals(registry.ApplicationUri, application.ApplicationUri)) {
                 if ((int)registry.ApplicationType != (int)application.ApplicationType ||
                     !string.Equals(registry.ApplicationName, application.ApplicationName) ||
@@ -180,14 +180,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             return modelResult;
         }
 
-        private ApplicationRecordModel NewApplicationFromRegistry(ApplicationInfoApiModel record) {
+        private ApplicationInfoModel2 NewApplicationFromRegistry(ApplicationInfoApiModel record) {
             var applicationNames = new[] {
                 new ApplicationNameModel {
                     Name = record.ApplicationName,
                    // Locale = record.LocalizedNames
                 }
             };
-            var newApplication = new ApplicationRecordModel {
+            var newApplication = new ApplicationInfoModel2 {
                 ApplicationName = record.ApplicationName,
                // ApplicationNames = applicationNames,
                 ApplicationType = (IIoT.OpcUa.Registry.Models.ApplicationType)record.ApplicationType,

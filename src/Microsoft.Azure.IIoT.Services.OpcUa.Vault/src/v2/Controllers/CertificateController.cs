@@ -79,7 +79,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             try {
                 serial = serial.ToLower();
                 crl = crl.ToLower();
-                if (crl.EndsWith(".crl")) {
+                if (crl.EndsWith(".crl", StringComparison.OrdinalIgnoreCase)) {
                     var groupId = crl.Substring(0, crl.Length - 4);
                     // find isser cert with serial no.
                     var result = await _vault.GetIssuerCACertificateVersionsAsync(

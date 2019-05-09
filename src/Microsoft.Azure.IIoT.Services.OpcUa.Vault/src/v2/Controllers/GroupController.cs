@@ -157,7 +157,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         public async Task<CertificateGroupConfigurationCollectionApiModel> GetCertificateGroupsConfigurationAsync() {
             // Use service principal
             HttpContext.User = null; // TODO Set sp
-            var config = await _vaultClient.GetGroupConfigurationsAsync();
+            var config = await _vaultClient.ListGroupConfigurationsAsync();
             return new CertificateGroupConfigurationCollectionApiModel(config);
         }
 

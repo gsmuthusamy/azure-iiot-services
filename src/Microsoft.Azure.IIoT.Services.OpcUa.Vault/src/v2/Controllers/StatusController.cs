@@ -14,6 +14,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
     using System;
     using System.Threading.Tasks;
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Registry.Models;
 
     /// <summary>
     /// The status service.

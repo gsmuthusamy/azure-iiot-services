@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
-    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
+    using Microsoft.Azure.IIoT.OpcUa.Registry.Models;
     using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.Linq;
@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <param name="model"></param>
         public QueryApplicationsResponseApiModel(QueryApplicationsResultModel model) {
             Applications = model?.Applications?
-                .Select(a => new ApplicationRecordApiModel(a))
+                .Select(a => new ApplicationInfoApiModel(a))
                 .ToList();
             NextPageLink = model?.NextPageLink;
         }
@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Found applications
         /// </summary>
         [JsonProperty(PropertyName = "applications")]
-        public IList<ApplicationRecordApiModel> Applications { get; set; }
+        public IList<ApplicationInfoApiModel> Applications { get; set; }
 
         /// <summary>
         /// Next page

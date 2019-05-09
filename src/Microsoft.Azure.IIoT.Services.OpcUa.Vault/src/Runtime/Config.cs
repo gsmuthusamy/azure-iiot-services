@@ -86,6 +86,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         /// <inheritdoc/>
         public string KeyVaultResourceId => _vault.KeyVaultResourceId;
         /// <inheritdoc/>
+        public bool KeyVaultIsHsm => _vault.KeyVaultIsHsm;
+        /// <inheritdoc/>
         public string CosmosDBConnectionString => _vault.CosmosDBConnectionString;
         /// <inheritdoc/>
         public string CosmosDBDatabase => _vault.CosmosDBDatabase;

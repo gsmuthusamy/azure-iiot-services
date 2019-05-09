@@ -3,19 +3,20 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
+    using Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Auth;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Filters;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2;
     using Microsoft.Azure.IIoT.OpcUa.Api.Registry;
     using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Models;
     using Microsoft.Azure.IIoT.OpcUa.Vault;
+    using Microsoft.Azure.IIoT.OpcUa.Registry.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
 
     /// <summary>
     /// Registry sync services.
@@ -86,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                         status.Status == RegistryApplicationStatusType.New) {
                         var newApplication = NewApplicationFromRegistry(record);
                         var registeredApplication = await _applicationDatabase.RegisterApplicationAsync(newApplication);
-                        status.Application = new ApplicationRecordApiModel(registeredApplication);
+                        status.Application = new Models.ApplicationInfoApiModel(registeredApplication);
                         modelResult.Add(status);
                     }
                 }
@@ -96,7 +97,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 var status = await GetApplicationStatusAsync(registryApplication.Application);
                 var newApplication = NewApplicationFromRegistry(registryApplication.Application);
                 var registeredApplication = await _applicationDatabase.RegisterApplicationAsync(newApplication);
-                status.Application = new ApplicationRecordApiModel(registeredApplication);
+                status.Application = new Models.ApplicationInfoApiModel(registeredApplication);
                 modelResult.Add(status);
             }
             return new RegistryApplicationStatusResponseApiModel(modelResult, null);
@@ -133,8 +134,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         }
 
 
-        private RegistryApplicationStatusType TestApplicationStatus(ApplicationInfoApiModel registry,
-            ApplicationInfoModel2 application) {
+        private RegistryApplicationStatusType TestApplicationStatus(IIoT.OpcUa.Api.Registry.Models.ApplicationInfoApiModel registry,
+            ApplicationInfoModel application) {
             if (string.Equals(registry.ApplicationUri, application.ApplicationUri)) {
                 if ((int)registry.ApplicationType != (int)application.ApplicationType ||
                     !string.Equals(registry.ApplicationName, application.ApplicationName) ||
@@ -151,12 +152,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             return RegistryApplicationStatusType.Unknown;
         }
 
-        private async Task<RegistryApplicationStatusApiModel> GetApplicationStatusAsync(ApplicationInfoApiModel record) {
+        private async Task<RegistryApplicationStatusApiModel> GetApplicationStatusAsync(IIoT.OpcUa.Api.Registry.Models.ApplicationInfoApiModel record) {
             var modelResult = new RegistryApplicationStatusApiModel {
                 Status = RegistryApplicationStatusType.Unknown
             };
             if (record != null) {
-                modelResult.Registry = record;
+               // modelResult.Registry = record;
                 modelResult.Status = RegistryApplicationStatusType.New;
                 try {
                     var applications = await _applicationDatabase.ListApplicationAsync(record.ApplicationUri);
@@ -165,7 +166,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                         if (status == RegistryApplicationStatusType.Ok ||
                             status == RegistryApplicationStatusType.Update) {
                             // TODO: check if there are more results?
-                            modelResult.Application = new ApplicationRecordApiModel(application);
+                            modelResult.Application = new Models.ApplicationInfoApiModel(application);
                             modelResult.Status = status;
                             break;
                         }
@@ -180,20 +181,20 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             return modelResult;
         }
 
-        private ApplicationInfoModel2 NewApplicationFromRegistry(ApplicationInfoApiModel record) {
-            var applicationNames = new[] {
-                new ApplicationNameModel {
-                    Name = record.ApplicationName,
-                   // Locale = record.LocalizedNames
-                }
-            };
-            var newApplication = new ApplicationInfoModel2 {
+        private ApplicationInfoModel NewApplicationFromRegistry(IIoT.OpcUa.Api.Registry.Models.ApplicationInfoApiModel record) {
+            var newApplication = new ApplicationInfoModel {
                 ApplicationName = record.ApplicationName,
                // ApplicationNames = applicationNames,
                 ApplicationType = (IIoT.OpcUa.Registry.Models.ApplicationType)record.ApplicationType,
+                LocalizedNames = record.LocalizedNames,
+                ApplicationId = record.ApplicationId,
+                DiscoveryProfileUri = record.DiscoveryProfileUri,
+                GatewayServerUri = record.GatewayServerUri,
+                SupervisorId = record.SupervisorId,
+                State = (IIoT.OpcUa.Registry.Models.ApplicationState)record.State,
                 ApplicationUri = record.ApplicationUri,
-                DiscoveryUrls = record.DiscoveryUrls.ToArray(),
-                AuthorityId = User.Identity.Name,
+                DiscoveryUrls = record.DiscoveryUrls.ToHashSetSafe(),
+               //AuthorityId = User.Identity.Name,
                 ProductUri = record.ProductUri,
                // RegistryId = record.ApplicationId,
                // ApplicationState = Microsoft.Azure.IIoT.OpcUa.Vault.Models.ApplicationState.New,
@@ -201,10 +202,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             };
             if (record.ApplicationType != IIoT.OpcUa.Api.Registry.Models.ApplicationType.Client) {
                 if (record.Capabilities != null) {
-                    newApplication.Capabilities = string.Join(",", record.Capabilities);
-                }
-                else {
-                    newApplication.Capabilities = "NA";
+                    newApplication.Capabilities = record.Capabilities;
                 }
             }
             return newApplication;

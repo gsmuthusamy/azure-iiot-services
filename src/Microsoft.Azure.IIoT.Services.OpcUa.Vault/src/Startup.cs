@@ -58,10 +58,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         /// <param name="env"></param>
         /// <param name="configuration"></param>
         public Startup(IHostingEnvironment env, IConfiguration configuration) {
+            if (configuration == null) {
+                throw new ArgumentNullException(nameof(configuration));
+            }
             Environment = env;
 
             var configBuilder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
+                .AddConfiguration(configuration)
                 .AddJsonFile("appsettings.json", true, true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
                 .AddFromDotEnvFile()
@@ -218,16 +222,17 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
 
             // ... with bearer auth
             if (Config.AuthRequired) {
-                builder.RegisterType<BehalfOfTokenProvider>()
-                    .AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<DistributedTokenCache>()
                     .AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<HttpBearerAuthentication>()
                     .AsImplementedInterfaces().SingleInstance();
             }
 
+            builder.RegisterType<UserOrServiceTokenProvider>()
+                .AsImplementedInterfaces().SingleInstance();
+
             // Register endpoint services and ...
-            builder.RegisterType<KeyVaultCertificateStore>()
+            builder.RegisterType<DefaultVaultClient>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<DefaultApplicationDatabase>()
                 .AsImplementedInterfaces().SingleInstance();

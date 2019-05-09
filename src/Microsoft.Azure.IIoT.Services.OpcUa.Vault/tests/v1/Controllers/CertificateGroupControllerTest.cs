@@ -12,8 +12,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.v2.Controllers {
     public class CertificateGroupControllerTest {
 
         private readonly Mock<IVaultClient> _group;
-        private readonly Mock<IUserImpersonation<IVaultClient>> _user;
-        private readonly CertificateGroupController _target;
+        private readonly GroupController _target;
 
         public const string DateFormat = "yyyy-MM-dd'T'HH:mm:sszzz";
 
@@ -29,10 +28,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.v2.Controllers {
             // we can test the class in isolation
             // Moq Quickstart: https://github.com/Moq/moq4/wiki/Quickstart
             _group = new Mock<IVaultClient>();
-            _user = new Mock<IUserImpersonation<IVaultClient>>();
 
             // By convention we call "target" the class under test
-            _target = new CertificateGroupController(_group.Object, _user.Object);
+            _target = new GroupController(_group.Object);
         }
 
         [Fact, Trait(Constants.Type, Constants.ControllerTest)]

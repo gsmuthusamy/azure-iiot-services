@@ -3,9 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
-    using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Models;
-    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
+    using Microsoft.Azure.IIoT.OpcUa.Registry.Models;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -29,6 +28,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// The application information in the security database.
         /// </summary>
         [JsonProperty(PropertyName = "application")]
-        public ApplicationRecordApiModel Application { get; set; }
+        public ApplicationInfoApiModel Application { get; set; }
     }
 }

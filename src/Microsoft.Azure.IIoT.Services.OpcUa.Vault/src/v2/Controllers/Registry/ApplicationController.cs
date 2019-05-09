@@ -3,10 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
+    using Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Auth;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Filters;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2;
     using Microsoft.Azure.IIoT.OpcUa.Vault;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -45,14 +46,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <returns>The registered application record</returns>
         [HttpPost("register")]
         [Authorize(Policy = Policies.CanWrite)]
-        public async Task<ApplicationRecordApiModel> RegisterApplicationAsync(
-            [FromBody] ApplicationRecordApiModel application) {
+        public async Task<ApplicationInfoApiModel> RegisterApplicationAsync(
+            [FromBody] ApplicationInfoApiModel application) {
             if (application == null) {
                 throw new ArgumentNullException(nameof(application));
             }
             var applicationServiceModel = application.ToServiceModel();
-            applicationServiceModel.AuthorityId = User.Identity.Name;
-            return new ApplicationRecordApiModel(
+            // TODO: applicationServiceModel.AuthorityId = User.Identity.Name;
+            return new ApplicationInfoApiModel(
                 await _applicationDatabase.RegisterApplicationAsync(applicationServiceModel));
         }
 
@@ -65,8 +66,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <param name="applicationId">The application id</param>
         /// <returns>The application record</returns>
         [HttpGet("{applicationId}")]
-        public async Task<ApplicationRecordApiModel> GetApplicationAsync(string applicationId) {
-            return new ApplicationRecordApiModel(
+        public async Task<ApplicationInfoApiModel> GetApplicationAsync(string applicationId) {
+            return new ApplicationInfoApiModel(
                 await _applicationDatabase.GetApplicationAsync(applicationId));
         }
 
@@ -81,14 +82,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <returns>The updated application record</returns>
         [HttpPut("{applicationId}")]
         [Authorize(Policy = Policies.CanWrite)]
-        public async Task<ApplicationRecordApiModel> UpdateApplicationAsync(
-            [FromBody] ApplicationRecordApiModel application) {
+        public async Task<ApplicationInfoApiModel> UpdateApplicationAsync(
+            [FromBody] ApplicationInfoApiModel application) {
             if (application == null) {
                 throw new ArgumentNullException(nameof(application));
             }
             var applicationServiceModel = application.ToServiceModel();
-            applicationServiceModel.AuthorityId = User.Identity.Name;
-            return new ApplicationRecordApiModel(
+            // TODO: applicationServiceModel.AuthorityId = User.Identity.Name;
+            return new ApplicationInfoApiModel(
                 await _applicationDatabase.UpdateApplicationAsync(application.ApplicationId, applicationServiceModel));
         }
 
@@ -106,9 +107,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <returns>The updated application record</returns>
         [HttpPost("{applicationId}/{approved}/approve")]
         [Authorize(Policy = Policies.CanManage)]
-        public async Task<ApplicationRecordApiModel> ApproveApplicationAsync(
+        public async Task<ApplicationInfoApiModel> ApproveApplicationAsync(
             string applicationId, bool approved, bool? force) {
-            return new ApplicationRecordApiModel(
+            return new ApplicationInfoApiModel(
                 await _applicationDatabase.ApproveApplicationAsync(applicationId, approved, force ?? false));
         }
 
@@ -164,10 +165,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         public async Task<QueryApplicationsResponseApiModel> ListApplicationsAsync(
             string applicationUri, [FromQuery] string nextPageLink, [FromQuery] int? pageSize) {
 
-            var results = await _applicationDatabase.ListApplicationAsync(applicationUri);
-            var modelResult = new List<ApplicationRecordApiModel>();
+            var results = await _applicationDatabase.ListApplicationAsync(
+                applicationUri, nextPageLink, pageSize);
+            var modelResult = new List<ApplicationInfoApiModel>();
             foreach (var record in results) {
-                modelResult.Add(new ApplicationRecordApiModel(record));
+                modelResult.Add(new ApplicationInfoApiModel(record));
             }
             return new QueryApplicationsResponseApiModel(null) {
                 Applications = modelResult,

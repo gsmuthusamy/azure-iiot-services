@@ -231,19 +231,18 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             builder.RegisterType<UserOrServiceTokenProvider>()
                 .AsImplementedInterfaces().SingleInstance();
 
-            // Register endpoint services and ...
+            // Vault services ...
             builder.RegisterType<CertificateManagement>()
                 .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<IIoT.OpcUa.Vault.KeyVault.Services.KeyVaultServiceClient>()
+                .AsImplementedInterfaces().SingleInstance();
+
             builder.RegisterType<ApplicationDatabase>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<CertificateAuthority>()
                 .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<IIoT.OpcUa.Vault.Services.CosmosDB.Services.DocumentDBRepository>()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<IIoT.OpcUa.Vault.Services.KeyVault.Services.KeyVaultServiceClient>()
-                .AsImplementedInterfaces().SingleInstance();
 
-            // ... into cosmos db collection with configured name.
+            // ... with cosmos db collection as storage
             builder.RegisterType<ItemContainerFactory>()
                 .AsImplementedInterfaces();
             builder.RegisterType<CosmosDbServiceClient>()

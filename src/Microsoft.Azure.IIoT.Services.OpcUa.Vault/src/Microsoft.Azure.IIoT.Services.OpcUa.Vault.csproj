@@ -25,18 +25,6 @@
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
   </ItemGroup>
   <Choose>
-    <When Condition="Exists('..\..\..\..\api')">
-      <ItemGroup>
-        <ProjectReference Include="..\..\..\..\api\src\Microsoft.Azure.IIoT.OpcUa.Api.Registry\src\Microsoft.Azure.IIoT.OpcUa.Api.Registry.csproj" />
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <ItemGroup>
-        <PackageReference Include="Microsoft.Azure.IIoT.OpcUa.Api.Registry" Version="$(ServicesApiVersion)" />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
-  <Choose>
     <When Condition="Exists('..\..\..\..\common')">
       <ItemGroup>
         <ProjectReference Include="..\..\..\..\common\src\Microsoft.Azure.IIoT.Services\src\Microsoft.Azure.IIoT.Services.csproj" />

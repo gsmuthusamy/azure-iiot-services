@@ -7,23 +7,24 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
 
     /// <summary>
     /// New key pair request
     /// </summary>
-    public sealed class CreateNewKeyPairRequestApiModel {
+    public sealed class NewKeyPairRequestApiModel {
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public CreateNewKeyPairRequestApiModel() {
+        public NewKeyPairRequestApiModel() {
         }
 
         /// <summary>
         /// Create new request
         /// </summary>
         /// <param name="model"></param>
-        public CreateNewKeyPairRequestApiModel(CreateNewKeyPairRequestModel model) {
+        public NewKeyPairRequestApiModel(NewKeyPairRequestModel model) {
             ApplicationId = model.ApplicationId;
             CertificateGroupId = model.CertificateGroupId;
             CertificateTypeId = model.CertificateTypeId;
@@ -36,8 +37,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <summary>
         /// Convert to service model
         /// </summary>
-        public CreateNewKeyPairRequestModel ToServiceModel() {
-            return new CreateNewKeyPairRequestModel {
+        public NewKeyPairRequestModel ToServiceModel() {
+            return new NewKeyPairRequestModel {
                 ApplicationId = ApplicationId,
                 CertificateGroupId = CertificateGroupId,
                 CertificateTypeId = CertificateTypeId,
@@ -52,42 +53,48 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Application id
         /// </summary>
         [JsonProperty(PropertyName = "applicationId")]
+        [Required]
         public string ApplicationId { get; set; }
 
         /// <summary>
         /// Certificate group
         /// </summary>
         [JsonProperty(PropertyName = "certificateGroupId")]
+        [Required]
         public string CertificateGroupId { get; set; }
 
         /// <summary>
         /// Type
         /// </summary>
         [JsonProperty(PropertyName = "certificateTypeId")]
-        public string CertificateTypeId { get; set; }
+        [Required]
+        public CertificateType CertificateTypeId { get; set; }
 
         /// <summary>
         /// Subject name
         /// </summary>
         [JsonProperty(PropertyName = "subjectName")]
+        [Required]
         public string SubjectName { get; set; }
 
         /// <summary>
         /// Domain names
         /// </summary>
         [JsonProperty(PropertyName = "domainNames")]
-        public IList<string> DomainNames { get; set; }
+        public List<string> DomainNames { get; set; }
 
         /// <summary>
         /// Format
         /// </summary>
         [JsonProperty(PropertyName = "privateKeyFormat")]
-        public string PrivateKeyFormat { get; set; }
+        [Required]
+        public PrivateKeyFormat PrivateKeyFormat { get; set; }
 
         /// <summary>
         /// Password
         /// </summary>
         [JsonProperty(PropertyName = "privateKeyPassword")]
+        [Required]
         public string PrivateKeyPassword { get; set; }
     }
 }

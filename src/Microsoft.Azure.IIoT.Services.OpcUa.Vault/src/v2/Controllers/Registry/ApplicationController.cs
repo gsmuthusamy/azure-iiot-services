@@ -8,11 +8,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Auth;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Filters;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2;
-    using Microsoft.Azure.IIoT.OpcUa.Vault;
+    using Microsoft.Azure.IIoT.OpcUa.Registry;
+    using Microsoft.Azure.IIoT.OpcUa.Registry.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Swashbuckle.AspNetCore.Swagger;
 
@@ -30,7 +30,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// Create controller
         /// </summary>
         /// <param name="applicationDatabase"></param>
-        public ApplicationController(IApplicationsDatabase applicationDatabase) {
+        public ApplicationController(IApplicationRegistry2 applicationDatabase) {
             _applicationDatabase = applicationDatabase;
         }
 
@@ -53,8 +53,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
             }
             var applicationServiceModel = application.ToServiceModel();
             // TODO: applicationServiceModel.AuthorityId = User.Identity.Name;
-            return new ApplicationInfoApiModel(
-                await _applicationDatabase.RegisterApplicationAsync(applicationServiceModel));
+            var result = await _applicationDatabase.RegisterApplicationAsync(
+                applicationServiceModel.ToRegistrationRequest());
+            return await GetApplicationAsync(result.Id);
         }
 
         /// <summary>
@@ -67,8 +68,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// <returns>The application record</returns>
         [HttpGet("{applicationId}")]
         public async Task<ApplicationInfoApiModel> GetApplicationAsync(string applicationId) {
-            return new ApplicationInfoApiModel(
-                await _applicationDatabase.GetApplicationAsync(applicationId));
+            var registration = await _applicationDatabase.GetApplicationAsync(applicationId);
+            return new ApplicationInfoApiModel(registration.Application);
         }
 
         /// <summary>
@@ -89,28 +90,51 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
             }
             var applicationServiceModel = application.ToServiceModel();
             // TODO: applicationServiceModel.AuthorityId = User.Identity.Name;
-            return new ApplicationInfoApiModel(
-                await _applicationDatabase.UpdateApplicationAsync(application.ApplicationId, applicationServiceModel));
+            await _applicationDatabase.UpdateApplicationAsync(application.ApplicationId,
+                applicationServiceModel.ToUpdateRequest());
+            return await GetApplicationAsync(application.ApplicationId);
         }
 
         /// <summary>
-        /// Approve or reject a new application.
+        /// Approve a new application.
         /// </summary>
         /// <remarks>
-        /// A manager can approve a new application or force an application from any state.
-        /// After approval the application is in the 'Approved' or 'Rejected' state.
+        /// A manager can approve a new application or force an application
+        /// from any state.
+        /// After approval the application is in the 'Approved' state.
         /// Requires Manager role.
         /// </remarks>
         /// <param name="applicationId">The application id</param>
-        /// <param name="approved">approve or reject the new application</param>
         /// <param name="force">optional, force application in new state</param>
         /// <returns>The updated application record</returns>
-        [HttpPost("{applicationId}/{approved}/approve")]
+        [HttpPost("{applicationId}/approve")]
         [Authorize(Policy = Policies.CanManage)]
         public async Task<ApplicationInfoApiModel> ApproveApplicationAsync(
-            string applicationId, bool approved, bool? force) {
-            return new ApplicationInfoApiModel(
-                await _applicationDatabase.ApproveApplicationAsync(applicationId, approved, force ?? false));
+            string applicationId, bool? force) {
+            await _applicationDatabase.ApproveApplicationAsync(applicationId,
+                force ?? false);
+            return await GetApplicationAsync(applicationId);
+        }
+
+        /// <summary>
+        /// Reject a new application.
+        /// </summary>
+        /// <remarks>
+        /// A manager can approve a new application or force an application
+        /// from any state.
+        /// After approval the application is in the 'Rejected' state.
+        /// Requires Manager role.
+        /// </remarks>
+        /// <param name="applicationId">The application id</param>
+        /// <param name="force">optional, force application in new state</param>
+        /// <returns>The updated application record</returns>
+        [HttpPost("{applicationId}/reject")]
+        [Authorize(Policy = Policies.CanManage)]
+        public async Task<ApplicationInfoApiModel> RejectApplicationAsync(
+            string applicationId, bool? force) {
+            await _applicationDatabase.RejectApplicationAsync(applicationId,
+                force ?? false);
+            return await GetApplicationAsync(applicationId);
         }
 
         /// <summary>
@@ -162,19 +186,15 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// <returns>The application records</returns>
         [HttpGet("find/{applicationUri}")]
         [AutoRestExtension(NextPageLinkName = "nextPageLink")]
-        public async Task<QueryApplicationsResponseApiModel> ListApplicationsAsync(
+        public async Task<ApplicationInfoListApiModel> ListApplicationsAsync(
             string applicationUri, [FromQuery] string nextPageLink, [FromQuery] int? pageSize) {
 
-            var results = await _applicationDatabase.ListApplicationAsync(
-                applicationUri, nextPageLink, pageSize);
-            var modelResult = new List<ApplicationInfoApiModel>();
-            foreach (var record in results) {
-                modelResult.Add(new ApplicationInfoApiModel(record));
-            }
-            return new QueryApplicationsResponseApiModel(null) {
-                Applications = modelResult,
-                NextPageLink = null
-            };
+            var results = string.IsNullOrEmpty(nextPageLink) ?
+                await _applicationDatabase.QueryApplicationsAsync(
+                new ApplicationRegistrationQueryModel {
+                    ApplicationUri = applicationUri
+                }, pageSize) : await _applicationDatabase.ListApplicationsAsync(nextPageLink, pageSize);
+            return new ApplicationInfoListApiModel(results);
         }
 
         /// <summary>
@@ -197,32 +217,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
             return new QueryApplicationsByIdResponseApiModel(result);
         }
 
-        /// <summary>
-        /// Query applications.
-        /// </summary>
-        /// <remarks>
-        /// List applications that match the query model.
-        /// The returned model can contain a next page link if more results are
-        /// available.
-        /// </remarks>
-        /// <param name="query">The Application query parameters</param>
-        /// <param name="nextPageLink">optional, link to next page </param>
-        /// <param name="pageSize">optional, the maximum number of result per page</param>
-        /// <returns></returns>
-        [HttpPost("query")]
-        [AutoRestExtension(NextPageLinkName = "nextPageLink")]
-        public async Task<QueryApplicationsResponseApiModel> QueryApplicationsAsync(
-            [FromBody] QueryApplicationsRequestApiModel query, [FromQuery] string nextPageLink,
-            [FromQuery] int? pageSize) {
-            if (query == null) {
-                // query all
-                query = new QueryApplicationsRequestApiModel();
-            }
-            var result = await _applicationDatabase.QueryApplicationsAsync(
-                query.ToServiceModel(), nextPageLink, pageSize);
-            return new QueryApplicationsResponseApiModel(result);
-        }
-
-        private readonly IApplicationsDatabase _applicationDatabase;
+        private readonly IApplicationRegistry2 _applicationDatabase;
     }
 }

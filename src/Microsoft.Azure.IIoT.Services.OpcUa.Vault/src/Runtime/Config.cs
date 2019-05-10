@@ -7,7 +7,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
     using Microsoft.Azure.IIoT.Auth.Clients;
     using Microsoft.Azure.IIoT.Auth.Runtime;
     using Microsoft.Azure.IIoT.Auth.Server;
-    using Microsoft.Azure.IIoT.OpcUa.Api.Registry;
     using Microsoft.Azure.IIoT.OpcUa.Vault;
     using Microsoft.Azure.IIoT.OpcUa.Vault.Runtime;
     using Microsoft.Azure.IIoT.Services.Cors;
@@ -15,14 +14,17 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
     using Microsoft.Azure.IIoT.Services.Swagger;
     using Microsoft.Azure.IIoT.Services.Swagger.Runtime;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Storage.CosmosDb;
     using Microsoft.Extensions.Configuration;
     using System;
+    using Microsoft.Azure.IIoT.Storage;
 
     /// <summary>
     /// Web service configuration
     /// </summary>
     public class Config : ConfigBase, IAuthConfig, ICorsConfig,
-        IClientConfig, ISwaggerConfig, IVaultConfig, IRegistryConfig {
+        IClientConfig, ISwaggerConfig, IVaultConfig, ICosmosDbConfig,
+        IItemContainerConfig {
 
         /// <summary>
         /// Configuration constructor
@@ -37,12 +39,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         /// </summary>
         /// <param name="serviceId"></param>
         /// <param name="configuration"></param>
-        internal Config(string serviceId,
-            IConfigurationRoot configuration) :
+        internal Config(string serviceId, IConfigurationRoot configuration) :
             base(configuration) {
             _vault = new VaultConfig(configuration);
+            _cosmos = new VaultConfig(configuration);
+            _db = new VaultConfig(configuration);
             _swagger = new SwaggerConfig(configuration, serviceId);
-            _registry = new RegistryConfig(configuration);
             _auth = new AuthConfig(configuration, serviceId);
             _cors = new CorsConfig(configuration);
         }
@@ -88,17 +90,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         /// <inheritdoc/>
         public bool KeyVaultIsHsm => _vault.KeyVaultIsHsm;
         /// <inheritdoc/>
-        public string CosmosDBConnectionString => _vault.CosmosDBConnectionString;
+        public string DbConnectionString => _cosmos.DbConnectionString;
         /// <inheritdoc/>
-        public string CosmosDBDatabase => _vault.CosmosDBDatabase;
+        public string DatabaseName => _db.DatabaseName;
         /// <inheritdoc/>
-        public string CollectionName => _vault.CollectionName;
+        public string ContainerName => _db.ContainerName;
         /// <inheritdoc/>
         public bool ApplicationsAutoApprove => _vault.ApplicationsAutoApprove;
-        /// <inheritdoc/>
-        public string OpcUaRegistryServiceUrl => _registry.OpcUaRegistryServiceUrl;
-        /// <inheritdoc/>
-        public string OpcUaRegistryServiceResourceId => _registry.OpcUaRegistryServiceResourceId;
 
         /// <summary>
         /// Whether to use role based access
@@ -106,8 +104,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         public bool UseRoles => GetBoolOrDefault("PCS_AUTH_ROLES", true);
 
         private readonly IVaultConfig _vault;
+        private readonly ICosmosDbConfig _cosmos;
+        private readonly IItemContainerConfig _db;
         private readonly SwaggerConfig _swagger;
-        private readonly RegistryConfig _registry;
         private readonly AuthConfig _auth;
         private readonly CorsConfig _cors;
     }

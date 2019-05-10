@@ -7,7 +7,6 @@
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
-    using System.ComponentModel.DataAnnotations;
 
     /// <summary>
     /// Fetch results
@@ -25,13 +24,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         /// <param name="model"></param>
         public FetchCertificateRequestResponseApiModel(FetchCertificateRequestResultModel model) {
-            RequestId = model.RequestId;
-            ApplicationId = model.ApplicationId;
-            State = model.State;
-            CertificateGroupId = model.CertificateGroupId;
-            CertificateTypeId = model.CertificateTypeId;
+            Request = model.Request != null ?
+                new CertificateRequestRecordApiModel(model.Request) : null;
             SignedCertificate = model.SignedCertificate;
-            PrivateKeyFormat = model.PrivateKeyFormat;
             PrivateKey = model.PrivateKey;
             AuthorityId = model.AuthorityId;
         }
@@ -41,71 +36,39 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         public FetchCertificateRequestResultModel ToServiceModel() {
             return new FetchCertificateRequestResultModel {
-                RequestId = RequestId,
-                ApplicationId = ApplicationId,
-                State = State,
-                CertificateGroupId = CertificateGroupId,
-                CertificateTypeId = CertificateTypeId,
+                Request = Request?.ToServiceModel(),
                 SignedCertificate = SignedCertificate,
-                PrivateKeyFormat = PrivateKeyFormat,
                 PrivateKey = PrivateKey,
                 AuthorityId = AuthorityId
             };
         }
 
         /// <summary>
-        /// Request id
+        /// Request
         /// </summary>
-        [JsonProperty(PropertyName = "requestId")]
-        public string RequestId { get; set; }
-
-        /// <summary>
-        /// Application id
-        /// </summary>
-        [JsonProperty(PropertyName = "applicationId")]
-        public string ApplicationId { get; set; }
-
-        /// <summary>
-        /// State
-        /// </summary>
-        [JsonProperty(PropertyName = "state")]
-        [Required]
-        public CertificateRequestState State { get; set; }
-
-        /// <summary>
-        /// Group id
-        /// </summary>
-        [JsonProperty(PropertyName = "certificateGroupId")]
-        public string CertificateGroupId { get; set; }
-
-        /// <summary>
-        /// Type
-        /// </summary>
-        [JsonProperty(PropertyName = "certificateTypeId")]
-        public string CertificateTypeId { get; set; }
+        [JsonProperty(PropertyName = "request",
+            NullValueHandling = NullValueHandling.Ignore)]
+        public CertificateRequestRecordApiModel Request { get; set; }
 
         /// <summary>
         /// Signed certificate
         /// </summary>
-        [JsonProperty(PropertyName = "signedCertificate")]
+        [JsonProperty(PropertyName = "signedCertificate",
+            NullValueHandling = NullValueHandling.Ignore)]
         public byte[] SignedCertificate { get; set; }
-
-        /// <summary>
-        /// Format
-        /// </summary>
-        [JsonProperty(PropertyName = "privateKeyFormat")]
-        public string PrivateKeyFormat { get; set; }
 
         /// <summary>
         /// Private key
         /// </summary>
-        [JsonProperty(PropertyName = "privateKey")]
+        [JsonProperty(PropertyName = "privateKey",
+            NullValueHandling = NullValueHandling.Ignore)]
         public byte[] PrivateKey { get; set; }
 
         /// <summary>
         /// Auth id
         /// </summary>
-        [JsonProperty(PropertyName = "authorityId")]
+        [JsonProperty(PropertyName = "authorityId",
+            NullValueHandling = NullValueHandling.Ignore)]
         public string AuthorityId { get; set; }
     }
 }

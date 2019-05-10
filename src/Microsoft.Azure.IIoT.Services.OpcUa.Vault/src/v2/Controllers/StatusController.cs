@@ -7,14 +7,15 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Auth;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Filters;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Registry;
+    using Microsoft.Azure.IIoT.OpcUa.Registry.Models;
     using Microsoft.Azure.IIoT.OpcUa.Vault;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Serilog;
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
-    using Microsoft.Azure.IIoT.OpcUa.Registry.Models;
 
     /// <summary>
     /// The status service.
@@ -32,8 +33,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <param name="applicationDatabase"></param>
         /// <param name="certificateGroups"></param>
         /// <param name="logger"></param>
-        public StatusController(IApplicationsDatabase applicationDatabase,
-            IVaultClient certificateGroups, ILogger logger) {
+        public StatusController(IApplicationRegistry2 applicationDatabase,
+            ICertificateStorage certificateGroups, ILogger logger) {
             _applicationDatabase = applicationDatabase;
             _certificateGroups = certificateGroups;
             _logger = logger;
@@ -50,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 var apps = await _applicationDatabase.QueryApplicationsByIdAsync(
                     new QueryApplicationsByIdRequestModel {
                         MaxRecordsToReturn = 1,
-                        ApplicationState = QueryApplicationState.Any
+                        ApplicationState = ApplicationStateMask.Any
                     });
                 applicationOk = apps != null;
             }
@@ -59,13 +60,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 applicationMessage = ex.Message;
             }
             _logger.Information("Service status application database", new {
-                Healthy = applicationOk, Message = applicationMessage
+                Healthy = applicationOk,
+                Message = applicationMessage
             });
             bool kvOk;
             var kvMessage = "Alive and well";
             try {
-                var groups = await _certificateGroups.GetGroupIdsAsync();
-                kvOk = groups.Length > 0;
+                var groups = await _certificateGroups.ListGroupIdsAsync();
+                kvOk = groups.Groups.Any();
                 kvMessage = string.Join(",", groups);
             }
             catch (Exception ex) {
@@ -73,13 +75,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 kvMessage = ex.Message;
             }
             _logger.Information("Service status OpcVault", new {
-                Healthy = kvOk, Message = kvMessage
+                Healthy = kvOk,
+                Message = kvMessage
             });
             return new StatusApiModel(applicationOk, applicationMessage, kvOk, kvMessage);
         }
 
         private readonly ILogger _logger;
-        private readonly IVaultClient _certificateGroups;
-        private readonly IApplicationsDatabase _applicationDatabase;
+        private readonly ICertificateStorage _certificateGroups;
+        private readonly IApplicationRegistry2 _applicationDatabase;
     }
 }

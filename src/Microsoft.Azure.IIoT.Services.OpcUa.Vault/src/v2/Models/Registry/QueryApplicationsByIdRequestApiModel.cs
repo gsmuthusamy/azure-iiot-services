@@ -96,6 +96,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         /// Application state
         /// </summary>
         [JsonProperty(PropertyName = "applicationState")]
-        public QueryApplicationState? ApplicationState { get; set; }
+        public ApplicationStateMask? ApplicationState { get; set; }
     }
 }

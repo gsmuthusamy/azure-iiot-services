@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.v2.Controllers {
 
     public class CertificateGroupControllerTest {
 
-        private readonly Mock<IVaultClient> _group;
+        private readonly Mock<ICertificateStorage> _group;
         private readonly GroupController _target;
 
         public const string DateFormat = "yyyy-MM-dd'T'HH:mm:sszzz";
@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.v2.Controllers {
             // This is a dependency of the controller, that we mock, so that
             // we can test the class in isolation
             // Moq Quickstart: https://github.com/Moq/moq4/wiki/Quickstart
-            _group = new Mock<IVaultClient>();
+            _group = new Mock<ICertificateStorage>();
 
             // By convention we call "target" the class under test
             _target = new GroupController(_group.Object);
@@ -40,13 +40,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.v2.Controllers {
             // *Act*:     execute an action in the system under test (SUT)
             // *Assert*:  verify that the test succeeded
             var id = "Default";
-            var configuration = new CertificateGroupConfigurationModel {
+            var configuration = new CertificateGroupInfoModel {
                 Id = id
             };
 
             // Inject a fake response when Devices.GetAsync() is invoked
             // Moq Quickstart: https://github.com/Moq/moq4/wiki/Quickstart
-            _group.Setup(x => x.GetGroupConfigurationAsync(id)).ReturnsAsync(configuration);
+            _group.Setup(x => x.GetGroupAsync(id)).ReturnsAsync(configuration);
 
             // Act
             // Note: don't use "var" so to implicitly assert that the
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.v2.Controllers {
 
             // Verify that Devices.GetAsync() has been called, exactly once
             // with the correct parameters
-            _group.Verify(x => x.GetGroupConfigurationAsync(
+            _group.Verify(x => x.GetGroupAsync(
                 It.Is<string>(s => s == id)), Times.Once);
         }
 

@@ -6,25 +6,26 @@
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
     /// Certificate group configuration model
     /// </summary>
-    public sealed class CertificateGroupConfigurationApiModel {
+    public sealed class CertificateGroupInfoApiModel {
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public CertificateGroupConfigurationApiModel() {
+        public CertificateGroupInfoApiModel() {
         }
 
         /// <summary>
         /// Create configuration model
         /// </summary>
         /// <param name="config"></param>
-        public CertificateGroupConfigurationApiModel(
-            CertificateGroupConfigurationModel config) {
+        public CertificateGroupInfoApiModel(
+            CertificateGroupInfoModel config) {
             Id = config.Id;
             CertificateType = config.CertificateType;
             SubjectName = config.SubjectName;
@@ -42,8 +43,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Convert to service model
         /// </summary>
         /// <returns></returns>
-        public CertificateGroupConfigurationModel ToServiceModel() =>
-            new CertificateGroupConfigurationModel {
+        public CertificateGroupInfoModel ToServiceModel() =>
+            new CertificateGroupInfoModel {
                 Id = Id,
                 CertificateType = CertificateType,
                 SubjectName = SubjectName,
@@ -72,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// </summary>
         [JsonProperty(PropertyName = "certificateType")]
         [Required]
-        public string CertificateType { get; set; }
+        public CertificateType CertificateType { get; set; }
 
         /// <summary>
         /// The subject as distinguished name.
@@ -130,19 +131,25 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         public ushort IssuerCACertificateHashSize { get; set; }
 
         /// <summary>
-        /// The endpoint URL for the CRL Distributionpoint in the Issuer CA certificate.
-        /// The names %servicehost%, %serial% and %group% are replaced with cert values.
-        /// default: 'http://%servicehost%/certs/crl/%serial%/%group%.crl'
+        /// The endpoint URL for the CRL Distributionpoint
+        /// in the Issuer CA certificate.
+        /// The names %servicehost%, %serial% and %group%
+        /// are replaced with cert values.
         /// </summary>
-        [JsonProperty(PropertyName = "issuerCACRLDistributionPoint")]
+        [JsonProperty(PropertyName = "issuerCACRLDistributionPoint",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue("http://%servicehost%/certs/crl/%serial%/%group%.crl")]
         public string IssuerCACrlDistributionPoint { get; set; }
 
         /// <summary>
-        /// The endpoint URL for the Issuer CA Authority Information Access.
-        /// The names %servicehost%, %serial% and %group% are replaced with cert values.
-        /// default: 'http://%servicehost%/certs/issuer/%serial%/%group%.cer'
+        /// The endpoint URL for the Issuer CA Authority
+        /// Information Access.
+        /// The names %servicehost%, %serial% and %group%
+        /// are replaced with cert values.
         /// </summary>
-        [JsonProperty(PropertyName = "issuerCAAuthorityInformationAccess")]
+        [JsonProperty(PropertyName = "issuerCAAuthorityInformationAccess",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue("http://%servicehost%/certs/issuer/%serial%/%group%.cer")]
         public string IssuerCAAuthorityInformationAccess { get; set; }
     }
 }

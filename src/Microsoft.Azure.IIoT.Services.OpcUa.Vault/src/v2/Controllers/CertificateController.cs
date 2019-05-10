@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// Create the controller.
         /// </summary>
         /// <param name="vault"></param>
-        public CertificateController(IVaultClient vault) {
+        public CertificateController(ICertificateStorage vault) {
             _vault = vault;
         }
 
@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                     var groupId = cert.Substring(0, cert.Length - 4);
                     // find isser cert with serial no.
 
-                    var result = await _vault.GetIssuerCACertificateVersionsAsync(
+                    var result = await _vault.ListIssuerCACertificateVersionsAsync(
                         groupId, false);
                     while (result.Chain != null && result.Chain.Count > 0) {
                         foreach (var certVersion in result.Chain) {
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                         if (result.NextPageLink == null) {
                             break;
                         }
-                        result = await _vault.GetIssuerCACertificateVersionsAsync(
+                        result = await _vault.ListIssuerCACertificateVersionsAsync(
                             groupId, false, result.NextPageLink);
                     }
                 }
@@ -82,7 +82,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 if (crl.EndsWith(".crl", StringComparison.OrdinalIgnoreCase)) {
                     var groupId = crl.Substring(0, crl.Length - 4);
                     // find isser cert with serial no.
-                    var result = await _vault.GetIssuerCACertificateVersionsAsync(
+                    var result = await _vault.ListIssuerCACertificateVersionsAsync(
                         groupId, false);
                     while (result.Chain != null && result.Chain.Count > 0) {
                         foreach (var cert in result.Chain) {
@@ -102,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                         if (result.NextPageLink == null) {
                             break;
                         }
-                        result = await _vault.GetIssuerCACertificateVersionsAsync(
+                        result = await _vault.ListIssuerCACertificateVersionsAsync(
                             groupId, false, result.NextPageLink);
                     }
                 }
@@ -113,6 +113,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             return new NotFoundResult();
         }
 
-        private readonly IVaultClient _vault;
+        private readonly ICertificateStorage _vault;
     }
 }

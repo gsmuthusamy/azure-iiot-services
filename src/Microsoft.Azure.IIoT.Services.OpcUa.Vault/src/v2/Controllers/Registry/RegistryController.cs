@@ -8,9 +8,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Auth;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Filters;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2;
-    using Microsoft.Azure.IIoT.OpcUa.Api.Registry;
-    using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Models;
-    using Microsoft.Azure.IIoT.OpcUa.Vault;
+    using Microsoft.Azure.IIoT.OpcUa.Registry;
     using Microsoft.Azure.IIoT.OpcUa.Registry.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -32,13 +30,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// Create the controller
         /// </summary>
         /// <param name="applicationDatabase"></param>
-        /// <param name="registryServiceApi"></param>
-        public RegistryController(IApplicationsDatabase applicationDatabase,
-            IRegistryServiceApi registryServiceApi) {
+        public RegistryController(IApplicationRegistry2 applicationDatabase) {
             _applicationDatabase = applicationDatabase;
-            _registryServiceApi = registryServiceApi;
         }
-
+#if REMOVED
         /// <summary>
         /// List applications which differ in the actual registry.
         /// </summary>
@@ -160,7 +155,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
                // modelResult.Registry = record;
                 modelResult.Status = RegistryApplicationStatusType.New;
                 try {
-                    var applications = await _applicationDatabase.ListApplicationAsync(record.ApplicationUri);
+                    var applications = await _applicationDatabase.ListApplicationsAsync(record.ApplicationUri);
                     foreach (var application in applications) {
                         var status = TestApplicationStatus(record, application);
                         if (status == RegistryApplicationStatusType.Ok ||
@@ -207,8 +202,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
             }
             return newApplication;
         }
-
-        private readonly IApplicationsDatabase _applicationDatabase;
-        private readonly IRegistryServiceApi _registryServiceApi;
+#endif
+        private readonly IApplicationRegistry2 _applicationDatabase;
     }
 }

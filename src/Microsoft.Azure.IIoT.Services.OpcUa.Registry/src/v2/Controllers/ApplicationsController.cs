@@ -58,6 +58,46 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         }
 
         /// <summary>
+        /// Approve a new application.
+        /// </summary>
+        /// <remarks>
+        /// A manager can approve a new application or force an application
+        /// from any state.
+        /// After approval the application is in the 'Approved' state.
+        /// Requires Manager role.
+        /// </remarks>
+        /// <param name="applicationId">The application id</param>
+        /// <param name="force">optional, force application in new state</param>
+        /// <returns></returns>
+        [HttpPost("{applicationId}/approve")]
+        [Authorize(Policy = Policies.CanManage)]
+        public async Task ApproveApplicationAsync(
+            string applicationId, [FromQuery] bool? force) {
+            await _applications.ApproveApplicationAsync(applicationId,
+                force ?? false);
+        }
+
+        /// <summary>
+        /// Reject a new application.
+        /// </summary>
+        /// <remarks>
+        /// A manager can approve a new application or force an application
+        /// from any state.
+        /// After approval the application is in the 'Rejected' state.
+        /// Requires Manager role.
+        /// </remarks>
+        /// <param name="applicationId">The application id</param>
+        /// <param name="force">optional, force application in new state</param>
+        /// <returns></returns>
+        [HttpPost("{applicationId}/reject")]
+        [Authorize(Policy = Policies.CanManage)]
+        public async Task RejectApplicationAsync(
+            string applicationId, [FromQuery] bool? force) {
+            await _applications.RejectApplicationAsync(applicationId,
+                force ?? false);
+        }
+
+        /// <summary>
         /// Discover servers
         /// </summary>
         /// <remarks>
@@ -94,7 +134,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var result = await _applications.RegisterAsync(
+            var result = await _applications.RegisterApplicationAsync(
                 request.ToServiceModel());
             return new ApplicationRegistrationResponseApiModel(result);
         }

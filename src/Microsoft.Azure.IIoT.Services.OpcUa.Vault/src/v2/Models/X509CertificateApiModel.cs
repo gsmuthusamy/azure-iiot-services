@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using System;
+    using System.ComponentModel.DataAnnotations;
 
     /// <summary>
     /// Certificate model
@@ -51,37 +52,43 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <summary>
         /// Subject
         /// </summary>
-        [JsonProperty(PropertyName = "subject")]
+        [JsonProperty(PropertyName = "subject",
+            NullValueHandling = NullValueHandling.Ignore)]
         public string Subject { get; set; }
 
         /// <summary>
         /// Thumbprint
         /// </summary>
-        [JsonProperty(PropertyName = "thumbprint")]
+        [JsonProperty(PropertyName = "thumbprint",
+            NullValueHandling = NullValueHandling.Ignore)]
         public string Thumbprint { get; set; }
 
         /// <summary>
         /// Serial number
         /// </summary>
-        [JsonProperty(PropertyName = "serialNumber")]
+        [JsonProperty(PropertyName = "serialNumber",
+            NullValueHandling = NullValueHandling.Ignore)]
         public string SerialNumber { get; set; }
 
         /// <summary>
         /// Not before validity
         /// </summary>
-        [JsonProperty(PropertyName = "notBefore")]
+        [JsonProperty(PropertyName = "notBefore",
+            NullValueHandling = NullValueHandling.Ignore)]
         public DateTime? NotBefore { get; set; }
 
         /// <summary>
         /// Not after validity
         /// </summary>
-        [JsonProperty(PropertyName = "notAfter")]
+        [JsonProperty(PropertyName = "notAfter",
+            NullValueHandling = NullValueHandling.Ignore)]
         public DateTime? NotAfter { get; set; }
 
         /// <summary>
         /// Raw data
         /// </summary>
         [JsonProperty(PropertyName = "certificate")]
+        [Required]
         public JToken Certificate { get; set; }
     }
 }

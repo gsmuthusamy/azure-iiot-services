@@ -29,13 +29,15 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <summary>
         /// The query result.
         /// </summary>
-        [JsonProperty(PropertyName = "requests")]
-        public IList<CertificateRequestRecordApiModel> Requests { get; set; }
+        [JsonProperty(PropertyName = "requests",
+            NullValueHandling = NullValueHandling.Ignore)]
+        public List<CertificateRequestRecordApiModel> Requests { get; set; }
 
         /// <summary>
         /// Link to the next page of results.
         /// </summary>
-        [JsonProperty(PropertyName = "nextPageLink")]
+        [JsonProperty(PropertyName = "nextPageLink",
+            NullValueHandling = NullValueHandling.Ignore)]
         public string NextPageLink { get; set; }
     }
 }

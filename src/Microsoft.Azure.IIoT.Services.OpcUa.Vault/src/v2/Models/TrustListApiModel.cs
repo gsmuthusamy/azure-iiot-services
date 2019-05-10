@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
+    using System.ComponentModel;
 
     /// <summary>
     /// Trust list api model
@@ -53,37 +54,44 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <summary>
         /// Group id
         /// </summary>
-        [JsonProperty(PropertyName = "groupId")]
+        [JsonProperty(PropertyName = "groupId",
+            NullValueHandling = NullValueHandling.Ignore)]
         public string GroupId { get; set; }
 
         /// <summary>
         /// Issuer certificates
         /// </summary>
-        [JsonProperty(PropertyName = "issuerCertificates")]
+        [JsonProperty(PropertyName = "issuerCertificates",
+            NullValueHandling = NullValueHandling.Ignore)]
         public X509CertificateCollectionApiModel IssuerCertificates { get; set; }
 
         /// <summary>
         /// Issuer crls
         /// </summary>
-        [JsonProperty(PropertyName = "issuerCrls")]
+        [JsonProperty(PropertyName = "issuerCrls",
+            NullValueHandling = NullValueHandling.Ignore)]
         public X509CrlCollectionApiModel IssuerCrls { get; set; }
 
         /// <summary>
         /// Trusted certificates
         /// </summary>
-        [JsonProperty(PropertyName = "trustedCertificates")]
+        [JsonProperty(PropertyName = "trustedCertificates",
+            NullValueHandling = NullValueHandling.Ignore)]
         public X509CertificateCollectionApiModel TrustedCertificates { get; set; }
 
         /// <summary>
         /// Trusted crls
         /// </summary>
-        [JsonProperty(PropertyName = "trustedCrls")]
+        [JsonProperty(PropertyName = "trustedCrls",
+            NullValueHandling = NullValueHandling.Ignore)]
         public X509CrlCollectionApiModel TrustedCrls { get; set; }
 
         /// <summary>
         /// Next page link
         /// </summary>
-        [JsonProperty(PropertyName = "nextPageLink")]
+        [JsonProperty(PropertyName = "nextPageLink",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
         public string NextPageLink { get; set; }
     }
 }

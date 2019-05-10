@@ -8,23 +8,24 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
+    using System.ComponentModel.DataAnnotations;
 
     /// <summary>
     /// Signing request
     /// </summary>
-    public sealed class CreateSigningRequestApiModel {
+    public sealed class SigningRequestApiModel {
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public CreateSigningRequestApiModel() {
+        public SigningRequestApiModel() {
         }
 
         /// <summary>
         /// Create signing request
         /// </summary>
         /// <param name="model"></param>
-        public CreateSigningRequestApiModel(CreateSigningRequestModel model) {
+        public SigningRequestApiModel(SigningRequestModel model) {
             ApplicationId = model.ApplicationId;
             CertificateGroupId = model.CertificateGroupId;
             CertificateTypeId = model.CertificateTypeId;
@@ -35,8 +36,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Convert back to service model
         /// </summary>
         /// <returns></returns>
-        public CreateSigningRequestModel ToServiceModel() {
-            return new CreateSigningRequestModel {
+        public SigningRequestModel ToServiceModel() {
+            return new SigningRequestModel {
                 CertificateTypeId = CertificateTypeId,
                 CertificateGroupId = CertificateGroupId,
                 CertificateRequest = CertificateRequest,
@@ -48,24 +49,28 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Application id
         /// </summary>
         [JsonProperty(PropertyName = "applicationId")]
+        [Required]
         public string ApplicationId { get; set; }
 
         /// <summary>
         /// Certificate group id
         /// </summary>
         [JsonProperty(PropertyName = "certificateGroupId")]
+        [Required]
         public string CertificateGroupId { get; set; }
 
         /// <summary>
         /// Type
         /// </summary>
         [JsonProperty(PropertyName = "certificateTypeId")]
-        public string CertificateTypeId { get; set; }
+        [Required]
+        public CertificateType CertificateTypeId { get; set; }
 
         /// <summary>
         /// Request
         /// </summary>
         [JsonProperty(PropertyName = "certificateRequest")]
+        [Required]
         public JToken CertificateRequest { get; set; }
     }
 }

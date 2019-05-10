@@ -11,8 +11,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Azure.IIoT.Http.Auth;
     using Microsoft.Azure.IIoT.Http.Default;
-    using Microsoft.Azure.IIoT.OpcUa.Api.Registry.Clients;
-    using Microsoft.Azure.IIoT.OpcUa.Vault.CosmosDB.Services;
     using Microsoft.Azure.IIoT.OpcUa.Vault.Services;
     using Microsoft.Azure.IIoT.Services;
     using Microsoft.Azure.IIoT.Services.Auth;
@@ -21,6 +19,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
     using Microsoft.Azure.IIoT.Services.Diagnostics;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2;
+    using Microsoft.Azure.IIoT.Storage.CosmosDb.Services;
+    using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Azure.KeyVault;
     using Microsoft.Azure.Services.AppAuthentication;
     using Microsoft.Extensions.Configuration;
@@ -232,20 +232,22 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                 .AsImplementedInterfaces().SingleInstance();
 
             // Register endpoint services and ...
-            builder.RegisterType<DefaultVaultClient>()
+            builder.RegisterType<CertificateManagement>()
                 .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<DefaultApplicationDatabase>()
+            builder.RegisterType<ApplicationDatabase>()
                 .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<DefaultCertificateAuthority>()
+            builder.RegisterType<CertificateAuthority>()
                 .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<DocumentDBRepository>()
+            builder.RegisterType<IIoT.OpcUa.Vault.Services.CosmosDB.Services.DocumentDBRepository>()
                 .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<WarmStartDatabase>()
+            builder.RegisterType<IIoT.OpcUa.Vault.Services.KeyVault.Services.KeyVaultServiceClient>()
                 .AsImplementedInterfaces().SingleInstance();
 
-            // Registry (optional)
-            builder.RegisterType<RegistryServiceClient>()
-                .AsImplementedInterfaces().SingleInstance();
+            // ... into cosmos db collection with configured name.
+            builder.RegisterType<ItemContainerFactory>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<CosmosDbServiceClient>()
+                .AsImplementedInterfaces();
         }
     }
 }

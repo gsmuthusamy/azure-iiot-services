@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
 
     /// <summary>
@@ -47,13 +48,17 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <summary>
         /// Chain
         /// </summary>
-        [JsonProperty(PropertyName = "chain")]
-        public IList<X509CrlApiModel> Chain { get; set; }
+        [JsonProperty(PropertyName = "chain",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
+        public List<X509CrlApiModel> Chain { get; set; }
 
         /// <summary>
         /// Next link
         /// </summary>
-        [JsonProperty(PropertyName = "nextPageLink")]
+        [JsonProperty(PropertyName = "nextPageLink",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
         public string NextPageLink { get; set; }
     }
 }

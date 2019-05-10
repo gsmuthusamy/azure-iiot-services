@@ -59,13 +59,15 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <summary>
         /// Request id
         /// </summary>
-        [JsonProperty(PropertyName = "requestId")]
+        [JsonProperty(PropertyName = "requestId",
+            NullValueHandling = NullValueHandling.Ignore)]
         public string RequestId { get; set; }
 
         /// <summary>
         /// Application id
         /// </summary>
-        [JsonProperty(PropertyName = "applicationId")]
+        [JsonProperty(PropertyName = "applicationId",
+            NullValueHandling = NullValueHandling.Ignore)]
         public string ApplicationId { get; set; }
 
         /// <summary>
@@ -79,13 +81,15 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Certificate group
         /// </summary>
         [JsonProperty(PropertyName = "certificateGroupId")]
+        [Required]
         public string CertificateGroupId { get; set; }
 
         /// <summary>
         /// Type
         /// </summary>
         [JsonProperty(PropertyName = "certificateTypeId")]
-        public string CertificateTypeId { get; set; }
+        [Required]
+        public CertificateType CertificateTypeId { get; set; }
 
         /// <summary>
         /// Is Signing request
@@ -97,19 +101,22 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <summary>
         /// Subject
         /// </summary>
-        [JsonProperty(PropertyName = "subjectName")]
+        [JsonProperty(PropertyName = "subjectName",
+            NullValueHandling = NullValueHandling.Ignore)]
         public string SubjectName { get; set; }
 
         /// <summary>
         /// Domain names
         /// </summary>
-        [JsonProperty(PropertyName = "domainNames")]
-        public IList<string> DomainNames { get; set; }
+        [JsonProperty(PropertyName = "domainNames",
+            NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> DomainNames { get; set; }
 
         /// <summary>
         /// Private key format to return
         /// </summary>
-        [JsonProperty(PropertyName = "privateKeyFormat")]
-        public string PrivateKeyFormat { get; set; }
+        [JsonProperty(PropertyName = "privateKeyFormat",
+            NullValueHandling = NullValueHandling.Ignore)]
+        public PrivateKeyFormat PrivateKeyFormat { get; set; }
     }
 }

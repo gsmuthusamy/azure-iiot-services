@@ -30,6 +30,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             ApplicationName = model.ApplicationName;
             LocalizedNames = model.LocalizedNames;
             ProductUri = model.ProductUri;
+            SiteId = model.SiteId;
             DiscoveryProfileUri = model.DiscoveryProfileUri;
             DiscoveryUrls = model.DiscoveryUrls;
             Capabilities = model.Capabilities;
@@ -48,6 +49,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
                 ProductUri = ProductUri,
                 DiscoveryProfileUri = DiscoveryProfileUri,
                 DiscoveryUrls = DiscoveryUrls,
+                SiteId = SiteId,
                 GatewayServerUri = GatewayServerUri,
                 Capabilities = Capabilities
             };
@@ -85,6 +87,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             NullValueHandling = NullValueHandling.Ignore)]
         [DefaultValue(null)]
         public string ApplicationName { get; set; }
+
+        /// <summary>
+        /// Site of the application
+        /// </summary>
+        [JsonProperty(PropertyName = "siteId",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
+        public string SiteId { get; set; }
 
         /// <summary>
         /// Localized names key off locale id.

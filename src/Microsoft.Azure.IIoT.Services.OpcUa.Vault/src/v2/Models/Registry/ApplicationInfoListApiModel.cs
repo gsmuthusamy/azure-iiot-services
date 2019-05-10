@@ -12,17 +12,17 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
     /// <summary>
     /// Application query response
     /// </summary>
-    public sealed class QueryApplicationsResponseApiModel {
+    public sealed class ApplicationInfoListApiModel {
 
         /// <summary>
         /// Create model
         /// </summary>
         /// <param name="model"></param>
-        public QueryApplicationsResponseApiModel(QueryApplicationsResultModel model) {
-            Applications = model?.Applications?
+        public ApplicationInfoListApiModel(ApplicationInfoListModel model) {
+            Applications = model?.Items?
                 .Select(a => new ApplicationInfoApiModel(a))
                 .ToList();
-            NextPageLink = model?.NextPageLink;
+            NextPageLink = model?.ContinuationToken;
         }
 
         /// <summary>

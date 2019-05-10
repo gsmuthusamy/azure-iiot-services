@@ -7,45 +7,57 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Microsoft.Azure.IIoT.OpcUa.Vault.Models;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
 
     /// <summary>
     /// Configuration collection model
     /// </summary>
-    public sealed class CertificateGroupConfigurationCollectionApiModel {
+    public sealed class CertificateGroupInfoListApiModel {
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public CertificateGroupConfigurationCollectionApiModel() {
+        public CertificateGroupInfoListApiModel() {
         }
 
         /// <summary>
         /// Create model
         /// </summary>
-        /// <param name="config"></param>
-        public CertificateGroupConfigurationCollectionApiModel(
-            CertificateGroupConfigurationCollectionModel config) {
-            Groups = config.Groups
-                .Select(g => new CertificateGroupConfigurationApiModel(g))
+        /// <param name="model"></param>
+        public CertificateGroupInfoListApiModel(
+            CertificateGroupInfoListModel model) {
+            Groups = model.Groups
+                .Select(g => new CertificateGroupInfoApiModel(g))
                 .ToList();
+            NextPageLink = model.NextPageLink;
         }
 
         /// <summary>
         /// Convert to service model
         /// </summary>
         /// <returns></returns>
-        public CertificateGroupConfigurationCollectionModel ToServiceModel() =>
-            new CertificateGroupConfigurationCollectionModel {
+        public CertificateGroupInfoListModel ToServiceModel() =>
+            new CertificateGroupInfoListModel {
                 Groups = Groups?
                     .Select(g => g.ToServiceModel())
-                    .ToList()
+                    .ToList(),
+                NextPageLink = NextPageLink,
             };
 
         /// <summary>
         /// Groups
         /// </summary>
         [JsonProperty(PropertyName = "groups")]
-        public IList<CertificateGroupConfigurationApiModel> Groups { get; set; }
+        [DefaultValue(null)]
+        public List<CertificateGroupInfoApiModel> Groups { get; set; }
+
+        /// <summary>
+        /// Next link
+        /// </summary>
+        [JsonProperty(PropertyName = "nextPageLink",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
+        public string NextPageLink { get; set; }
     }
 }

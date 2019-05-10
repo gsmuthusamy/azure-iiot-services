@@ -134,7 +134,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         [JsonProperty(PropertyName = "state",
             NullValueHandling = NullValueHandling.Ignore)]
         [DefaultValue(null)]
-        public ApplicationState? State { get; set; }
+        public ApplicationStateMask? State { get; set; }
 
         /// <summary>
         /// Whether to include apps that were soft deleted

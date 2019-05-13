@@ -51,8 +51,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
                 new RegistryOperationApiModel(model.Approved);
             Updated = model.Created == null ? null :
                 new RegistryOperationApiModel(model.Updated);
-            Deleted = model.Created == null ? null :
-                new RegistryOperationApiModel(model.Deleted);
         }
 
         /// <summary>
@@ -80,7 +78,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
                 Created = Created?.ToServiceModel(),
                 Approved = Approved?.ToServiceModel(),
                 Updated = Updated?.ToServiceModel(),
-                Deleted = Deleted?.ToServiceModel(),
             };
         }
 
@@ -241,13 +238,5 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             NullValueHandling = NullValueHandling.Ignore)]
         [DefaultValue(null)]
         public RegistryOperationApiModel Updated { get; set; }
-
-        /// <summary>
-        /// Deleted
-        /// </summary>
-        [JsonProperty(PropertyName = "deleted",
-            NullValueHandling = NullValueHandling.Ignore)]
-        [DefaultValue(null)]
-        public RegistryOperationApiModel Deleted { get; set; }
     }
 }

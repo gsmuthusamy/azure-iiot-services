@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         public QueryApplicationsByIdResponseApiModel(
             QueryApplicationsByIdResultModel model) {
             var applicationsList = new List<ApplicationInfoApiModel>();
-            foreach (var application in model.Applications) {
+            foreach (var application in model.Items) {
                 applicationsList.Add(new ApplicationInfoApiModel(application));
             }
             Applications = applicationsList;

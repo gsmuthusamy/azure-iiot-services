@@ -142,9 +142,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// </summary>
         /// <remarks>
         /// Unregisters the application record and all associated information.
-        /// The application record remains in the database in 'Unregistered' state.
-        /// Certificate Requests associated with the application id are set to the 'Deleted' state,
-        /// and will be revoked with the next CRL update.
+        /// Certificate Requests associated with the application id are set to
+        /// the 'Deleted' state, and will be revoked with the next CRL update.
         /// Requires Writer role.
         ///</remarks>
         /// <param name="applicationId">The application id</param>
@@ -152,23 +151,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         [Authorize(Policy = Policies.CanWrite)]
         public async Task UnregisterApplicationAsync(string applicationId) {
             await _applicationDatabase.UnregisterApplicationAsync(applicationId);
-        }
-
-        /// <summary>
-        /// Delete application.
-        /// </summary>
-        /// <remarks>
-        /// Deletes the application record.
-        /// Certificate Requests associated with the application id are set in the deleted state,
-        /// and will be revoked with the next CRL update.
-        /// Requires Manager role.
-        /// </remarks>
-        /// <param name="applicationId">The application id</param>
-        /// <param name="force">optional, skip sanity checks and force to delete application</param>
-        [HttpDelete("{applicationId}")]
-        [Authorize(Policy = Policies.CanManage)]
-        public async Task DeleteApplicationAsync(string applicationId, bool? force) {
-            await _applicationDatabase.DeleteApplicationAsync(applicationId, force ?? false);
         }
 
         /// <summary>
@@ -193,7 +175,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
                 await _applicationDatabase.QueryApplicationsAsync(
                 new ApplicationRegistrationQueryModel {
                     ApplicationUri = applicationUri
-                }, pageSize) : await _applicationDatabase.ListApplicationsAsync(nextPageLink, pageSize);
+                }, pageSize) : await _applicationDatabase.ListApplicationsAsync(
+                    nextPageLink, pageSize);
             return new ApplicationInfoListApiModel(results);
         }
 

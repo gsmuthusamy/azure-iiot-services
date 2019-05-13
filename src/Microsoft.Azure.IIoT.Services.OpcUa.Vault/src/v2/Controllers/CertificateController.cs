@@ -25,8 +25,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// Create the controller.
         /// </summary>
         /// <param name="vault"></param>
-        public CertificateController(ICertificateStorage vault) {
-            _vault = vault;
+        public CertificateController(IGroupServices vault) {
+            _services = vault;
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                     var groupId = cert.Substring(0, cert.Length - 4);
                     // find isser cert with serial no.
 
-                    var result = await _vault.ListIssuerCACertificateVersionsAsync(
+                    var result = await _services.ListIssuerCACertificateVersionsAsync(
                         groupId, false);
                     while (result.Chain != null && result.Chain.Count > 0) {
                         foreach (var certVersion in result.Chain) {
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                         if (result.NextPageLink == null) {
                             break;
                         }
-                        result = await _vault.ListIssuerCACertificateVersionsAsync(
+                        result = await _services.ListIssuerCACertificateVersionsAsync(
                             groupId, false, result.NextPageLink);
                     }
                 }
@@ -82,13 +82,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 if (crl.EndsWith(".crl", StringComparison.OrdinalIgnoreCase)) {
                     var groupId = crl.Substring(0, crl.Length - 4);
                     // find isser cert with serial no.
-                    var result = await _vault.ListIssuerCACertificateVersionsAsync(
+                    var result = await _services.ListIssuerCACertificateVersionsAsync(
                         groupId, false);
                     while (result.Chain != null && result.Chain.Count > 0) {
                         foreach (var cert in result.Chain) {
                             if (serial.EqualsIgnoreCase(cert.SerialNumber)) {
                                 var thumbPrint = cert.Thumbprint;
-                                var crlBinary = await _vault.GetIssuerCACrlChainAsync(
+                                var crlBinary = await _services.GetIssuerCACrlChainAsync(
                                     groupId, thumbPrint);
                                 var byteArray = crlBinary.Chain?.FirstOrDefault()?.ToRawData();
                                 if (byteArray == null) {
@@ -102,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                         if (result.NextPageLink == null) {
                             break;
                         }
-                        result = await _vault.ListIssuerCACertificateVersionsAsync(
+                        result = await _services.ListIssuerCACertificateVersionsAsync(
                             groupId, false, result.NextPageLink);
                     }
                 }
@@ -113,6 +113,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             return new NotFoundResult();
         }
 
-        private readonly ICertificateStorage _vault;
+        private readonly IGroupServices _services;
     }
 }

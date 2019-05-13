@@ -232,9 +232,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                 .AsImplementedInterfaces().SingleInstance();
 
             // Vault services ...
-            builder.RegisterType<CertificateManagement>()
+            builder.RegisterType<KeyVaultGroupRegistry>()
                 .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<IIoT.OpcUa.Vault.KeyVault.Services.KeyVaultServiceClient>()
+            builder.RegisterType<IIoT.OpcUa.Vault.KeyVault.Clients.KeyVaultServiceClient>()
                 .AsImplementedInterfaces().SingleInstance();
 
             builder.RegisterType<ApplicationDatabase>()

@@ -32,10 +32,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// Create controller with services
         /// </summary>
         /// <param name="requests">certificate services</param>
-        /// <param name="config"></param>
-        public RequestController(ICertificateAuthority requests, IVaultConfig config) {
+        /// <param name="management"></param>
+        public RequestController(ICertificateAuthority requests,
+            IRequestManagement management) {
             _requests = requests;
-            _config = config;
+            _management = management;
         }
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <returns>The certificate request id</returns>
         [HttpPost("sign")]
         [Authorize(Policy = Policies.CanWrite)]
-        public async Task<string> CreateSigningRequestAsync(
+        public async Task<string> SubmitSigningRequestAsync(
             [FromBody] SigningRequestApiModel signingRequest) {
             if (signingRequest == null) {
                 throw new ArgumentNullException(nameof(signingRequest));
@@ -71,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <returns>The certificate request id</returns>
         [HttpPost("keypair")]
         [Authorize(Policy = Policies.CanWrite)]
-        public async Task<string> CreateNewKeyPairRequestAsync(
+        public async Task<string> SubmitNewKeyPairRequestAsync(
             [FromBody] NewKeyPairRequestApiModel newKeyPairRequest) {
             if (newKeyPairRequest == null) {
                 throw new ArgumentNullException(nameof(newKeyPairRequest));
@@ -103,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [Authorize(Policy = Policies.CanSign)]
         public async Task ApproveCertificateRequestAsync(string requestId) {
             // for auto approve the service app id must have signing rights in keyvault
-            await _requests.ApproveRequestAsync(requestId);
+            await _management.ApproveRequestAsync(requestId);
         }
 
         /// <summary>
@@ -120,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [Authorize(Policy = Policies.CanSign)]
         public async Task RejectCertificateRequestAsync(string requestId) {
             // for auto approve the service app id must have signing rights in keyvault
-            await _requests.RejectRequestAsync(requestId);
+            await _management.RejectRequestAsync(requestId);
         }
 
         /// <summary>
@@ -141,7 +142,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [Authorize(Policy = Policies.CanWrite)]
         public async Task AcceptCertificateRequestAsync(string requestId) {
             HttpContext.User = null; // TODO: Set service principal
-            await _requests.AcceptRequestAsync(requestId);
+            await _management.AcceptRequestAsync(requestId);
         }
 
         /// <summary>
@@ -163,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [Authorize(Policy = Policies.CanManage)]
         public async Task DeleteCertificateRequestAsync(string requestId) {
             HttpContext.User = null; // TODO: Set service principal
-            await _requests.DeleteRequestAsync(requestId);
+            await _management.DeleteRequestAsync(requestId);
         }
 
         /// <summary>
@@ -182,7 +183,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         public async Task PurgeCertificateRequestAsync(string requestId) {
             // may require elevated rights to delete pk
             HttpContext.User = null; // TODO: Set service principal
-            await _requests.PurgeRequestAsync(requestId);
+            await _management.PurgeRequestAsync(requestId);
         }
 
         /// <summary>
@@ -202,7 +203,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpPost("{requestId}/revoke")]
         [Authorize(Policy = Policies.CanSign)]
         public async Task RevokeCertificateRequestAsync(string requestId) {
-            await _requests.RevokeRequestCertificateAsync(requestId);
+            await _management.RevokeRequestCertificateAsync(requestId);
         }
 
         /// <summary>
@@ -224,7 +225,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpPost("{group}/revokegroup")]
         [Authorize(Policy = Policies.CanSign)]
         public async Task RevokeCertificateGroupAsync(string group, bool? allVersions) {
-            await _requests.RevokeAllRequestsAsync(group, allVersions ?? true);
+            await _management.RevokeAllRequestsAsync(group, allVersions ?? true);
         }
 
         /// <summary>
@@ -250,7 +251,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                     .FirstOrDefault());
             }
             HttpContext.User = null; // TODO: Set service principal
-            var result = await _requests.QueryRequestsAsync(appId,
+            var result = await _management.QueryRequestsAsync(appId,
                 requestState, nextPageLink, pageSize);
             return new CertificateRequestQueryResponseApiModel(result);
         }
@@ -264,7 +265,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         public async Task<CertificateRequestRecordApiModel> GetCertificateRequestAsync(
             string requestId) {
             HttpContext.User = null; // TODO: Set service principal
-            var result = await _requests.GetRequestAsync(requestId);
+            var result = await _management.GetRequestAsync(requestId);
             return new CertificateRequestRecordApiModel(result);
         }
 
@@ -296,6 +297,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         }
 
         private readonly ICertificateAuthority _requests;
-        private readonly IVaultConfig _config;
+        private readonly IRequestManagement _management;
     }
 }

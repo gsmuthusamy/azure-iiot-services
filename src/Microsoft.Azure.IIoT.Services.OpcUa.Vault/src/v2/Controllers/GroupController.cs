@@ -29,9 +29,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <summary>
         /// Create the controller.
         /// </summary>
-        /// <param name="vaultClient">Group client</param>
-        public GroupController(ICertificateStorage vaultClient) {
-            _vaultClient = vaultClient;
+        /// <param name="groups">Groups client</param>
+        /// <param name="management"></param>
+        public GroupController(IGroupRegistry groups, IGroupServices management) {
+            _groups = groups;
+            _services = management;
         }
 
         /// <summary>
@@ -45,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <returns>List of certificate group names</returns>
         [HttpGet]
         public async Task<CertificateGroupListApiModel> GetCertificateGroupsAsync() {
-            var result = await _vaultClient.ListGroupIdsAsync();
+            var result = await _groups.ListGroupIdsAsync();
             return new CertificateGroupListApiModel(result);
         }
 
@@ -65,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             if (string.IsNullOrEmpty(group)) {
                 throw new ArgumentNullException(nameof(group));
             }
-            var config = await _vaultClient.GetGroupAsync(group);
+            var config = await _groups.GetGroupAsync(group);
             return new CertificateGroupInfoApiModel(config);
         }
 
@@ -94,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             if (string.IsNullOrEmpty(group)) {
                 throw new ArgumentNullException(nameof(group));
             }
-            var result = await _vaultClient.UpdateGroupAsync(
+            var result = await _groups.UpdateGroupAsync(
                 group, config.ToServiceModel());
             return new CertificateGroupInfoApiModel(result);
         }
@@ -120,7 +122,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             if (string.IsNullOrEmpty(group)) {
                 throw new ArgumentNullException(nameof(group));
             }
-            var config = await _vaultClient.CreateGroupAsync(
+            var config = await _groups.CreateGroupAsync(
                 group, subject, certType);
             return new CertificateGroupInfoApiModel(config);
         }
@@ -161,7 +163,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         public async Task<CertificateGroupInfoListApiModel> GetCertificateGroupsConfigurationAsync() {
             // Use service principal
             HttpContext.User = null; // TODO Set sp
-            var config = await _vaultClient.ListGroupsAsync();
+            var config = await _groups.ListGroupsAsync();
             return new CertificateGroupInfoListApiModel(config);
         }
 
@@ -189,7 +191,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             }
             // Use service principal
             HttpContext.User = null; // TODO Set sp
-            var result = await _vaultClient.ListIssuerCACertificateVersionsAsync(
+            var result = await _services.ListIssuerCACertificateVersionsAsync(
                 group, withCertificates, nextPageLink, pageSize);
             return new X509CertificateCollectionApiModel(result);
         }
@@ -211,7 +213,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             }
             // Use service principal
             HttpContext.User = null; // TODO Set sp
-            var result = await _vaultClient.GetIssuerCACertificateChainAsync(
+            var result = await _services.GetIssuerCACertificateChainAsync(
                 group, thumbPrint, nextPageLink, pageSize);
             return new X509CertificateCollectionApiModel(result);
         }
@@ -233,7 +235,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             }
             // Use service principal
             HttpContext.User = null; // TODO Set sp
-            var chain = await _vaultClient.GetIssuerCACrlChainAsync(group, thumbPrint,
+            var chain = await _services.GetIssuerCACrlChainAsync(group, thumbPrint,
                 nextPageLink, pageSize);
             return new X509CrlCollectionApiModel(chain);
         }
@@ -262,7 +264,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             }
             // Use service principal
             HttpContext.User = null; // TODO Set sp
-            return new TrustListApiModel(await _vaultClient.GetTrustListAsync(group, nextPageLink,
+            return new TrustListApiModel(await _services.GetTrustListAsync(group, nextPageLink,
                 pageSize));
         }
 
@@ -286,9 +288,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 throw new ArgumentNullException(nameof(group));
             }
             return new X509CertificateApiModel(
-                await _vaultClient.CreateIssuerCACertificateAsync(group));
+                await _services.CreateIssuerCACertificateAsync(group));
         }
 
-        private readonly ICertificateStorage _vaultClient;
+        private readonly IGroupRegistry _groups;
+        private readonly IGroupServices _services;
     }
 }

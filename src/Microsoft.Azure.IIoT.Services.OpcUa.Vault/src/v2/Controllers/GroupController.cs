@@ -87,18 +87,19 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// Requires manager role.
         /// </remarks>
         /// <param name="group">The group name</param>
-        /// <param name="config">The group configuration</param>
+        /// <param name="request">The group configuration</param>
         /// <returns>The configuration</returns>
         [HttpPut("{group}")]
         [Authorize(Policy = Policies.CanManage)]
-        public async Task<CertificateGroupInfoApiModel> UpdateCertificateGroupConfigurationAsync(
-            string group, [FromBody] CertificateGroupInfoApiModel config) {
+        public async Task UpdateCertificateGroupConfigurationAsync(string group,
+            [FromBody] CertificateGroupUpdateApiModel request) {
             if (string.IsNullOrEmpty(group)) {
                 throw new ArgumentNullException(nameof(group));
             }
-            var result = await _groups.UpdateGroupAsync(
-                group, config.ToServiceModel());
-            return new CertificateGroupInfoApiModel(result);
+            if (request == null) {
+                throw new ArgumentNullException(nameof(request));
+            }
+            await _groups.UpdateGroupAsync(group, request.ToServiceModel());
         }
 
         /// <summary>
@@ -111,20 +112,17 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// certificate is created for the first time.
         /// Requires manager role.
         /// </remarks>
-        /// <param name="group">The group name</param>
-        /// <param name="subject">The Issuer CA subject</param>
-        /// <param name="certType">The certificate type</param>
+        /// <param name="request">The create request</param>
         /// <returns>The group configuration</returns>
         [HttpPost("{group}/{subject}/{certType}/create")]
         [Authorize(Policy = Policies.CanManage)]
-        public async Task<CertificateGroupInfoApiModel> CreateCertificateGroupAsync(
-            string group, string subject, CertificateType certType) {
-            if (string.IsNullOrEmpty(group)) {
-                throw new ArgumentNullException(nameof(group));
+        public async Task<CertificateGroupCreateResponseApiModel> CreateCertificateGroupAsync(
+            CertificateGroupCreateRequestApiModel request) {
+            if (request == null) {
+                throw new ArgumentNullException(nameof(request));
             }
-            var config = await _groups.CreateGroupAsync(
-                group, subject, certType);
-            return new CertificateGroupInfoApiModel(config);
+            var result = await _groups.CreateGroupAsync(request.ToServiceModel());
+            return new CertificateGroupCreateResponseApiModel(result);
         }
 
         /// <summary>
@@ -144,10 +142,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             if (string.IsNullOrEmpty(group)) {
                 throw new ArgumentNullException(nameof(group));
             }
-            // await _vaultClient.DeleteGroupConfigurationAsync(group);
-            await Task.Delay(1000);
-            // intentionally not implemented yet
-            throw new ResourceNotFoundException();
+            await _groups.DeleteGroupAsync(group);
         }
 
         /// <summary>

@@ -232,14 +232,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                 .AsImplementedInterfaces().SingleInstance();
 
             // Vault services ...
-            builder.RegisterType<KeyVaultGroupRegistry>()
-                .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<IIoT.OpcUa.Vault.KeyVault.Clients.KeyVaultServiceClient>()
                 .AsImplementedInterfaces().SingleInstance();
 
             builder.RegisterType<ApplicationDatabase>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<CertificateAuthority>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<GroupDatabase>()
                 .AsImplementedInterfaces().SingleInstance();
 
             // ... with cosmos db collection as storage

@@ -23,20 +23,20 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <summary>
         /// Create configuration model
         /// </summary>
-        /// <param name="config"></param>
-        public CertificateGroupInfoApiModel(
-            CertificateGroupInfoModel config) {
-            Id = config.Id;
-            CertificateType = config.CertificateType;
-            SubjectName = config.SubjectName;
-            DefaultCertificateLifetime = config.DefaultCertificateLifetime;
-            DefaultCertificateKeySize = config.DefaultCertificateKeySize;
-            DefaultCertificateHashSize = config.DefaultCertificateHashSize;
-            IssuerCACertificateLifetime = config.IssuerCACertificateLifetime;
-            IssuerCACertificateKeySize = config.IssuerCACertificateKeySize;
-            IssuerCACertificateHashSize = config.IssuerCACertificateHashSize;
-            IssuerCACrlDistributionPoint = config.IssuerCACrlDistributionPoint;
-            IssuerCAAuthorityInformationAccess = config.IssuerCAAuthorityInformationAccess;
+        /// <param name="model"></param>
+        public CertificateGroupInfoApiModel(CertificateGroupInfoModel model) {
+            Id = model.Id;
+            Name = model.Name;
+            CertificateType = model.CertificateType;
+            SubjectName = model.SubjectName;
+            DefaultCertificateLifetime = model.DefaultCertificateLifetime;
+            DefaultCertificateKeySize = model.DefaultCertificateKeySize;
+            DefaultCertificateHashSize = model.DefaultCertificateHashSize;
+            IssuerCACertificateLifetime = model.IssuerCACertificateLifetime;
+            IssuerCACertificateKeySize = model.IssuerCACertificateKeySize;
+            IssuerCACertificateHashSize = model.IssuerCACertificateHashSize;
+            IssuerCACrlDistributionPoint = model.IssuerCACrlDistributionPoint;
+            IssuerCAAuthorityInformationAccess = model.IssuerCAAuthorityInformationAccess;
         }
 
         /// <summary>
@@ -46,6 +46,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         public CertificateGroupInfoModel ToServiceModel() =>
             new CertificateGroupInfoModel {
                 Id = Id,
+                Name = Name,
                 CertificateType = CertificateType,
                 SubjectName = SubjectName,
                 DefaultCertificateLifetime = DefaultCertificateLifetime,
@@ -59,11 +60,18 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
             };
 
         /// <summary>
-        /// The name of the certificate group, ofter referred to as group id.
+        /// The id of the certificate group
+        /// </summary>
+        [JsonProperty(PropertyName = "id")]
+        [Required]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// The name of the certificate group
         /// </summary>
         [JsonProperty(PropertyName = "name")]
         [Required]
-        public string Id { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// The certificate type as specified in the OPC UA spec 1.04.

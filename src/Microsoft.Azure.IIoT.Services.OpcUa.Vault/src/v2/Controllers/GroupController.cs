@@ -267,7 +267,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// Create a new Issuer CA Certificate.
         /// </summary>
         /// <remark>
-        /// A new key and CA cert is created in KeyVault base don the configuration
+        /// A new key and CA cert is created in KeyVault based on the configuration
         /// information of the group.
         /// The new issuer cert and CRL become active immediately for signing.
         /// All the next approved certificates are signed with the new key and trustlists
@@ -283,7 +283,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 throw new ArgumentNullException(nameof(group));
             }
             return new X509CertificateApiModel(
-                await _services.CreateIssuerCACertificateAsync(group));
+                await _services.GenerateNewIssuerCACertificateAsync(group));
         }
 
         private readonly IGroupRegistry _groups;

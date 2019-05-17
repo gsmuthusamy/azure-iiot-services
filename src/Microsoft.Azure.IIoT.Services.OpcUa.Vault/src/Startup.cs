@@ -4,11 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
-    using Autofac;
-    using Autofac.Extensions.DependencyInjection;
-    using AutofacSerilogIntegration;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.Crypto.KeyVault.Clients;
     using Microsoft.Azure.IIoT.Http.Auth;
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.OpcUa.Vault.Services;
@@ -26,7 +22,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
     using Newtonsoft.Json;
+    using Autofac;
+    using Autofac.Extensions.DependencyInjection;
+    using AutofacSerilogIntegration;
     using Serilog;
     using Swashbuckle.AspNetCore.Swagger;
     using System;
@@ -228,13 +229,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                     .AsImplementedInterfaces().SingleInstance();
             }
 
+            // key vault client ...
             builder.RegisterType<UserOrServiceTokenProvider>()
                 .AsImplementedInterfaces().SingleInstance();
-
-            // Vault services ...
-            builder.RegisterType<IIoT.OpcUa.Vault.KeyVault.Clients.KeyVaultServiceClient>()
+            builder.RegisterType<KeyVaultServiceClient>()
                 .AsImplementedInterfaces().SingleInstance();
 
+            // Vault services
             builder.RegisterType<ApplicationDatabase>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<CertificateAuthority>()

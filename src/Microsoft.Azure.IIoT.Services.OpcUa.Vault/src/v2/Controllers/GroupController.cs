@@ -171,8 +171,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// returned.
         /// </remarks>
         /// <param name="group">The group name</param>
-        /// <param name="withCertificates">Optional, true to include the full
-        /// certificates</param>
         /// <param name="nextPageLink">optional, link to next page</param>
         /// <param name="pageSize">optional, the maximum number of result per
         /// page</param>
@@ -180,14 +178,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         [HttpGet("{group}/issuercaversions")]
         [AutoRestExtension(NextPageLinkName = "nextPageLink")]
         public async Task<X509CertificateCollectionApiModel> GetCertificateGroupIssuerCAVersionsAsync(
-            string group, bool? withCertificates, [FromQuery] string nextPageLink, [FromQuery] int? pageSize) {
+            string group, [FromQuery] string nextPageLink, [FromQuery] int? pageSize) {
             if (string.IsNullOrEmpty(group)) {
                 throw new ArgumentNullException(nameof(group));
             }
             // Use service principal
             HttpContext.User = null; // TODO Set sp
             var result = await _services.ListIssuerCACertificateVersionsAsync(
-                group, withCertificates, nextPageLink, pageSize);
+                group, nextPageLink, pageSize);
             return new X509CertificateCollectionApiModel(result);
         }
 

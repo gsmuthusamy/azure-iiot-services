@@ -45,8 +45,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                     var groupId = cert.Substring(0, cert.Length - 4);
                     // find isser cert with serial no.
 
-                    var result = await _services.ListIssuerCACertificateVersionsAsync(
-                        groupId, false);
+                    var result = await _services.ListIssuerCACertificateVersionsAsync(groupId);
                     while (result.Chain != null && result.Chain.Count > 0) {
                         foreach (var certVersion in result.Chain) {
                             if (serial.EqualsIgnoreCase(certVersion.SerialNumber)) {
@@ -60,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                             break;
                         }
                         result = await _services.ListIssuerCACertificateVersionsAsync(
-                            groupId, false, result.NextPageLink);
+                            groupId, result.NextPageLink);
                     }
                 }
             }
@@ -82,8 +81,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 if (crl.EndsWith(".crl", StringComparison.OrdinalIgnoreCase)) {
                     var groupId = crl.Substring(0, crl.Length - 4);
                     // find isser cert with serial no.
-                    var result = await _services.ListIssuerCACertificateVersionsAsync(
-                        groupId, false);
+                    var result = await _services.ListIssuerCACertificateVersionsAsync(groupId);
                     while (result.Chain != null && result.Chain.Count > 0) {
                         foreach (var cert in result.Chain) {
                             if (serial.EqualsIgnoreCase(cert.SerialNumber)) {
@@ -103,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                             break;
                         }
                         result = await _services.ListIssuerCACertificateVersionsAsync(
-                            groupId, false, result.NextPageLink);
+                            groupId, result.NextPageLink);
                     }
                 }
             }

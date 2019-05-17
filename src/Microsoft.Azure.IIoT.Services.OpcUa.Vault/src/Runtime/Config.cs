@@ -7,24 +7,26 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
     using Microsoft.Azure.IIoT.Auth.Clients;
     using Microsoft.Azure.IIoT.Auth.Runtime;
     using Microsoft.Azure.IIoT.Auth.Server;
+    using Microsoft.Azure.IIoT.Crypto.KeyVault;
+    using Microsoft.Azure.IIoT.Crypto.KeyVault.Runtime;
     using Microsoft.Azure.IIoT.OpcUa.Vault;
     using Microsoft.Azure.IIoT.OpcUa.Vault.Runtime;
     using Microsoft.Azure.IIoT.Services.Cors;
     using Microsoft.Azure.IIoT.Services.Cors.Runtime;
     using Microsoft.Azure.IIoT.Services.Swagger;
     using Microsoft.Azure.IIoT.Services.Swagger.Runtime;
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Storage.CosmosDb;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
     using System;
-    using Microsoft.Azure.IIoT.Storage;
 
     /// <summary>
     /// Web service configuration
     /// </summary>
     public class Config : ConfigBase, IAuthConfig, ICorsConfig,
         IClientConfig, ISwaggerConfig, IVaultConfig, ICosmosDbConfig,
-        IItemContainerConfig {
+        IItemContainerConfig, IKeyVaultConfig {
 
         /// <summary>
         /// Configuration constructor
@@ -42,6 +44,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         internal Config(string serviceId, IConfigurationRoot configuration) :
             base(configuration) {
             _vault = new VaultConfig(configuration);
+            _keyVault = new KeyVaultConfig(configuration);
             _cosmos = new VaultConfig(configuration);
             _db = new VaultConfig(configuration);
             _swagger = new SwaggerConfig(configuration, serviceId);
@@ -84,11 +87,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         /// <inheritdoc/>
         public string ServiceHost => _vault.ServiceHost;
         /// <inheritdoc/>
-        public string KeyVaultBaseUrl => _vault.KeyVaultBaseUrl;
+        public string KeyVaultBaseUrl => _keyVault.KeyVaultBaseUrl;
         /// <inheritdoc/>
-        public string KeyVaultResourceId => _vault.KeyVaultResourceId;
+        public string KeyVaultResourceId => _keyVault.KeyVaultResourceId;
         /// <inheritdoc/>
-        public bool KeyVaultIsHsm => _vault.KeyVaultIsHsm;
+        public bool KeyVaultIsHsm => _keyVault.KeyVaultIsHsm;
         /// <inheritdoc/>
         public string DbConnectionString => _cosmos.DbConnectionString;
         /// <inheritdoc/>
@@ -104,6 +107,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         public bool UseRoles => GetBoolOrDefault("PCS_AUTH_ROLES", true);
 
         private readonly IVaultConfig _vault;
+        private readonly KeyVaultConfig _keyVault;
         private readonly ICosmosDbConfig _cosmos;
         private readonly IItemContainerConfig _db;
         private readonly SwaggerConfig _swagger;

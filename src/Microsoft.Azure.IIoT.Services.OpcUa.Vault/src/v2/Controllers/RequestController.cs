@@ -236,23 +236,22 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// The returned model can contain a link to the next page if more results are
         /// available.
         /// </remarks>
-        /// <param name="appId">optional, query for application id</param>
-        /// <param name="requestState">optional, query for request state</param>
+        /// <param name="query">optional, query filter</param>
         /// <param name="nextPageLink">optional, link to next page </param>
         /// <param name="pageSize">optional, the maximum number of result per page</param>
         /// <returns>Matching requests, next page link</returns>
         [HttpGet("query")]
         [AutoRestExtension(NextPageLinkName = "nextPageLink")]
         public async Task<CertificateRequestQueryResponseApiModel> QueryCertificateRequestsAsync(
-            string appId, CertificateRequestState? requestState, [FromQuery] string nextPageLink,
+            CertificateRequestQueryRequestApiModel query, [FromQuery] string nextPageLink,
             [FromQuery] int? pageSize) {
             if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
                 pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
                     .FirstOrDefault());
             }
             HttpContext.User = null; // TODO: Set service principal
-            var result = await _management.QueryRequestsAsync(appId,
-                requestState, nextPageLink, pageSize);
+            var result = await _management.QueryRequestsAsync(query?.ToServiceModel(),
+                nextPageLink, pageSize);
             return new CertificateRequestQueryResponseApiModel(result);
         }
 
@@ -283,16 +282,15 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// Requires Writer role.
         /// </remarks>
         /// <param name="requestId"></param>
-        /// <param name="applicationId"></param>
         /// <returns>
         /// The state, the issued Certificate and the private key, if available.
         /// </returns>
-        [HttpGet("{requestId}/{applicationId}/fetch")]
+        [HttpGet("{requestId}/fetch")]
         [Authorize(Policy = Policies.CanWrite)]
         public async Task<FetchCertificateRequestResponseApiModel> FetchCertificateRequestResultAsync(
-            string requestId, string applicationId) {
+            string requestId) {
             HttpContext.User = null; // TODO: Set service principal
-            var result = await _requests.FetchResultAsync(requestId, applicationId);
+            var result = await _requests.FetchResultAsync(requestId);
             return new FetchCertificateRequestResponseApiModel(result);
         }
 

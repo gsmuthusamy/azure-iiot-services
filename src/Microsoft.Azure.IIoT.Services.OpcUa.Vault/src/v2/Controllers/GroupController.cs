@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// </summary>
         /// <param name="groups">Groups client</param>
         /// <param name="management"></param>
-        public GroupController(IGroupRegistry groups, IGroupServices management) {
+        public GroupController(IGroupRegistry groups, ICertificateDirectory management) {
             _groups = groups;
             _services = management;
         }
@@ -285,6 +285,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         }
 
         private readonly IGroupRegistry _groups;
-        private readonly IGroupServices _services;
+        private readonly ICertificateDirectory _services;
     }
 }

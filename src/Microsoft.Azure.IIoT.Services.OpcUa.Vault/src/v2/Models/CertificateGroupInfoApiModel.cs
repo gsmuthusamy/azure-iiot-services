@@ -74,13 +74,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         public string Name { get; set; }
 
         /// <summary>
-        /// The certificate type as specified in the OPC UA spec 1.04.
-        /// supported values:
-        /// - RsaSha256ApplicationCertificateType (default)
-        /// - ApplicationCertificateType
+        /// The certificate group type
         /// </summary>
         [JsonProperty(PropertyName = "certificateType")]
-        [Required]
+        [DefaultValue(CertificateType.ApplicationInstanceCertificateType)]
         public CertificateType CertificateType { get; set; }
 
         /// <summary>

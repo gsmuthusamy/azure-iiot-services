@@ -9,21 +9,21 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Fetch results
+    /// Finish request results
     /// </summary>
-    public sealed class FetchCertificateRequestResponseApiModel {
+    public sealed class FinishCertificateRequestResponseApiModel {
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public FetchCertificateRequestResponseApiModel() {
+        public FinishCertificateRequestResponseApiModel() {
         }
 
         /// <summary>
         /// Create fetch request
         /// </summary>
         /// <param name="model"></param>
-        public FetchCertificateRequestResponseApiModel(FetchCertificateRequestResultModel model) {
+        public FinishCertificateRequestResponseApiModel(FinishCertificateRequestResultModel model) {
             Request = model.Request != null ?
                 new CertificateRequestRecordApiModel(model.Request) : null;
             SignedCertificate = model.SignedCertificate;
@@ -34,8 +34,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <summary>
         /// Create fetch request
         /// </summary>
-        public FetchCertificateRequestResultModel ToServiceModel() {
-            return new FetchCertificateRequestResultModel {
+        public FinishCertificateRequestResultModel ToServiceModel() {
+            return new FinishCertificateRequestResultModel {
                 Request = Request?.ToServiceModel(),
                 SignedCertificate = SignedCertificate,
                 PrivateKey = PrivateKey,

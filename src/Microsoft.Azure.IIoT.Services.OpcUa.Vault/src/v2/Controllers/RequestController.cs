@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// </summary>
         /// <param name="requests">certificate services</param>
         /// <param name="management"></param>
-        public RequestController(ICertificateAuthority requests,
+        public RequestController(ICertificateManager requests,
             IRequestManagement management) {
             _requests = requests;
             _management = management;
@@ -50,13 +50,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <returns>The certificate request id</returns>
         [HttpPost("sign")]
         [Authorize(Policy = Policies.CanWrite)]
-        public async Task<string> SubmitSigningRequestAsync(
+        public async Task<string> StartSigningRequestAsync(
             [FromBody] SigningRequestApiModel signingRequest) {
             if (signingRequest == null) {
                 throw new ArgumentNullException(nameof(signingRequest));
             }
             HttpContext.User = null; // TODO: Set service principal
-            return await _requests.SubmitSigningRequestAsync(
+            return await _requests.StartSigningRequestAsync(
                 signingRequest.ToServiceModel(), User.Identity.Name);
         }
 
@@ -72,13 +72,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <returns>The certificate request id</returns>
         [HttpPost("keypair")]
         [Authorize(Policy = Policies.CanWrite)]
-        public async Task<string> SubmitNewKeyPairRequestAsync(
+        public async Task<string> StartNewKeyPairRequestAsync(
             [FromBody] NewKeyPairRequestApiModel newKeyPairRequest) {
             if (newKeyPairRequest == null) {
                 throw new ArgumentNullException(nameof(newKeyPairRequest));
             }
             HttpContext.User = null; // TODO: Set service principal
-            return await _requests.SubmitNewKeyPairRequestAsync(
+            return await _requests.StartNewKeyPairRequestAsync(
                 newKeyPairRequest.ToServiceModel(), User.Identity.Name);
         }
 
@@ -287,14 +287,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// </returns>
         [HttpGet("{requestId}/fetch")]
         [Authorize(Policy = Policies.CanWrite)]
-        public async Task<FetchCertificateRequestResponseApiModel> FetchCertificateRequestResultAsync(
+        public async Task<FinishCertificateRequestResponseApiModel> FinishCertificateRequestAsync(
             string requestId) {
             HttpContext.User = null; // TODO: Set service principal
-            var result = await _requests.FetchResultAsync(requestId);
-            return new FetchCertificateRequestResponseApiModel(result);
+            var result = await _requests.FinishRequestAsync(requestId);
+            return new FinishCertificateRequestResponseApiModel(result);
         }
 
-        private readonly ICertificateAuthority _requests;
+        private readonly ICertificateManager _requests;
         private readonly IRequestManagement _management;
     }
 }

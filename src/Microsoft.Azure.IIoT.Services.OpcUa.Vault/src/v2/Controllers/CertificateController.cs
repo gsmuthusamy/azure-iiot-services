@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// Create the controller.
         /// </summary>
         /// <param name="vault"></param>
-        public CertificateController(IGroupServices vault) {
+        public CertificateController(ICertificateDirectory vault) {
             _services = vault;
         }
 
@@ -111,6 +111,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             return new NotFoundResult();
         }
 
-        private readonly IGroupServices _services;
+        private readonly ICertificateDirectory _services;
     }
 }

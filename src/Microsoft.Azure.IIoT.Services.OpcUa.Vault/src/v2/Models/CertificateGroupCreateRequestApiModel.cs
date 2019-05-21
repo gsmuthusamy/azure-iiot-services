@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// The certificate group type
         /// </summary>
         [JsonProperty(PropertyName = "certificateType")]
-        [DefaultValue(CertificateType.ApplicationInstanceCertificateType)]
+        [DefaultValue(CertificateType.ApplicationInstanceCertificate)]
         public CertificateType CertificateType { get; set; }
 
         /// <summary>

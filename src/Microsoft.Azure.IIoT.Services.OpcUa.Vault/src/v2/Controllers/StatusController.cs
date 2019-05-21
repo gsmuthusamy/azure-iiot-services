@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <param name="certificateGroups"></param>
         /// <param name="logger"></param>
         public StatusController(IApplicationRegistry2 applicationDatabase,
-            IGroupRegistry certificateGroups, ILogger logger) {
+            ICertificateGroupManager certificateGroups, ILogger logger) {
             _applicationDatabase = applicationDatabase;
             _certificateGroups = certificateGroups;
             _logger = logger;
@@ -82,7 +82,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         }
 
         private readonly ILogger _logger;
-        private readonly IGroupRegistry _certificateGroups;
+        private readonly ICertificateGroupManager _certificateGroups;
         private readonly IApplicationRegistry2 _applicationDatabase;
     }
 }

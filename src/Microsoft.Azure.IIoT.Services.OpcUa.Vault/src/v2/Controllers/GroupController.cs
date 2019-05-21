@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// </summary>
         /// <param name="groups">Groups client</param>
         /// <param name="management"></param>
-        public GroupController(IGroupRegistry groups, ICertificateDirectory management) {
+        public GroupController(ICertificateGroupManager groups, ICertificateDirectory management) {
             _groups = groups;
             _services = management;
         }
@@ -284,7 +284,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 await _services.GenerateNewIssuerCACertificateAsync(group));
         }
 
-        private readonly IGroupRegistry _groups;
+        private readonly ICertificateGroupManager _groups;
         private readonly ICertificateDirectory _services;
     }
 }

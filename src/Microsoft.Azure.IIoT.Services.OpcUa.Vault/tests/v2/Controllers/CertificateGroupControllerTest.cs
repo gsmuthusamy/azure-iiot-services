@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.v2.Controllers {
 
     public class CertificateGroupControllerTest {
 
-        private readonly Mock<IGroupRegistry> _groups;
+        private readonly Mock<ICertificateGroupManager> _groups;
         private readonly Mock<ICertificateDirectory> _services;
         private readonly GroupController _target;
 
@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Tests.v2.Controllers {
             // This is a dependency of the controller, that we mock, so that
             // we can test the class in isolation
             // Moq Quickstart: https://github.com/Moq/moq4/wiki/Quickstart
-            _groups = new Mock<IGroupRegistry>();
+            _groups = new Mock<ICertificateGroupManager>();
             _services = new Mock<ICertificateDirectory>();
 
             // By convention we call "target" the class under test

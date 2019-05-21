@@ -135,7 +135,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Onboarding {
                 .AsImplementedInterfaces().SingleInstance();
 
             // And fleet discovery and activation
-            builder.RegisterType<RegistryServices>()
+            builder.RegisterType<EndpointRegistry>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<ActivationClient>()
                 .AsImplementedInterfaces().SingleInstance();

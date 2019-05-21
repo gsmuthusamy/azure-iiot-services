@@ -180,7 +180,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Gateway {
                 .AsImplementedInterfaces().SingleInstance();
 
             // Opc Ua services
-            builder.RegisterType<RegistryServices>()
+            builder.RegisterType<EndpointRegistry>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<ActivationClient>()
                 .AsImplementedInterfaces().SingleInstance();

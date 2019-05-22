@@ -31,6 +31,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.History {
     using System;
     using Serilog;
     using ILogger = Serilog.ILogger;
+    using Microsoft.Azure.IIoT.OpcUa.Twin;
 
     /// <summary>
     /// Webservice startup
@@ -203,10 +204,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.History {
                 .AsImplementedInterfaces().SingleInstance();
 
             // Adapters and corresponding edge client
-            builder.RegisterType<TwinClient>()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<SupervisorClient>()
-                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterModule<TwinModuleClients>();
             builder.RegisterType<HistoricAccessAdapter<string>>()
               .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<HistoricAccessAdapter<EndpointRegistrationModel>>()

@@ -31,6 +31,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Gateway {
     using AutofacSerilogIntegration;
     using System;
     using ILogger = Serilog.ILogger;
+    using Microsoft.Azure.IIoT.OpcUa.Registry;
 
     /// <summary>
     /// Webservice startup
@@ -180,16 +181,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Gateway {
                 .AsImplementedInterfaces().SingleInstance();
 
             // Opc Ua services
-            builder.RegisterType<EndpointRegistry>()
-                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterModule<RegistryServices>();
             builder.RegisterType<ActivationClient>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<OnboardingClient>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<TwinClient>()
                 .AsImplementedInterfaces().SingleInstance();
-            //builder.RegisterType<Twin.Clients.SupervisorClient>()
-            //    .AsImplementedInterfaces().SingleInstance();
 
             // Auto start listeners
             builder.RegisterType<TcpChannelListener>()

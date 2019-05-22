@@ -29,6 +29,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Twin {
     using System;
     using Serilog;
     using ILogger = Serilog.ILogger;
+    using Microsoft.Azure.IIoT.OpcUa.Twin;
 
     /// <summary>
     /// Webservice startup
@@ -201,10 +202,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Twin {
                 .AsImplementedInterfaces().SingleInstance();
 
             // Edge clients
-            builder.RegisterType<TwinClient>()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<SupervisorClient>()
-                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterModule<TwinModuleClients>();
         }
     }
 }

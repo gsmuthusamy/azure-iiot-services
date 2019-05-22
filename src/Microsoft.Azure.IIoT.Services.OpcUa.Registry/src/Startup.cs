@@ -30,6 +30,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry {
     using System;
     using Serilog;
     using ILogger = Serilog.ILogger;
+    using Microsoft.Azure.IIoT.OpcUa.Registry;
 
     /// <summary>
     /// Webservice startup
@@ -203,8 +204,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry {
                 .AsImplementedInterfaces().SingleInstance();
 
             // Opc Ua services
-            builder.RegisterType<EndpointRegistry>()
-                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterModule<RegistryServices>();
             builder.RegisterType<ActivationClient>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<DiagnosticsClient>()

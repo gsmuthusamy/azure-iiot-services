@@ -26,6 +26,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Onboarding {
     using System.Runtime.Loader;
     using System.Threading.Tasks;
     using Serilog;
+    using Microsoft.Azure.IIoT.OpcUa.Registry;
 
     /// <summary>
     /// IoT Hub device event processor host
@@ -135,15 +136,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Onboarding {
                 .AsImplementedInterfaces().SingleInstance();
 
             // And fleet discovery and activation
-            builder.RegisterType<EndpointRegistry>()
-                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterModule<RegistryServices>();
             builder.RegisterType<ActivationClient>()
                 .AsImplementedInterfaces().SingleInstance();
 #if USE_JOBS
             builder.RegisterType<DiscoveryJobClient>()
                 .AsImplementedInterfaces().SingleInstance();
 #else
-            builder.RegisterType<DiscoveryServices>()
+            builder.RegisterType<DiscoveryMultiplexer>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<DiscoveryClient>()
                 .AsImplementedInterfaces().SingleInstance();

@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         /// Create from service model
         /// </summary>
         /// <param name="model"></param>
-        public RegistryOperationApiModel(RegistryOperationModel model) {
+        public RegistryOperationApiModel(RegistryOperationContextModel model) {
             AuthorityId = model.AuthorityId;
             Time = model.Time;
         }
@@ -32,8 +32,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         /// Convert back to service model
         /// </summary>
         /// <returns></returns>
-        public RegistryOperationModel ToServiceModel() {
-            return new RegistryOperationModel {
+        public RegistryOperationContextModel ToServiceModel() {
+            return new RegistryOperationContextModel {
                 Time = Time,
                 AuthorityId = AuthorityId
             };

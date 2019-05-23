@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
     using Swashbuckle.AspNetCore.Swagger;
 
     /// <summary>
-    /// Application services.
+    /// Application extended query support.
     /// </summary>
     [ApiController]
     [Route(VersionInfo.PATH + "/app")]
@@ -29,9 +29,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// <summary>
         /// Create controller
         /// </summary>
-        /// <param name="applicationDatabase"></param>
-        public ApplicationController(IApplicationRegistry2 applicationDatabase) {
-            _applicationDatabase = applicationDatabase;
+        /// <param name="applications"></param>
+        /// <param name="query"></param>
+        public ApplicationController(IApplicationRegistry applications,
+            IApplicationExtendedQuery query) {
+            _query = query;
+            _applications = applications;
         }
 
         /// <summary>
@@ -53,7 +56,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
             }
             var applicationServiceModel = application.ToServiceModel();
             // TODO: applicationServiceModel.AuthorityId = User.Identity.Name;
-            var result = await _applicationDatabase.RegisterApplicationAsync(
+            var result = await _applications.RegisterApplicationAsync(
                 applicationServiceModel.ToRegistrationRequest());
             return await GetApplicationAsync(result.Id);
         }
@@ -68,7 +71,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// <returns>The application record</returns>
         [HttpGet("{applicationId}")]
         public async Task<ApplicationInfoApiModel> GetApplicationAsync(string applicationId) {
-            var registration = await _applicationDatabase.GetApplicationAsync(applicationId);
+            var registration = await _applications.GetApplicationAsync(applicationId);
             return new ApplicationInfoApiModel(registration.Application);
         }
 
@@ -90,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
             }
             var applicationServiceModel = application.ToServiceModel();
             // TODO: applicationServiceModel.AuthorityId = User.Identity.Name;
-            await _applicationDatabase.UpdateApplicationAsync(application.ApplicationId,
+            await _applications.UpdateApplicationAsync(application.ApplicationId,
                 applicationServiceModel.ToUpdateRequest());
             return await GetApplicationAsync(application.ApplicationId);
         }
@@ -111,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         [Authorize(Policy = Policies.CanManage)]
         public async Task<ApplicationInfoApiModel> ApproveApplicationAsync(
             string applicationId, bool? force) {
-            await _applicationDatabase.ApproveApplicationAsync(applicationId,
+            await _applications.ApproveApplicationAsync(applicationId,
                 force ?? false);
             return await GetApplicationAsync(applicationId);
         }
@@ -132,7 +135,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         [Authorize(Policy = Policies.CanManage)]
         public async Task<ApplicationInfoApiModel> RejectApplicationAsync(
             string applicationId, bool? force) {
-            await _applicationDatabase.RejectApplicationAsync(applicationId,
+            await _applications.RejectApplicationAsync(applicationId,
                 force ?? false);
             return await GetApplicationAsync(applicationId);
         }
@@ -150,7 +153,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         [HttpDelete("{applicationId}/unregister")]
         [Authorize(Policy = Policies.CanWrite)]
         public async Task UnregisterApplicationAsync(string applicationId) {
-            await _applicationDatabase.UnregisterApplicationAsync(applicationId);
+            await _applications.UnregisterApplicationAsync(applicationId);
         }
 
         /// <summary>
@@ -172,10 +175,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
             string applicationUri, [FromQuery] string nextPageLink, [FromQuery] int? pageSize) {
 
             var results = string.IsNullOrEmpty(nextPageLink) ?
-                await _applicationDatabase.QueryApplicationsAsync(
+                await _applications.QueryApplicationsAsync(
                 new ApplicationRegistrationQueryModel {
                     ApplicationUri = applicationUri
-                }, pageSize) : await _applicationDatabase.ListApplicationsAsync(
+                }, pageSize) : await _applications.ListApplicationsAsync(
                     nextPageLink, pageSize);
             return new ApplicationInfoListApiModel(results);
         }
@@ -195,11 +198,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
                 // query all
                 query = new QueryApplicationsByIdRequestApiModel();
             }
-            var result = await _applicationDatabase.QueryApplicationsByIdAsync(
+            var result = await _query.QueryApplicationsByIdAsync(
                 query.ToServiceModel());
             return new QueryApplicationsByIdResponseApiModel(result);
         }
 
-        private readonly IApplicationRegistry2 _applicationDatabase;
+        private readonly IApplicationExtendedQuery _query;
+        private readonly IApplicationRegistry _applications;
     }
 }

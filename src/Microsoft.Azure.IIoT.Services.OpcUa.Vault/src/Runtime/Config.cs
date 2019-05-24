@@ -9,6 +9,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
     using Microsoft.Azure.IIoT.Auth.Server;
     using Microsoft.Azure.IIoT.Crypto.KeyVault;
     using Microsoft.Azure.IIoT.Crypto.KeyVault.Runtime;
+    using Microsoft.Azure.IIoT.OpcUa.Registry;
+    using Microsoft.Azure.IIoT.OpcUa.Registry.Runtime;
     using Microsoft.Azure.IIoT.OpcUa.Vault;
     using Microsoft.Azure.IIoT.OpcUa.Vault.Runtime;
     using Microsoft.Azure.IIoT.Services.Cors;
@@ -26,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
     /// </summary>
     public class Config : ConfigBase, IAuthConfig, ICorsConfig,
         IClientConfig, ISwaggerConfig, IVaultConfig, ICosmosDbConfig,
-        IItemContainerConfig, IKeyVaultConfig {
+        IItemContainerConfig, IKeyVaultConfig, IRegistryConfig {
 
         /// <summary>
         /// Configuration constructor
@@ -44,6 +46,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         internal Config(string serviceId, IConfigurationRoot configuration) :
             base(configuration) {
             _vault = new VaultConfig(configuration);
+            _registry = new RegistryConfig(configuration);
             _keyVault = new KeyVaultConfig(configuration);
             _cosmos = new VaultConfig(configuration);
             _db = new VaultConfig(configuration);
@@ -99,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         /// <inheritdoc/>
         public string ContainerName => _db.ContainerName;
         /// <inheritdoc/>
-        public bool ApplicationsAutoApprove => _vault.ApplicationsAutoApprove;
+        public bool ApplicationsAutoApprove => _registry.ApplicationsAutoApprove;
 
         /// <summary>
         /// Whether to use role based access
@@ -107,6 +110,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         public bool UseRoles => GetBoolOrDefault("PCS_AUTH_ROLES", true);
 
         private readonly IVaultConfig _vault;
+        private readonly RegistryConfig _registry;
         private readonly KeyVaultConfig _keyVault;
         private readonly ICosmosDbConfig _cosmos;
         private readonly IItemContainerConfig _db;

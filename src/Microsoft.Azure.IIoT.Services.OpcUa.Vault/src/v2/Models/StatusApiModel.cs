@@ -69,7 +69,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         [JsonProperty(PropertyName = "dependencies")]
         public Dictionary<string, string> Dependencies => new Dictionary<string, string>
         {
-            { "ApplicationDatabase", _appMessage },
             { "KeyVault", _kvMessage }
         };
 
@@ -86,16 +85,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// <summary>
         /// Create model
         /// </summary>
-        /// <param name="appOk"></param>
-        /// <param name="appMessage"></param>
         /// <param name="kvOk"></param>
         /// <param name="kvMessage"></param>
-        public StatusApiModel(bool appOk, string appMessage, bool kvOk, string kvMessage) {
-            Status = appOk && kvOk ? "OK" : "ERROR";
-            _appMessage = appOk ? "OK" : "ERROR";
-            if (!string.IsNullOrEmpty(appMessage)) {
-                _appMessage += ":" + appMessage;
-            }
+        public StatusApiModel(bool kvOk, string kvMessage) {
+            Status = kvOk ? "OK" : "ERROR";
             _kvMessage = kvOk ? "OK" : "ERROR";
             if (!string.IsNullOrEmpty(kvMessage)) {
                 _kvMessage += ":" + kvMessage;
@@ -103,7 +96,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         }
 
         private const string kDateFormat = "yyyy-MM-dd'T'HH:mm:sszzz";
-        private readonly string _appMessage;
         private readonly string _kvMessage;
     }
 }

@@ -41,11 +41,13 @@
     <When Condition="Exists('..\..\..\..\components\opc-ua')">
       <ItemGroup>
         <ProjectReference Include="..\..\..\..\components\opc-ua\src\Microsoft.Azure.IIoT.OpcUa.Vault\src\Microsoft.Azure.IIoT.OpcUa.Vault.csproj" />
+        <ProjectReference Include="..\..\..\..\components\opc-ua\src\Microsoft.Azure.IIoT.OpcUa.Registry\src\Microsoft.Azure.IIoT.OpcUa.Registry.csproj" />
       </ItemGroup>
     </When>
     <Otherwise>
       <ItemGroup>
         <PackageReference Include="Microsoft.Azure.IIoT.OpcUa.Vault" Version="$(ComponentsOpcUaVersion)" />
+        <PackageReference Include="Microsoft.Azure.IIoT.OpcUa.Registry" Version="$(ComponentsOpcUaVersion)" />
       </ItemGroup>
     </Otherwise>
   </Choose>

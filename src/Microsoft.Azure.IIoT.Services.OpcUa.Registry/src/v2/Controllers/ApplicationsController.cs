@@ -27,12 +27,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
     public class ApplicationsController : Controller {
 
         /// <summary>
-        /// Create controller with service
+        /// Create controller
         /// </summary>
         /// <param name="applications"></param>
+        /// <param name="query"></param>
         /// <param name="onboarding"></param>
         public ApplicationsController(IApplicationRegistry applications,
-            IOnboardingServices onboarding) {
+            IApplicationRecordQuery query, IOnboardingServices onboarding) {
+            _query = query;
             _applications = applications;
             _onboarding = onboarding;
         }
@@ -129,13 +131,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// <returns>Application registration response</returns>
         [HttpPut]
         [Authorize(Policy = Policies.CanManage)]
-        public async Task<ApplicationRegistrationResponseApiModel> CreateApplicationAsync(
+        public async Task<ApplicationRegistrationResponseApiModel> RegisterApplicationAsync(
             [FromBody] [Required] ApplicationRegistrationRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var result = await _applications.RegisterApplicationAsync(
-                request.ToServiceModel());
+            var model = request.ToServiceModel();
+            // TODO: applicationServiceModel.AuthorityId = User.Identity.Name;
+            var result = await _applications.RegisterApplicationAsync(model);
             return new ApplicationRegistrationResponseApiModel(result);
         }
 
@@ -168,8 +171,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _applications.UpdateApplicationAsync(applicationId,
-                request.ToServiceModel());
+            var model = request.ToServiceModel();
+            // TODO: applicationServiceModel.AuthorityId = User.Identity.Name;
+            await _applications.UpdateApplicationAsync(applicationId, model);
         }
 
         /// <summary>
@@ -182,7 +186,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// <returns></returns>
         [HttpDelete("{applicationId}")]
         [Authorize(Policy = Policies.CanManage)]
-        public async Task DeleteApplicationAsync(string applicationId) {
+        public async Task UnregisterApplicationAsync(string applicationId) {
             await _applications.UnregisterApplicationAsync(applicationId);
         }
 
@@ -301,6 +305,26 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         }
 
         /// <summary>
+        /// Query applications by id.
+        /// </summary>
+        /// <remarks>
+        /// A query model which supports the OPC UA Global Discovery Server query.
+        /// </remarks>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        [HttpPost("querybyid")]
+        public async Task<ApplicationRecordListApiModel> QueryApplicationsByIdAsync(
+            [FromBody] ApplicationRecordQueryApiModel query) {
+            if (query == null) {
+                // query all
+                query = new ApplicationRecordQueryApiModel();
+            }
+            var result = await _query.QueryApplicationsAsync(
+                query.ToServiceModel());
+            return new ApplicationRecordListApiModel(result);
+        }
+
+        /// <summary>
         /// Get filtered list of applications
         /// </summary>
         /// <remarks>
@@ -331,6 +355,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
             return new ApplicationInfoListApiModel(result);
         }
 
+        private readonly IApplicationRecordQuery _query;
         private readonly IApplicationRegistry _applications;
         private readonly IOnboardingServices _onboarding;
     }

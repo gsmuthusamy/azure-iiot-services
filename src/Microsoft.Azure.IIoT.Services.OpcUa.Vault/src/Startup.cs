@@ -4,10 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
-    using Microsoft.Azure.IIoT.Crypto.KeyVault.Clients;
-    using Microsoft.Azure.IIoT.Http.Auth;
-    using Microsoft.Azure.IIoT.Http.Default;
-    using Microsoft.Azure.IIoT.OpcUa.Vault.Services;
     using Microsoft.Azure.IIoT.Services;
     using Microsoft.Azure.IIoT.Services.Auth;
     using Microsoft.Azure.IIoT.Services.Auth.Clients;
@@ -15,6 +11,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
     using Microsoft.Azure.IIoT.Services.Diagnostics;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2;
+    using Microsoft.Azure.IIoT.OpcUa.Registry;
+    using Microsoft.Azure.IIoT.OpcUa.Vault.Services;
+    using Microsoft.Azure.IIoT.Crypto.KeyVault.Clients;
+    using Microsoft.Azure.IIoT.Http.Auth;
+    using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Storage.CosmosDb.Services;
     using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Azure.KeyVault;
@@ -236,8 +237,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                 .AsImplementedInterfaces().SingleInstance();
 
             // Vault services
-            builder.RegisterType<ApplicationDatabaseOld>()
-                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterModule<RegistryServices>();
             builder.RegisterType<CertificateManager>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<GroupDatabase>()

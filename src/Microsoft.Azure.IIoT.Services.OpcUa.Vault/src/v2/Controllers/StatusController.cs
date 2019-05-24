@@ -30,12 +30,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <summary>
         /// Create the controller
         /// </summary>
-        /// <param name="applicationDatabase"></param>
         /// <param name="certificateGroups"></param>
         /// <param name="logger"></param>
-        public StatusController(IApplicationRecordQuery applicationDatabase,
+        public StatusController(
             ICertificateGroupManager certificateGroups, ILogger logger) {
-            _applicationDatabase = applicationDatabase;
             _certificateGroups = certificateGroups;
             _logger = logger;
         }
@@ -45,23 +43,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// </summary>
         [HttpGet]
         public async Task<StatusApiModel> GetStatusAsync() {
-            bool applicationOk;
-            var applicationMessage = "Alive and well";
-            try {
-                var apps = await _applicationDatabase.QueryApplicationsAsync(
-                    new ApplicationRecordQueryModel {
-                        MaxRecordsToReturn = 1
-                    });
-                applicationOk = apps != null;
-            }
-            catch (Exception ex) {
-                applicationOk = false;
-                applicationMessage = ex.Message;
-            }
-            _logger.Information("Service status application database", new {
-                Healthy = applicationOk,
-                Message = applicationMessage
-            });
             bool kvOk;
             var kvMessage = "Alive and well";
             try {
@@ -77,11 +58,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 Healthy = kvOk,
                 Message = kvMessage
             });
-            return new StatusApiModel(applicationOk, applicationMessage, kvOk, kvMessage);
+            return new StatusApiModel(kvOk, kvMessage);
         }
 
         private readonly ILogger _logger;
         private readonly ICertificateGroupManager _certificateGroups;
-        private readonly IApplicationRecordQuery _applicationDatabase;
     }
 }

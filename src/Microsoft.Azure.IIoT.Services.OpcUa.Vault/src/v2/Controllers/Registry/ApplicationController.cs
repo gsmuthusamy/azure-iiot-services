@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// <param name="applications"></param>
         /// <param name="query"></param>
         public ApplicationController(IApplicationRegistry applications,
-            IApplicationExtendedQuery query) {
+            IApplicationRecordQuery query) {
             _query = query;
             _applications = applications;
         }
@@ -192,18 +192,18 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// <param name="query"></param>
         /// <returns></returns>
         [HttpPost("querybyid")]
-        public async Task<QueryApplicationsByIdResponseApiModel> QueryApplicationsByIdAsync(
-            [FromBody] QueryApplicationsByIdRequestApiModel query) {
+        public async Task<ApplicationRecordListApiModel> QueryApplicationsByIdAsync(
+            [FromBody] ApplicationRecordQueryApiModel query) {
             if (query == null) {
                 // query all
-                query = new QueryApplicationsByIdRequestApiModel();
+                query = new ApplicationRecordQueryApiModel();
             }
-            var result = await _query.QueryApplicationsByIdAsync(
+            var result = await _query.QueryApplicationsAsync(
                 query.ToServiceModel());
-            return new QueryApplicationsByIdResponseApiModel(result);
+            return new ApplicationRecordListApiModel(result);
         }
 
-        private readonly IApplicationExtendedQuery _query;
+        private readonly IApplicationRecordQuery _query;
         private readonly IApplicationRegistry _applications;
     }
 }

@@ -11,25 +11,24 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
     /// <summary>
     /// Query by id
     /// </summary>
-    public sealed class QueryApplicationsByIdRequestApiModel {
+    public sealed class ApplicationRecordQueryApiModel {
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public QueryApplicationsByIdRequestApiModel() {
+        public ApplicationRecordQueryApiModel() {
         }
 
         /// <summary>
         /// Create query
         /// </summary>
         /// <param name="model"></param>
-        public QueryApplicationsByIdRequestApiModel(QueryApplicationsByIdRequestModel model) {
+        public ApplicationRecordQueryApiModel(ApplicationRecordQueryModel model) {
             ApplicationName = model.ApplicationName;
             ApplicationUri = model.ApplicationUri;
             ApplicationType = model.ApplicationType;
             ProductUri = model.ProductUri;
             ServerCapabilities = model.ServerCapabilities;
-            ApplicationState = model.ApplicationState;
             MaxRecordsToReturn = model.MaxRecordsToReturn;
             StartingRecordId = model.StartingRecordId;
         }
@@ -37,14 +36,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         /// <summary>
         /// Convert to service model
         /// </summary>
-        public QueryApplicationsByIdRequestModel ToServiceModel() {
-            return new QueryApplicationsByIdRequestModel {
+        public ApplicationRecordQueryModel ToServiceModel() {
+            return new ApplicationRecordQueryModel {
                 ApplicationName = ApplicationName,
                 ApplicationUri = ApplicationUri,
                 ApplicationType = ApplicationType,
                 ProductUri = ProductUri,
                 ServerCapabilities = ServerCapabilities,
-                ApplicationState = ApplicationState,
                 MaxRecordsToReturn = MaxRecordsToReturn,
                 StartingRecordId = StartingRecordId
             };
@@ -78,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         /// Application type
         /// </summary>
         [JsonProperty(PropertyName = "applicationType")]
-        public QueryApplicationType? ApplicationType { get; set; }
+        public ApplicationType? ApplicationType { get; set; }
 
         /// <summary>
         /// Product uri
@@ -90,12 +88,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         /// Server capabilities
         /// </summary>
         [JsonProperty(PropertyName = "serverCapabilities")]
-        public IList<string> ServerCapabilities { get; set; }
-
-        /// <summary>
-        /// Application state
-        /// </summary>
-        [JsonProperty(PropertyName = "applicationState")]
-        public ApplicationStateMask? ApplicationState { get; set; }
+        public List<string> ServerCapabilities { get; set; }
     }
 }

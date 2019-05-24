@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
         /// <param name="applicationDatabase"></param>
         /// <param name="certificateGroups"></param>
         /// <param name="logger"></param>
-        public StatusController(IApplicationExtendedQuery applicationDatabase,
+        public StatusController(IApplicationRecordQuery applicationDatabase,
             ICertificateGroupManager certificateGroups, ILogger logger) {
             _applicationDatabase = applicationDatabase;
             _certificateGroups = certificateGroups;
@@ -48,10 +48,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
             bool applicationOk;
             var applicationMessage = "Alive and well";
             try {
-                var apps = await _applicationDatabase.QueryApplicationsByIdAsync(
-                    new QueryApplicationsByIdRequestModel {
-                        MaxRecordsToReturn = 1,
-                        ApplicationState = ApplicationStateMask.Any
+                var apps = await _applicationDatabase.QueryApplicationsAsync(
+                    new ApplicationRecordQueryModel {
+                        MaxRecordsToReturn = 1
                     });
                 applicationOk = apps != null;
             }
@@ -83,6 +82,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
 
         private readonly ILogger _logger;
         private readonly ICertificateGroupManager _certificateGroups;
-        private readonly IApplicationExtendedQuery _applicationDatabase;
+        private readonly IApplicationRecordQuery _applicationDatabase;
     }
 }

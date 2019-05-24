@@ -236,7 +236,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                 .AsImplementedInterfaces().SingleInstance();
 
             // Vault services
-            builder.RegisterType<ApplicationIndex>()
+            builder.RegisterType<ApplicationDatabaseOld>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<CertificateManager>()
                 .AsImplementedInterfaces().SingleInstance();

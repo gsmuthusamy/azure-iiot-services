@@ -13,17 +13,17 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
     /// <summary>
     /// Create response
     /// </summary>
-    public sealed class QueryApplicationsByIdResponseApiModel {
+    public sealed class ApplicationRecordListApiModel {
 
         /// <summary>
         /// Create query response
         /// </summary>
         /// <param name="model"></param>
-        public QueryApplicationsByIdResponseApiModel(
-            QueryApplicationsByIdResultModel model) {
-            var applicationsList = new List<ApplicationInfoApiModel>();
-            foreach (var application in model.Items) {
-                applicationsList.Add(new ApplicationInfoApiModel(application));
+        public ApplicationRecordListApiModel(
+            ApplicationRecordListModel model) {
+            var applicationsList = new List<ApplicationRecordApiModel>();
+            foreach (var application in model.Applications) {
+                applicationsList.Add(new ApplicationRecordApiModel(application));
             }
             Applications = applicationsList;
             LastCounterResetTime = model.LastCounterResetTime;
@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
         /// Applications found
         /// </summary>
         [JsonProperty(PropertyName = "applications")]
-        public IList<ApplicationInfoApiModel> Applications { get; set; }
+        public List<ApplicationRecordApiModel> Applications { get; set; }
 
         /// <summary>
         /// Last counter reset

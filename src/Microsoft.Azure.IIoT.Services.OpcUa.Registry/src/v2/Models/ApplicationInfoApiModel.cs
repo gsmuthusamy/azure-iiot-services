@@ -44,7 +44,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             NotSeenSince = model.NotSeenSince;
             State = model.State;
             GatewayServerUri = model.GatewayServerUri;
-            RecordId = model.RecordId;
             Created = model.Created == null ? null :
                 new RegistryOperationApiModel(model.Created);
             Approved = model.Created == null ? null :
@@ -74,20 +73,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
                 NotSeenSince = NotSeenSince,
                 State = State,
                 GatewayServerUri = GatewayServerUri,
-                RecordId = RecordId,
                 Created = Created?.ToServiceModel(),
                 Approved = Approved?.ToServiceModel(),
                 Updated = Updated?.ToServiceModel(),
             };
         }
-
-        /// <summary>
-        /// Record id
-        /// </summary>
-        [JsonProperty(PropertyName = "id",
-            NullValueHandling = NullValueHandling.Ignore)]
-        [DefaultValue(null)]
-        public uint? RecordId { get; set; }
 
         /// <summary>
         /// State

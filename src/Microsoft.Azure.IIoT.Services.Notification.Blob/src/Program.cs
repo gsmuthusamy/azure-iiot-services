@@ -29,6 +29,7 @@ namespace Microsoft.Azure.IIoT.Services.Hub.Router {
 
         /// <summary>
         /// Static mapping of content type to event hub namespace / service bus
+        /// topic.
         /// Each one defines where the file notification / blob upload event is
         /// routed and thus consumed.
         /// </summary>
@@ -44,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Services.Hub.Router {
 
             ["application/x-node-set-v1"] = "graph",
 
-            // ... add more mappings here as we add blob processing services
+            // ... add more mappings here as we add more blob processing services
         };
 
         /// <summary>
@@ -141,10 +142,10 @@ namespace Microsoft.Azure.IIoT.Services.Hub.Router {
             /// </summary>
             /// <param name="broker"></param>
             /// <param name="logger"></param>
-            public BlobUploadNotificationRouter(IMessageBrokerClient broker, ILogger logger) {
+            public BlobUploadNotificationRouter(IEventBrokerClient broker, ILogger logger) {
                 _broker = broker ?? throw new ArgumentNullException(nameof(broker));
                 _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-                _clients = new ConcurrentDictionary<string, Task<IMessageClient>>();
+                _clients = new ConcurrentDictionary<string, Task<IEventQueueClient>>();
             }
 
             /// <inheritdoc/>
@@ -158,6 +159,8 @@ namespace Microsoft.Azure.IIoT.Services.Hub.Router {
                         $"Received content {contentType} that was not mapped to any route.");
                     return;
                 }
+
+                // Send blob notification through the message bus
                 await client.SendAsync(Encoding.UTF8.GetBytes(blobUri),
                     new Dictionary<string, string> {
                         { CommonProperties.kDeviceId, deviceId },
@@ -176,7 +179,7 @@ namespace Microsoft.Azure.IIoT.Services.Hub.Router {
             /// </summary>
             /// <param name="contentType"></param>
             /// <returns></returns>
-            private async Task<IMessageClient> GetClientAsync(string contentType) {
+            private async Task<IEventQueueClient> GetClientAsync(string contentType) {
                 // Parse the namespace out of the content type. A content type
                 // looks like this: "application/x-node-set-v1" and is routed to
                 // the path x-node-set-v1
@@ -194,8 +197,8 @@ namespace Microsoft.Azure.IIoT.Services.Hub.Router {
                 _clients.Clear();
             }
 
-            private readonly ConcurrentDictionary<string, Task<IMessageClient>> _clients;
-            private readonly IMessageBrokerClient _broker;
+            private readonly ConcurrentDictionary<string, Task<IEventQueueClient>> _clients;
+            private readonly IEventBrokerClient _broker;
             private readonly ILogger _logger;
         }
     }

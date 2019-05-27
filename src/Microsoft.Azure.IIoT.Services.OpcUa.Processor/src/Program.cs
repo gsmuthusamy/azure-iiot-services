@@ -105,15 +105,17 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Processor {
 
             // Now Monitor model upload notification using ...
             if (!config.UseFileNotificationHost) {
+
                 // ... event processor for fan out (requires blob
                 // notification router to be running) ...
+
                 builder.RegisterType<EventProcessorHost>()
                     .AsImplementedInterfaces();
                 builder.RegisterType<EventProcessorFactory>()
                     .AsImplementedInterfaces().SingleInstance();
             }
             else {
-                // ... or listen for file notifications on hub
+                // ... or listen for file notifications on hub directly
                 // (for simplicity) ...
                 builder.RegisterType<IoTHubFileNotificationHost>()
                     .AsImplementedInterfaces();

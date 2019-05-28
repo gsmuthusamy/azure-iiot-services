@@ -142,7 +142,7 @@ namespace Microsoft.Azure.IIoT.Services.Hub.Router {
             /// </summary>
             /// <param name="broker"></param>
             /// <param name="logger"></param>
-            public BlobUploadNotificationRouter(IEventBrokerClient broker, ILogger logger) {
+            public BlobUploadNotificationRouter(IEventQueueService broker, ILogger logger) {
                 _broker = broker ?? throw new ArgumentNullException(nameof(broker));
                 _logger = logger ?? throw new ArgumentNullException(nameof(logger));
                 _clients = new ConcurrentDictionary<string, Task<IEventQueueClient>>();
@@ -198,7 +198,7 @@ namespace Microsoft.Azure.IIoT.Services.Hub.Router {
             }
 
             private readonly ConcurrentDictionary<string, Task<IEventQueueClient>> _clients;
-            private readonly IEventBrokerClient _broker;
+            private readonly IEventQueueService _broker;
             private readonly ILogger _logger;
         }
     }

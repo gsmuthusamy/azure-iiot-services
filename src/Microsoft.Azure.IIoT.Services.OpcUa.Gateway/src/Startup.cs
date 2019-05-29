@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Gateway {
     using Microsoft.Azure.IIoT.OpcUa.Protocol.Transport;
     using Microsoft.Azure.IIoT.OpcUa.Registry.Clients;
     using Microsoft.Azure.IIoT.OpcUa.Registry.Services;
+    using Microsoft.Azure.IIoT.OpcUa.Registry;
     using Microsoft.Azure.IIoT.OpcUa.Gateway.Server;
     using Microsoft.Azure.IIoT.OpcUa.Twin.Clients;
     using Microsoft.Azure.IIoT.Services;
@@ -31,7 +32,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Gateway {
     using AutofacSerilogIntegration;
     using System;
     using ILogger = Serilog.ILogger;
-    using Microsoft.Azure.IIoT.OpcUa.Registry;
 
     /// <summary>
     /// Webservice startup

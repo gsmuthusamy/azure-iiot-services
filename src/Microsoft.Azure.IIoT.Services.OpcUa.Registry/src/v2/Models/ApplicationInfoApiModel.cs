@@ -32,6 +32,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             ApplicationType = model.ApplicationType;
             ApplicationUri = model.ApplicationUri;
             ApplicationName = model.ApplicationName;
+            Locale = model.Locale;
             LocalizedNames = model.LocalizedNames;
             Certificate = model.Certificate;
             ProductUri = model.ProductUri;
@@ -61,6 +62,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
                 ApplicationType = ApplicationType,
                 ApplicationUri = ApplicationUri,
                 ApplicationName = ApplicationName,
+                Locale = Locale,
                 LocalizedNames = LocalizedNames,
                 Certificate = Certificate,
                 ProductUri = ProductUri,
@@ -120,6 +122,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Models {
             NullValueHandling = NullValueHandling.Ignore)]
         [DefaultValue(null)]
         public string ApplicationName { get; set; }
+
+        /// <summary>
+        /// Locale of default name - defaults to "en"
+        /// </summary>
+        [JsonProperty(PropertyName = "locale",
+            NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue(null)]
+        public string Locale { get; set; }
 
         /// <summary>
         /// Localized Names of application keyed on locale

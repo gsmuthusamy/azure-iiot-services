@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.History {
     using Microsoft.Azure.IIoT.Services.Auth.Clients;
     using Microsoft.Azure.IIoT.Services.Cors;
     using Microsoft.Azure.IIoT.OpcUa.Registry.Models;
+    using Microsoft.Azure.IIoT.OpcUa.Twin;
     using Microsoft.Azure.IIoT.OpcUa.Twin.Clients;
     using Microsoft.Azure.IIoT.OpcUa.History.Clients;
     using Microsoft.Azure.IIoT.Http.Auth;
@@ -31,7 +32,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.History {
     using System;
     using Serilog;
     using ILogger = Serilog.ILogger;
-    using Microsoft.Azure.IIoT.OpcUa.Twin;
 
     /// <summary>
     /// Webservice startup

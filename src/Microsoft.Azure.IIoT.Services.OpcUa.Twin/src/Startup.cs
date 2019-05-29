@@ -6,12 +6,13 @@
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Twin {
     using Microsoft.Azure.IIoT.Services.OpcUa.Twin.Runtime;
     using Microsoft.Azure.IIoT.Services.OpcUa.Twin.v2;
+    using Microsoft.Azure.IIoT.OpcUa.Twin.Clients;
+    using Microsoft.Azure.IIoT.OpcUa.Twin;
     using Microsoft.Azure.IIoT.Services;
     using Microsoft.Azure.IIoT.Services.Diagnostics;
     using Microsoft.Azure.IIoT.Services.Auth;
     using Microsoft.Azure.IIoT.Services.Auth.Clients;
     using Microsoft.Azure.IIoT.Services.Cors;
-    using Microsoft.Azure.IIoT.OpcUa.Twin.Clients;
     using Microsoft.Azure.IIoT.Http.Auth;
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Hub.Client;
@@ -29,7 +30,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Twin {
     using System;
     using Serilog;
     using ILogger = Serilog.ILogger;
-    using Microsoft.Azure.IIoT.OpcUa.Twin;
 
     /// <summary>
     /// Webservice startup

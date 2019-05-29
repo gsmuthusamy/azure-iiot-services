@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Onboarding {
     using Microsoft.Azure.IIoT.OpcUa.Registry.Handlers;
     using Microsoft.Azure.IIoT.OpcUa.Registry.Clients;
     using Microsoft.Azure.IIoT.OpcUa.Registry.Services;
+    using Microsoft.Azure.IIoT.OpcUa.Registry;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hub.Processor.EventHub;
@@ -26,7 +27,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Onboarding {
     using System.Runtime.Loader;
     using System.Threading.Tasks;
     using Serilog;
-    using Microsoft.Azure.IIoT.OpcUa.Registry;
 
     /// <summary>
     /// IoT Hub device event processor host

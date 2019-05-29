@@ -131,7 +131,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// <returns>Application registration response</returns>
         [HttpPut]
         [Authorize(Policy = Policies.CanManage)]
-        public async Task<ApplicationRegistrationResponseApiModel> RegisterApplicationAsync(
+        public async Task<ApplicationRegistrationResponseApiModel> CreateApplicationAsync(
             [FromBody] [Required] ApplicationRegistrationRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
@@ -186,7 +186,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2.Controllers {
         /// <returns></returns>
         [HttpDelete("{applicationId}")]
         [Authorize(Policy = Policies.CanManage)]
-        public async Task UnregisterApplicationAsync(string applicationId) {
+        public async Task DeleteApplicationAsync(string applicationId) {
             await _applications.UnregisterApplicationAsync(applicationId);
         }
 

@@ -6,14 +6,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="appsettings.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.2.0" />
@@ -34,6 +26,7 @@
   </Choose>
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Services.Notification.Blob\src\Microsoft.Azure.IIoT.Services.Notification.Blob.csproj" />
+    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Services.OpcUa.Alerting\src\Microsoft.Azure.IIoT.Services.OpcUa.Alerting.csproj" />
     <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Services.OpcUa.Gateway\src\Microsoft.Azure.IIoT.Services.OpcUa.Gateway.csproj" />
     <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Services.OpcUa.History\src\Microsoft.Azure.IIoT.Services.OpcUa.History.csproj" />
     <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Services.OpcUa.Onboarding\src\Microsoft.Azure.IIoT.Services.OpcUa.Onboarding.csproj" />

@@ -3,31 +3,30 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.Hub.Router.Runtime {
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Alerting.Runtime {
+    using Microsoft.Azure.IIoT.Hub.Client.ServiceBus;
+    using Microsoft.Azure.IIoT.Hub.Client.ServiceBus.Runtime;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hub.Runtime;
-    using Microsoft.Azure.IIoT.Hub.Client.EventHub.Runtime;
-    using Microsoft.Azure.IIoT.Hub.Client.EventHub;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
-    /// Graph model upload agent configuration
+    /// Alerting agent configuration
     /// </summary>
-    public class Config : ConfigBase, IIoTHubConfig, IEventHubConfig {
+    public class Config : ConfigBase, IIoTHubConfig, IServiceBusConfig {
 
         /// <inheritdoc/>
         public string IoTHubConnString => _hub.IoTHubConnString;
+
         /// <inheritdoc/>
         public string IoTHubResourceId => _hub.IoTHubResourceId;
+
         /// <inheritdoc/>
-        public string EventHubConnString => _eh.EventHubConnString;
+        public string ServiceBusConnString => _sb.ServiceBusConnString;
+
         /// <inheritdoc/>
-        public string EventHubPath => _eh.EventHubPath;
-        /// <inheritdoc/>
-        public bool UseWebsockets => _eh.UseWebsockets;
-        /// <inheritdoc/>
-        public string ConsumerGroup => _eh.ConsumerGroup;
+        public string ClientName => _sb.ClientName;
 
         /// <summary>
         /// Configuration constructor
@@ -37,11 +36,11 @@ namespace Microsoft.Azure.IIoT.Services.Hub.Router.Runtime {
         public Config(string serviceId, IConfigurationRoot configuration) :
             base(configuration) {
 
-            _eh = new EventHubConfig(configuration, serviceId);
+            _sb = new ServiceBusConfig(configuration);
             _hub = new IoTHubConfig(configuration, serviceId);
         }
 
-        private readonly EventHubConfig _eh;
-        private readonly IoTHubConfig _hub;
+        private readonly IServiceBusConfig _sb;
+        private readonly IIoTHubConfig _hub;
     }
 }

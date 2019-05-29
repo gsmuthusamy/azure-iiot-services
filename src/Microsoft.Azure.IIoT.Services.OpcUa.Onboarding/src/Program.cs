@@ -19,6 +19,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Onboarding {
     using Microsoft.Azure.IIoT.Tasks.Default;
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Http.Ssl;
+    using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Storage.CosmosDb.Services;
     using Microsoft.Extensions.Configuration;
     using Autofac;
     using AutofacSerilogIntegration;
@@ -109,6 +111,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Onboarding {
             builder.RegisterType<NoOpCertValidator>()
                 .AsImplementedInterfaces();
 #endif
+            // Cosmos db storage
+            builder.RegisterType<ItemContainerFactory>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<CosmosDbServiceClient>()
+                .AsImplementedInterfaces();
+
             // Iot hub services
             builder.RegisterType<IoTHubServiceHttpClient>()
                 .AsImplementedInterfaces().SingleInstance();
@@ -117,27 +125,42 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Onboarding {
             builder.RegisterType<ChunkMethodClient>()
                 .AsImplementedInterfaces().SingleInstance();
 
-            // Event processor services
+            // Event processor services for onboarding consumer
             builder.RegisterType<EventProcessorHost>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<EventProcessorFactory>()
                 .AsImplementedInterfaces().SingleInstance();
 
-            // Handle device events
+            // Handle discovery events from opc twin module
             builder.RegisterType<IoTHubDeviceEventHandler>()
                 .AsImplementedInterfaces().SingleInstance();
-
-            // Including discovery events
             builder.RegisterType<DiscoveryEventHandler>()
                 .AsImplementedInterfaces().SingleInstance();
+
+            // Registries and repositories
+            builder.RegisterModule<RegistryServices>();
+#if !USE_APP_DB // TODO: Decide whether when to switch
+            builder.RegisterType<ApplicationTwins>()
+                .AsImplementedInterfaces().SingleInstance();
+#else
+            builder.RegisterType<ApplicationDatabase>()
+                .AsImplementedInterfaces().SingleInstance();
+#endif
+            // Finally add discovery processing and activation
+            builder.RegisterType<DiscoveryProcessor>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<ActivationClient>()
+                .AsImplementedInterfaces().SingleInstance();
+
+
+
+
+            // TODO: Move to broadcasting agent now that we have broker
+
+            // React to and pass discovery requests to edge 
             builder.RegisterType<DiscoveryRequestHandler>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<TaskProcessor>()
-                .AsImplementedInterfaces().SingleInstance();
-
-            // And fleet discovery and activation
-            builder.RegisterModule<RegistryServices>();
-            builder.RegisterType<ActivationClient>()
                 .AsImplementedInterfaces().SingleInstance();
 #if USE_JOBS
             builder.RegisterType<DiscoveryJobClient>()

@@ -7,7 +7,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry {
     using Microsoft.Azure.IIoT.Services.OpcUa.Registry.Runtime;
     using Microsoft.Azure.IIoT.Services.OpcUa.Registry.v2;
     using Microsoft.Azure.IIoT.OpcUa.Registry.Clients;
-    using Microsoft.Azure.IIoT.OpcUa.Registry.Services;
+    using Microsoft.Azure.IIoT.OpcUa.Registry;
+    using Microsoft.Azure.IIoT.OpcUa.Registry.Migration;
     using Microsoft.Azure.IIoT.Services;
     using Microsoft.Azure.IIoT.Services.Diagnostics;
     using Microsoft.Azure.IIoT.Services.Auth;
@@ -17,6 +18,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry {
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Hub.Client;
     using Microsoft.Azure.IIoT.Module.Default;
+    using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
@@ -30,7 +32,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry {
     using System;
     using Serilog;
     using ILogger = Serilog.ILogger;
-    using Microsoft.Azure.IIoT.OpcUa.Registry;
+    using Microsoft.Azure.IIoT.Storage.CosmosDb.Services;
+    using Microsoft.Azure.IIoT.OpcUa.Registry.Services;
 
     /// <summary>
     /// Webservice startup
@@ -176,7 +179,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry {
             // Diagnostics
             builder.RegisterType<AuditLogFilter>()
                 .AsImplementedInterfaces().SingleInstance();
-
             // CORS setup
             builder.RegisterType<CorsSetup>()
                 .AsImplementedInterfaces().SingleInstance();
@@ -188,7 +190,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry {
                 builder.RegisterType<BehalfOfTokenProvider>()
                     .AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<DistributedTokenCache>()
-                .AsImplementedInterfaces().SingleInstance();
+                    .AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<HttpBearerAuthentication>()
                     .AsImplementedInterfaces().SingleInstance();
             }
@@ -203,8 +205,29 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry {
             builder.RegisterType<ChunkMethodClient>()
                 .AsImplementedInterfaces().SingleInstance();
 
-            // Opc Ua services
+            // Cosmos db collection as storage
+            builder.RegisterType<ItemContainerFactory>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<CosmosDbServiceClient>()
+                .AsImplementedInterfaces();
+
+            // Registries and repositories
             builder.RegisterModule<RegistryServices>();
+            builder.RegisterType<StartupMigration>()
+               .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<VaultApplicationMigration>()
+                .AsImplementedInterfaces().SingleInstance();
+#if !USE_APP_DB // TODO: Decide whether when to switch
+            builder.RegisterType<ApplicationTwins>()
+                .AsImplementedInterfaces().SingleInstance();
+#else
+            builder.RegisterType<ApplicationDatabase>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<ApplicationTwinsMigration>()
+                .AsImplementedInterfaces().SingleInstance();
+#endif
+
+            // Registry services
             builder.RegisterType<ActivationClient>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<DiagnosticsClient>()

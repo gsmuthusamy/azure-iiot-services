@@ -4,20 +4,24 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
+    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2;
     using Microsoft.Azure.IIoT.Services;
     using Microsoft.Azure.IIoT.Services.Auth;
     using Microsoft.Azure.IIoT.Services.Auth.Clients;
     using Microsoft.Azure.IIoT.Services.Cors;
     using Microsoft.Azure.IIoT.Services.Diagnostics;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime;
-    using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2;
     using Microsoft.Azure.IIoT.OpcUa.Registry;
+    using Microsoft.Azure.IIoT.OpcUa.Registry.Events.v2;
     using Microsoft.Azure.IIoT.OpcUa.Vault.Services;
     using Microsoft.Azure.IIoT.Crypto.KeyVault.Clients;
     using Microsoft.Azure.IIoT.Http.Auth;
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Storage.CosmosDb.Services;
     using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Hub.Client.ServiceBus.Services;
+    using Microsoft.Azure.IIoT.Hub.Client.ServiceBus.Clients;
+    using Microsoft.Azure.IIoT.Hub.Default;
     using Microsoft.Azure.KeyVault;
     using Microsoft.Azure.Services.AppAuthentication;
     using Microsoft.Extensions.Configuration;
@@ -234,6 +238,19 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             builder.RegisterType<UserOrServiceTokenProvider>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<KeyVaultServiceClient>()
+                .AsImplementedInterfaces().SingleInstance();
+
+            // Register event bus for application events
+            builder.RegisterType<EventBusHost>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<ServiceBusClientFactory>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<ServiceBusEventBus>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<ApplicationEventSubscriber>()
+                .AsImplementedInterfaces().SingleInstance();
+            // ... and auto start
+            builder.RegisterType<EventHostAutoStart>()
                 .AsImplementedInterfaces().SingleInstance();
 
             // Vault services

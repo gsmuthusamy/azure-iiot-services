@@ -6,8 +6,8 @@
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Alerting.Runtime {
     using Microsoft.Azure.IIoT.Hub.Client.ServiceBus;
     using Microsoft.Azure.IIoT.Hub.Client.ServiceBus.Runtime;
-    using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Hub.Runtime;
+    using Microsoft.Azure.IIoT.Hub.Client;
+    using Microsoft.Azure.IIoT.Hub.Client.Runtime;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
 

@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Gateway {
-    using Autofac;
+    using Microsoft.Azure.IIoT.Hub.Client;
+    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Testing;
-    using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Extensions.Configuration;
+    using Autofac;
     using System;
     using System.IO;
     using System.Net.Http;

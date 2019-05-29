@@ -4,10 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Onboarding.Runtime {
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hub.Processor;
     using Microsoft.Azure.IIoT.Hub.Processor.Runtime;
-    using Microsoft.Azure.IIoT.Hub.Runtime;
+    using Microsoft.Azure.IIoT.Hub.Client;
+    using Microsoft.Azure.IIoT.Hub.Client.Runtime;
+    using Microsoft.Azure.IIoT.Hub.Client.EventHub;
     using Microsoft.Azure.IIoT.Tasks;
     using Microsoft.Azure.IIoT.Tasks.Runtime;
     using Microsoft.Azure.IIoT.Utils;

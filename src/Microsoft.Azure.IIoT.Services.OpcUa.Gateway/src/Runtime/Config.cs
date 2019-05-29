@@ -9,8 +9,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Gateway.Runtime {
     using Microsoft.Azure.IIoT.OpcUa.Protocol.Transport;
     using Microsoft.Azure.IIoT.Services.Cors;
     using Microsoft.Azure.IIoT.Services.Cors.Runtime;
-    using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Hub.Runtime;
+    using Microsoft.Azure.IIoT.Hub.Client;
+    using Microsoft.Azure.IIoT.Hub.Client.Runtime;
     using Microsoft.Azure.IIoT.Hub.Client.EventHub.Runtime;
     using Microsoft.Azure.IIoT.Hub.Client.EventHub;
     using Microsoft.Azure.IIoT.Auth.Server;

@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Processor.Runtime {
-    using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Hub.Runtime;
+    using Microsoft.Azure.IIoT.Hub.Client;
+    using Microsoft.Azure.IIoT.Hub.Client.Runtime;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Storage.Blob;
     using Microsoft.Azure.IIoT.Storage.Blob.Runtime;

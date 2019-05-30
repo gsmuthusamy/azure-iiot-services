@@ -8,7 +8,8 @@ namespace Microsoft.Azure.IIoT.Services.Hub.Router {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hub.Client;
-    using Microsoft.Azure.IIoT.Hub.Client.EventHub.Services;
+    using Microsoft.Azure.IIoT.Messaging;
+    using Microsoft.Azure.IIoT.Messaging.EventHub.Services;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
     using Autofac;
@@ -79,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Services.Hub.Router {
             var exit = false;
             while (!exit) {
                 using (var container = ConfigureContainer(config).Build()) {
-                    var host = container.Resolve<IEventProcessorHost>();
+                    var host = container.Resolve<IHost>();
                     var logger = container.Resolve<ILogger>();
                     // Wait until the agent unloads or is cancelled
                     var tcs = new TaskCompletionSource<bool>();

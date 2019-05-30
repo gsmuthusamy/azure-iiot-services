@@ -15,11 +15,13 @@
       <ItemGroup>
         <ProjectReference Include="..\..\..\..\common\src\Microsoft.Azure.IIoT.Auth\src\Microsoft.Azure.IIoT.Auth.csproj" />
         <ProjectReference Include="..\..\..\..\common\src\Microsoft.Azure.IIoT.Hub.Client\src\Microsoft.Azure.IIoT.Hub.Client.csproj" />
+        <ProjectReference Include="..\..\..\..\common\src\Microsoft.Azure.IIoT.Messaging\src\Microsoft.Azure.IIoT.Messaging.csproj" />
       </ItemGroup>
     </When>
     <Otherwise>
       <ItemGroup>
         <PackageReference Include="Microsoft.Azure.IIoT.Auth" Version="$(CommonVersion)" />
+        <PackageReference Include="Microsoft.Azure.IIoT.Messaging" Version="$(CommonVersion)" />
         <PackageReference Include="Microsoft.Azure.IIoT.Hub.Client" Version="$(CommonVersion)" />
       </ItemGroup>
     </Otherwise>

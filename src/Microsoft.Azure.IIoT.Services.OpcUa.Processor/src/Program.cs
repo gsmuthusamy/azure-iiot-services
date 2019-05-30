@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Processor {
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Model import processor - processes uploaded models and inserts 
+    /// Model import processor - processes uploaded models and inserts
     /// them into the opc model graph and eventually CDM.
     /// </summary>
     public class Program {
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Processor {
             var exit = false;
             while (!exit) {
                 using (var container = ConfigureContainer(config).Build()) {
-                    var host = container.Resolve<IEventProcessorHost>();
+                    var host = container.Resolve<IHost>();
                     var logger = container.Resolve<ILogger>();
                     // Wait until the agent unloads or is cancelled
                     var tcs = new TaskCompletionSource<bool>();

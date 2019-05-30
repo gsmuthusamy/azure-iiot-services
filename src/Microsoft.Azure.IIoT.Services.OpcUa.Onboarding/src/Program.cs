@@ -63,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Onboarding {
             var exit = false;
             while (!exit) {
                 using (var container = ConfigureContainer(config).Build()) {
-                    var host = container.Resolve<IEventProcessorHost>();
+                    var host = container.Resolve<IHost>();
                     var logger = container.Resolve<ILogger>();
                     // Wait until the event processor host unloads or is cancelled
                     var tcs = new TaskCompletionSource<bool>();
@@ -157,7 +157,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Onboarding {
 
             // TODO: Move to broadcasting agent now that we have broker
 
-            // React to and pass discovery requests to edge 
+            // React to and pass discovery requests to edge
             builder.RegisterType<DiscoveryRequestHandler>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<TaskProcessor>()

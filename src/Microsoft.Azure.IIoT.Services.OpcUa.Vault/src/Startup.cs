@@ -15,13 +15,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
     using Microsoft.Azure.IIoT.OpcUa.Registry.Events.v2;
     using Microsoft.Azure.IIoT.OpcUa.Vault.Services;
     using Microsoft.Azure.IIoT.Crypto.KeyVault.Clients;
-    using Microsoft.Azure.IIoT.Http.Auth;
-    using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Storage.CosmosDb.Services;
     using Microsoft.Azure.IIoT.Storage.Default;
-    using Microsoft.Azure.IIoT.Hub.Client.ServiceBus.Services;
-    using Microsoft.Azure.IIoT.Hub.Client.ServiceBus.Clients;
-    using Microsoft.Azure.IIoT.Hub.Default;
+    using Microsoft.Azure.IIoT.Messaging.ServiceBus.Services;
+    using Microsoft.Azure.IIoT.Messaging.ServiceBus.Clients;
+    using Microsoft.Azure.IIoT.Messaging.Default;
+    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Http.Auth;
+    using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.KeyVault;
     using Microsoft.Azure.Services.AppAuthentication;
     using Microsoft.Extensions.Configuration;
@@ -250,7 +251,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             builder.RegisterType<ApplicationEventSubscriber>()
                 .AsImplementedInterfaces().SingleInstance();
             // ... and auto start
-            builder.RegisterType<EventHostAutoStart>()
+            builder.RegisterType<HostAutoStart>()
                 .AsImplementedInterfaces().SingleInstance();
 
             // Vault services

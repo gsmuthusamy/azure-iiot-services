@@ -28,14 +28,14 @@
       <ItemGroup>
         <ProjectReference Include="..\..\..\..\common\src\Microsoft.Azure.IIoT.Services\src\Microsoft.Azure.IIoT.Services.csproj" />
         <ProjectReference Include="..\..\..\..\common\src\Microsoft.Azure.IIoT.Storage\src\Microsoft.Azure.IIoT.Storage.csproj" />
-        <ProjectReference Include="..\..\..\..\common\src\Microsoft.Azure.IIoT.Hub.Client\src\Microsoft.Azure.IIoT.Hub.Client.csproj" />
+        <ProjectReference Include="..\..\..\..\common\src\Microsoft.Azure.IIoT.Messaging\src\Microsoft.Azure.IIoT.Messaging.csproj" />
       </ItemGroup>
     </When>
     <Otherwise>
       <ItemGroup>
         <PackageReference Include="Microsoft.Azure.IIoT.Services" Version="$(CommonVersion)" />
         <PackageReference Include="Microsoft.Azure.IIoT.Storage" Version="$(CommonPrereleaseVersion)" />
-        <PackageReference Include="Microsoft.Azure.IIoT.Hub.Client" Version="$(CommonVersion)" />
+        <PackageReference Include="Microsoft.Azure.IIoT.Messaging" Version="$(CommonVersion)" />
       </ItemGroup>
     </Otherwise>
   </Choose>

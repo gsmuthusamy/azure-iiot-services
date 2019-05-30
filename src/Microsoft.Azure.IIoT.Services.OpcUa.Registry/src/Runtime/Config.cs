@@ -10,8 +10,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.Runtime {
     using Microsoft.Azure.IIoT.Services.Cors.Runtime;
     using Microsoft.Azure.IIoT.Hub.Client;
     using Microsoft.Azure.IIoT.Hub.Client.Runtime;
-    using Microsoft.Azure.IIoT.Hub.Client.EventHub;
-    using Microsoft.Azure.IIoT.Hub.Client.EventHub.Runtime;
+    using Microsoft.Azure.IIoT.Messaging.EventHub;
+    using Microsoft.Azure.IIoT.Messaging.EventHub.Runtime;
     using Microsoft.Azure.IIoT.Auth.Server;
     using Microsoft.Azure.IIoT.Auth.Runtime;
     using Microsoft.Azure.IIoT.Auth.Clients;

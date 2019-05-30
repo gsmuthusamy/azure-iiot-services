@@ -10,9 +10,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Alerting {
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Http.Ssl;
     using Microsoft.Azure.IIoT.Hub.Client;
-    using Microsoft.Azure.IIoT.Hub.Default;
-    using Microsoft.Azure.IIoT.Hub.Client.ServiceBus.Services;
-    using Microsoft.Azure.IIoT.Hub.Client.ServiceBus.Clients;
+    using Microsoft.Azure.IIoT.Messaging.Default;
+    using Microsoft.Azure.IIoT.Messaging.ServiceBus.Services;
+    using Microsoft.Azure.IIoT.Messaging.ServiceBus.Clients;
+    using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Extensions.Configuration;
     using Autofac;
@@ -24,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Alerting {
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Model import processor - processes uploaded models and inserts 
+    /// Model import processor - processes uploaded models and inserts
     /// them into the opc model graph and eventually CDM.
     /// </summary>
     public class Program {
@@ -57,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Alerting {
             var exit = false;
             while (!exit) {
                 using (var container = ConfigureContainer(config).Build()) {
-                    var host = container.Resolve<IEventProcessorHost>();
+                    var host = container.Resolve<IHost>();
                     var logger = container.Resolve<ILogger>();
                     // Wait until the agent unloads or is cancelled
                     var tcs = new TaskCompletionSource<bool>();

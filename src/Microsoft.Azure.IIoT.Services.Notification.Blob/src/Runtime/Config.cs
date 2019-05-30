@@ -6,8 +6,8 @@
 namespace Microsoft.Azure.IIoT.Services.Hub.Router.Runtime {
     using Microsoft.Azure.IIoT.Hub.Client;
     using Microsoft.Azure.IIoT.Hub.Client.Runtime;
-    using Microsoft.Azure.IIoT.Hub.Client.EventHub.Runtime;
-    using Microsoft.Azure.IIoT.Hub.Client.EventHub;
+    using Microsoft.Azure.IIoT.Messaging.EventHub.Runtime;
+    using Microsoft.Azure.IIoT.Messaging.EventHub;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
 

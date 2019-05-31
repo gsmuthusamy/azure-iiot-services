@@ -45,6 +45,8 @@ Function GetEnvironmentVariables() {
     $BLOB_KEY = $deployment.Outputs["azureblob-key"].Value
     $BLOB_ENDPOINT_SUFFIX = $deployment.Outputs["azureblob-endpoint-suffix"].Value
     $DOCUMENTDB_CONNSTRING = $deployment.Outputs["docdb-connstring"].Value
+    $EVENTHUB_CONNSTRING = $deployment.Outputs["eventhub-connstring"].Value
+    $EVENTHUB_NAME = $deployment.Outputs["eventhub-name"].Value
     $SERVICEBUS_CONNSTRING = $deployment.Outputs["sb-connstring"].Value
     $KEYVAULT_URL = $deployment.Outputs["keyvault-url"].Value
 
@@ -78,6 +80,10 @@ Function GetEnvironmentVariables() {
         "PCS_ASA_DATA_AZUREBLOB_KEY=$BLOB_KEY"
     Write-Output `
         "PCS_ASA_DATA_AZUREBLOB_ENDPOINT_SUFFIX=$BLOB_ENDPOINT_SUFFIX"
+    Write-Output `
+        "PCS_EVENTHUB_CONNSTRING=$EVENTHUB_CONNSTRING"
+    Write-Output `
+        "PCS_EVENTHUB_NAME=$EVENTHUB_NAME"
     Write-Output `
         "PCS_SERVICEBUS_CONNSTRING=$SERVICEBUS_CONNSTRING"
     Write-Output `
@@ -165,16 +171,13 @@ $templateParameters = @{}
 if ($aadConfig) {
     if (![string]::IsNullOrEmpty($aadConfig.TenantId)) { 
         $templateParameters.Add("aadTenantId", $aadConfig.TenantId)
-         Write-Host $aadConfig.TenantId
-   }
+    }
     if (![string]::IsNullOrEmpty($aadConfig.ServicePrincipalId)) { 
         $templateParameters.Add("aadServicePrincipalId", $aadConfig.ServicePrincipalId)
-         Write-Host $aadConfig.ServicePrincipalId
-   }
+    }
     if (![string]::IsNullOrEmpty($aadConfig.UserPrincipalId)) { 
         $templateParameters.Add("aadUserPrincipalId", $aadConfig.UserPrincipalId)
-         Write-Host $aadConfig.UserPrincipalId
-   }
+    }
 }
 
 if (![string]::IsNullOrEmpty($script:containerRegistryPrefix)) {

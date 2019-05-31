@@ -7,9 +7,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Auth;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Filters;
     using Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models;
-    using Microsoft.Azure.IIoT.OpcUa.Registry;
-    using Microsoft.Azure.IIoT.OpcUa.Registry.Models;
     using Microsoft.Azure.IIoT.OpcUa.Vault;
+    using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Serilog;
@@ -25,17 +24,20 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
     [Route(VersionInfo.PATH + "/status")]
     [Produces("application/json")]
     [Authorize(Policy = Policies.CanRead)]
-    public sealed class StatusController : Controller {
+    public class StatusController : Controller {
 
         /// <summary>
         /// Create the controller
         /// </summary>
         /// <param name="certificateGroups"></param>
+        /// <param name="process"></param>
         /// <param name="logger"></param>
         public StatusController(
-            ICertificateGroupManager certificateGroups, ILogger logger) {
+            ICertificateGroupManager certificateGroups, IProcessIdentity process, 
+            ILogger logger) {
             _certificateGroups = certificateGroups;
             _logger = logger;
+            _process = process;
         }
 
         /// <summary>
@@ -58,10 +60,13 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Controllers {
                 Healthy = kvOk,
                 Message = kvMessage
             });
-            return new StatusApiModel(kvOk, kvMessage);
+            return new StatusApiModel(kvOk, kvMessage) {
+                Name = _process.Id
+            };
         }
 
         private readonly ILogger _logger;
+        private readonly IProcessIdentity _process;
         private readonly ICertificateGroupManager _certificateGroups;
     }
 }

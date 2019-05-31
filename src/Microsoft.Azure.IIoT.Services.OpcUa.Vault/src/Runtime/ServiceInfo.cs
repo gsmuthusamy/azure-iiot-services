@@ -1,28 +1,29 @@
-// ------------------------------------------------------------
+﻿// ------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation.  All rights reserved.
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Processor {
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
+    using Microsoft.Azure.IIoT.Diagnostics;
 
     /// <summary>
-    /// Web service information
+    /// Service information
     /// </summary>
-    public static class ServiceInfo {
+    public class ServiceInfo : IProcessIdentity {
 
         /// <summary>
         /// ID
         /// </summary>
-        public const string ID = "OPC_GRAPH_AGENT";
+        public string Id => "OPC_VAULT";
 
         /// <summary>
         /// Name of service
         /// </summary>
-        public const string NAME = "Opc-Graph-Agent";
+        public string Name => "Opc-Vault-Service";
 
         /// <summary>
         /// Description of service
         /// </summary>
-        public const string DESCRIPTION = "Azure Industrial IoT OPC UA Graph Agent";
+        public string Description => "Azure Industrial IoT OPC UA Vault Service";
     }
 }

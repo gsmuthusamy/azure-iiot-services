@@ -32,13 +32,12 @@ namespace Microsoft.Azure.IIoT.Services.Hub.Router.Runtime {
         /// <summary>
         /// Configuration constructor
         /// </summary>
-        /// <param name="serviceId"></param>
         /// <param name="configuration"></param>
-        public Config(string serviceId, IConfigurationRoot configuration) :
+        public Config(IConfigurationRoot configuration) :
             base(configuration) {
 
-            _eh = new EventHubConfig(configuration, serviceId);
-            _hub = new IoTHubConfig(configuration, serviceId);
+            _eh = new EventHubConfig(configuration);
+            _hub = new IoTHubConfig(configuration);
         }
 
         private readonly EventHubConfig _eh;

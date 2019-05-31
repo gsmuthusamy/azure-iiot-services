@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.v2.Models {
         /// Service name
         /// </summary>
         [JsonProperty(PropertyName = "name")]
-        public string Name => "OpcVault";
+        public string Name { get; set; }
 
         /// <summary>
         /// Status

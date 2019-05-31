@@ -3,26 +3,27 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.Hub.Router {
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Twin {
+    using Microsoft.Azure.IIoT.Diagnostics;
 
     /// <summary>
-    /// Web service information
+    /// Service information
     /// </summary>
-    public static class ServiceInfo {
+    public class ServiceInfo : IProcessIdentity {
 
         /// <summary>
         /// ID
         /// </summary>
-        public const string ID = "HUB_BLOB_ROUTER";
+        public string Id => "OPC_TWIN";
 
         /// <summary>
         /// Name of service
         /// </summary>
-        public const string NAME = "Hub-Blob-Router";
+        public string Name => "Opc-Twin-Service";
 
         /// <summary>
         /// Description of service
         /// </summary>
-        public const string DESCRIPTION = "Azure Industrial IoT Hub Blob Upload Notification Router";
+        public string Description => "Azure Industrial IoT OPC UA Twin Service";
     }
 }

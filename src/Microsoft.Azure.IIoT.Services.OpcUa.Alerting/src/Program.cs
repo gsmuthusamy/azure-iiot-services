@@ -23,12 +23,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Alerting {
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Security alerter agent
+    /// Security alerter agent emits security alerts based on service events
     /// </summary>
     public class Program {
 
         /// <summary>
-        /// Main entry point for model import processor
+        /// Main entry point for security alerts agent
         /// </summary>
         /// <param name="args"></param>
         public static void Main(string[] args) {
@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Alerting {
         }
 
         /// <summary>
-        /// Run blob stream processor host
+        /// Run event bus host
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
@@ -84,10 +84,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Alerting {
         public static ContainerBuilder ConfigureContainer(
             IConfigurationRoot configuration) {
 
-            var config = new Config(ServiceInfo.ID, configuration);
+            var serviceInfo = new ServiceInfo();
+            var config = new Config(configuration);
             var builder = new ContainerBuilder();
 
-            // Register configuration interfaces
+            builder.RegisterInstance(serviceInfo)
+                .AsImplementedInterfaces().SingleInstance();
             builder.RegisterInstance(config)
                 .AsImplementedInterfaces().SingleInstance();
 

@@ -50,6 +50,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         public Config Config { get; }
 
         /// <summary>
+        /// Service info - Initialized in constructor
+        /// </summary>
+        public ServiceInfo ServiceInfo { get; }
+
+        /// <summary>
         /// Current hosting environment - Initialized in constructor
         /// </summary>
         public IHostingEnvironment Environment { get; }
@@ -151,9 +156,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             services.AddApplicationInsightsTelemetry(Config.Configuration);
 
             services.AddSwagger(Config, new Info {
-                Title = ServiceInfo.NAME,
+                Title = ServiceInfo.Name,
                 Version = VersionInfo.PATH,
-                Description = ServiceInfo.DESCRIPTION,
+                Description = ServiceInfo.Description,
             });
 
             // Prepare DI container
@@ -186,9 +191,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             app.EnableCors();
 
             app.UseSwagger(Config, new Info {
-                Title = ServiceInfo.NAME,
+                Title = ServiceInfo.Name,
                 Version = VersionInfo.PATH,
-                Description = ServiceInfo.DESCRIPTION,
+                Description = ServiceInfo.Description,
             });
 
             app.UseMvc();
@@ -198,7 +203,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
             appLifetime.ApplicationStopped.Register(ApplicationContainer.Dispose);
 
             // Print some useful information at bootstrap time
-            log.Information("{service} web service started with id {id}", ServiceInfo.NAME,
+            log.Information("{service} web service started with id {id}", ServiceInfo.Name,
                 Uptime.ProcessId);
         }
 
@@ -208,7 +213,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
         /// <param name="builder"></param>
         public virtual void ConfigureContainer(ContainerBuilder builder) {
 
-            // Register configuration interfaces
+            // Register service info and configuration interfaces
+            builder.RegisterInstance(ServiceInfo)
+                .AsImplementedInterfaces().SingleInstance();
             builder.RegisterInstance(Config)
                 .AsImplementedInterfaces().SingleInstance();
 

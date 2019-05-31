@@ -4,25 +4,26 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.OpcUa.Gateway {
+    using Microsoft.Azure.IIoT.Diagnostics;
 
     /// <summary>
-    /// Web service information
+    /// Service information
     /// </summary>
-    public static class ServiceInfo {
+    public class ServiceInfo : IProcessIdentity {
 
         /// <summary>
         /// ID
         /// </summary>
-        public const string ID = "OPC_GATEWAY";
+        public string Id => "OPC_GATEWAY";
 
         /// <summary>
         /// Name of service
         /// </summary>
-        public const string NAME = "Opc-Gateway";
+        public string Name => "Opc-Gateway-Service";
 
         /// <summary>
         /// Description of service
         /// </summary>
-        public const string DESCRIPTION = "Azure Industrial IoT OPC UA Gateway Service";
+        public string Description => "Azure Industrial IoT OPC UA Gateway Agent";
     }
 }

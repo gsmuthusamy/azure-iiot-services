@@ -10,8 +10,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.Runtime {
     using Microsoft.Azure.IIoT.Services.Cors.Runtime;
     using Microsoft.Azure.IIoT.Hub.Client;
     using Microsoft.Azure.IIoT.Hub.Client.Runtime;
-    using Microsoft.Azure.IIoT.Messaging.EventHub;
-    using Microsoft.Azure.IIoT.Messaging.EventHub.Runtime;
+    using Microsoft.Azure.IIoT.Messaging.ServiceBus;
+    using Microsoft.Azure.IIoT.Messaging.ServiceBus.Runtime;
     using Microsoft.Azure.IIoT.Auth.Server;
     using Microsoft.Azure.IIoT.Auth.Runtime;
     using Microsoft.Azure.IIoT.Auth.Clients;
@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.Runtime {
     /// Common web service configuration aggregation
     /// </summary>
     public class Config : ConfigBase, IAuthConfig, IIoTHubConfig,
-        ICorsConfig, IClientConfig, ISwaggerConfig, IEventHubConfig {
+        ICorsConfig, IClientConfig, ISwaggerConfig, IServiceBusConfig {
 
         /// <inheritdoc/>
         public string IoTHubConnString => _hub.IoTHubConnString;
@@ -62,39 +62,31 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.Runtime {
         /// <inheritdoc/>
         public string SwaggerAppSecret => _swagger.SwaggerAppSecret;
         /// <inheritdoc/>
-        public string EventHubConnString => _eh.EventHubConnString;
-        /// <inheritdoc/>
-        public string EventHubPath => _eh.EventHubPath;
-        /// <inheritdoc/>
-        public bool UseWebsockets => _eh.UseWebsockets;
-        /// <inheritdoc/>
-        public string ConsumerGroup => _eh.ConsumerGroup;
+        public string ServiceBusConnString => _sb.ServiceBusConnString;
 
         /// <summary>
         /// Whether to use role based access
         /// </summary>
         public bool UseRoles => GetBoolOrDefault("PCS_AUTH_ROLES");
 
-
         /// <summary>
         /// Configuration constructor
         /// </summary>
-        /// <param name="serviceId"></param>
         /// <param name="configuration"></param>
-        public Config(string serviceId, IConfigurationRoot configuration) :
+        public Config(IConfigurationRoot configuration) :
             base(configuration) {
 
-            _swagger = new SwaggerConfig(configuration, serviceId);
-            _auth = new AuthConfig(configuration, serviceId);
-            _hub = new IoTHubConfig(configuration, serviceId);
+            _swagger = new SwaggerConfig(configuration);
+            _auth = new AuthConfig(configuration);
+            _hub = new IoTHubConfig(configuration);
             _cors = new CorsConfig(configuration);
-            _eh = new EventHubConfig(configuration, serviceId);
+            _sb = new ServiceBusConfig(configuration);
         }
 
         private readonly SwaggerConfig _swagger;
         private readonly AuthConfig _auth;
         private readonly CorsConfig _cors;
-        private readonly EventHubConfig _eh;
+        private readonly ServiceBusConfig _sb;
         private readonly IoTHubConfig _hub;
     }
 }

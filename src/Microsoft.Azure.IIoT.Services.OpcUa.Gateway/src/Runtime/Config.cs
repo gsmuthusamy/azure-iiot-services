@@ -89,15 +89,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Gateway.Runtime {
         /// <summary>
         /// Configuration constructor
         /// </summary>
-        /// <param name="serviceId"></param>
         /// <param name="configuration"></param>
-        public Config(string serviceId, IConfigurationRoot configuration) :
+        public Config(IConfigurationRoot configuration) :
             base(configuration) {
 
-            _auth = new AuthConfig(configuration, serviceId);
-            _hub = new IoTHubConfig(configuration, serviceId);
+            _auth = new AuthConfig(configuration);
+            _hub = new IoTHubConfig(configuration);
             _cors = new CorsConfig(configuration);
-            _eh = new EventHubConfig(configuration, serviceId);
+            _eh = new EventHubConfig(configuration);
             _sessions = new SessionServicesConfig(configuration);
         }
 

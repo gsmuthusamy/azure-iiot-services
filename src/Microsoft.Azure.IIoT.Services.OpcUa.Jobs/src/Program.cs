@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Jobs {
     using Microsoft.Azure.IIoT.Http.Ssl;
     using Microsoft.Azure.IIoT.Hub.Client;
     using Microsoft.Azure.IIoT.Tasks.Default;
+    using Microsoft.Azure.IIoT.Module.Default;
     using Microsoft.Azure.IIoT.Messaging.Default;
     using Microsoft.Azure.IIoT.Messaging.ServiceBus.Services;
     using Microsoft.Azure.IIoT.Messaging.ServiceBus.Clients;
@@ -25,13 +26,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Jobs {
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Model import processor - processes uploaded models and inserts
-    /// them into the opc model graph and eventually CDM.
+    /// Jobs agent handles jobs out of process for other services.
     /// </summary>
     public class Program {
 
         /// <summary>
-        /// Main entry point for model import processor
+        /// Main entry point for jobs agent
         /// </summary>
         /// <param name="args"></param>
         public static void Main(string[] args) {
@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Jobs {
         }
 
         /// <summary>
-        /// Run blob stream processor host
+        /// Run event bus host
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
@@ -87,10 +87,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Jobs {
         public static ContainerBuilder ConfigureContainer(
             IConfigurationRoot configuration) {
 
-            var config = new Config(ServiceInfo.ID, configuration);
+            var serviceInfo = new ServiceInfo();
+            var config = new Config(configuration);
             var builder = new ContainerBuilder();
 
-            // Register configuration interfaces
+            builder.RegisterInstance(serviceInfo)
+                .AsImplementedInterfaces().SingleInstance();
             builder.RegisterInstance(config)
                 .AsImplementedInterfaces().SingleInstance();
 
@@ -104,7 +106,11 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Jobs {
                 .AsImplementedInterfaces();
 #endif
             // Iot hub services
-            builder.RegisterType<IoTHubMessagingHttpClient>()
+            builder.RegisterType<IoTHubServiceHttpClient>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<IoTHubTwinMethodClient>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<ChunkMethodClient>()
                 .AsImplementedInterfaces().SingleInstance();
 
             // Register event bus
@@ -119,7 +125,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Jobs {
             builder.RegisterType<TaskProcessor>()
                 .AsImplementedInterfaces().SingleInstance();
 
+
             // Handle discovery request and pass to all edges
+            builder.RegisterType<SupervisorRegistry>()
+                .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<DiscoveryRequestHandler>()
                 .AsImplementedInterfaces().SingleInstance();
 #if USE_JOBS

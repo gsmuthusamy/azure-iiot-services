@@ -3,26 +3,27 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Twin {
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Jobs {
+    using Microsoft.Azure.IIoT.Diagnostics;
 
     /// <summary>
-    /// Web service information
+    /// Service information
     /// </summary>
-    public static class ServiceInfo {
+    public class ServiceInfo : IProcessIdentity {
 
         /// <summary>
         /// ID
         /// </summary>
-        public const string ID = "OPC_TWIN";
+        public string Id => "OPC_JOBS_AGENT";
 
         /// <summary>
         /// Name of service
         /// </summary>
-        public const string NAME = "Opc-Twin";
+        public string Name => "Opc-Jobs-Agent";
 
         /// <summary>
         /// Description of service
         /// </summary>
-        public const string DESCRIPTION = "Azure Industrial IoT OPC UA Twin Service";
+        public string Description => "Azure Industrial IoT OPC UA Jobs Agent";
     }
 }

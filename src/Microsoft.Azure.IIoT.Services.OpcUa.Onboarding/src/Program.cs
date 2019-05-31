@@ -93,10 +93,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Onboarding {
         public static ContainerBuilder ConfigureContainer(
             IConfigurationRoot configuration) {
 
-            var config = new Config(ServiceInfo.ID, configuration);
+            var serviceInfo = new ServiceInfo();
+            var config = new Config(configuration);
             var builder = new ContainerBuilder();
 
-            // Register configuration interfaces
+            builder.RegisterInstance(serviceInfo)
+                .AsImplementedInterfaces().SingleInstance();
             builder.RegisterInstance(config)
                 .AsImplementedInterfaces().SingleInstance();
 

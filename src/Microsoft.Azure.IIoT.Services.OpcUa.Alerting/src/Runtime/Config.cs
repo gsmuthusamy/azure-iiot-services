@@ -28,13 +28,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Alerting.Runtime {
         /// <summary>
         /// Configuration constructor
         /// </summary>
-        /// <param name="serviceId"></param>
         /// <param name="configuration"></param>
-        public Config(string serviceId, IConfigurationRoot configuration) :
+        public Config(IConfigurationRoot configuration) :
             base(configuration) {
 
             _sb = new ServiceBusConfig(configuration);
-            _hub = new IoTHubConfig(configuration, serviceId);
+            _hub = new IoTHubConfig(configuration);
         }
 
         private readonly IServiceBusConfig _sb;

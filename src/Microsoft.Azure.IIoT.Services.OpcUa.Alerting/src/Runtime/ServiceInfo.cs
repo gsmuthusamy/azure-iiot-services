@@ -3,26 +3,27 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry {
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Alerting {
+    using Microsoft.Azure.IIoT.Diagnostics;
 
     /// <summary>
-    /// Web service information
+    /// Service information
     /// </summary>
-    public static class ServiceInfo {
+    public class ServiceInfo : IProcessIdentity {
 
         /// <summary>
         /// ID
         /// </summary>
-        public const string ID = "OPC_REGISTRY";
+        public string Id => "OPC_ALERTING_AGENT";
 
         /// <summary>
         /// Name of service
         /// </summary>
-        public const string NAME = "Opc-Registry";
+        public string Name => "Opc-Alerting-Agent";
 
         /// <summary>
         /// Description of service
         /// </summary>
-        public const string DESCRIPTION = "Azure Industrial IoT OPC UA Registry Service";
+        public string Description => "Azure Industrial IoT OPC UA Alerting Agent";
     }
 }

@@ -49,15 +49,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Onboarding.Runtime {
         /// <summary>
         /// Configuration constructor
         /// </summary>
-        /// <param name="serviceId"></param>
         /// <param name="configuration"></param>
-        public Config(string serviceId, IConfigurationRoot configuration) :
+        public Config(IConfigurationRoot configuration) :
             base(configuration) {
 
             _tasks = new TaskProcessorConfig(configuration);
             _ep = new EventProcessorConfig(configuration);
-            _eh = new IoTHubEventConfig(configuration, serviceId);
-            _hub = new IoTHubConfig(configuration, serviceId);
+            _eh = new IoTHubEventConfig(configuration);
+            _hub = new IoTHubConfig(configuration);
         }
 
         private readonly TaskProcessorConfig _tasks;

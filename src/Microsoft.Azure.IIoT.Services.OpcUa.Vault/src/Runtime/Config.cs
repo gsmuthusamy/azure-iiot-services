@@ -34,24 +34,15 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         /// Configuration constructor
         /// </summary>
         /// <param name="configuration"></param>
-        public Config(IConfigurationRoot configuration) :
-            this(ServiceInfo.ID, configuration) {
-        }
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="serviceId"></param>
-        /// <param name="configuration"></param>
-        internal Config(string serviceId, IConfigurationRoot configuration) :
+        internal Config(IConfigurationRoot configuration) :
             base(configuration) {
             _vault = new VaultConfig(configuration);
             _registry = new RegistryConfig(configuration);
             _keyVault = new KeyVaultConfig(configuration);
             _cosmos = new VaultConfig(configuration);
             _db = new VaultConfig(configuration);
-            _swagger = new SwaggerConfig(configuration, serviceId);
-            _auth = new AuthConfig(configuration, serviceId);
+            _swagger = new SwaggerConfig(configuration);
+            _auth = new AuthConfig(configuration);
             _cors = new CorsConfig(configuration);
         }
 

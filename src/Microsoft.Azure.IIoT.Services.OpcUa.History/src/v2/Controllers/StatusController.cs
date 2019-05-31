@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.History.v2.Controllers {
     using Microsoft.Azure.IIoT.Services.OpcUa.History.v2.Filters;
     using Microsoft.Azure.IIoT.Services.OpcUa.History.v2.Models;
     using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.AspNetCore.Mvc;
 
     /// <summary>
@@ -21,8 +22,10 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.History.v2.Controllers {
         /// Create controller
         /// </summary>
         /// <param name="hub"></param>
-        public StatusController(IIoTHubTwinServices hub) {
+        /// <param name="process"></param>
+        public StatusController(IIoTHubTwinServices hub, IProcessIdentity process) {
             _hub = hub;
+            _process = process;
         }
 
         /// <summary>
@@ -33,9 +36,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.History.v2.Controllers {
         [HttpGet]
         public StatusResponseApiModel GetStatus() {
             // TODO: check if the dependencies are healthy
-            return new StatusResponseApiModel(true, "Alive and well");
+            return new StatusResponseApiModel(true, "Alive and well") {
+                Name = _process.Id
+            };
         }
 
         private readonly IIoTHubTwinServices _hub;
+        private readonly IProcessIdentity _process;
     }
 }

@@ -114,9 +114,12 @@ namespace Microsoft.Azure.IIoT.Services.Hub.Router {
         public static ContainerBuilder ConfigureContainer(
             IConfigurationRoot configuration) {
 
-            var config = new Config(ServiceInfo.ID, configuration);
+            var serviceInfo = new ServiceInfo();
+            var config = new Config(configuration);
             var builder = new ContainerBuilder();
 
+            builder.RegisterInstance(serviceInfo)
+                .AsImplementedInterfaces().SingleInstance();
             builder.RegisterInstance(config)
                 .AsImplementedInterfaces().SingleInstance();
 

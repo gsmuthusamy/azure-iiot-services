@@ -3,26 +3,27 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.OpcUa.Alerting {
+namespace Microsoft.Azure.IIoT.Services.OpcUa.Processor {
+    using Microsoft.Azure.IIoT.Diagnostics;
 
     /// <summary>
-    /// Web service information
+    /// Service information
     /// </summary>
-    public static class ServiceInfo {
+    public class ServiceInfo : IProcessIdentity {
 
         /// <summary>
         /// ID
         /// </summary>
-        public const string ID = "OPC_ALERTING_AGENT";
+        public string Id => "OPC_GRAPH_AGENT";
 
         /// <summary>
         /// Name of service
         /// </summary>
-        public const string NAME = "Opc-Alerting";
+        public string Name => "Opc-Graph-Agent";
 
         /// <summary>
         /// Description of service
         /// </summary>
-        public const string DESCRIPTION = "Azure Industrial IoT OPC UA Alert Agent";
+        public string Description => "Azure Industrial IoT OPC UA Graph Agent";
     }
 }

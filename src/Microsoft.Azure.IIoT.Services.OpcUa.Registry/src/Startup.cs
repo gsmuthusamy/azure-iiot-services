@@ -67,6 +67,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry {
         /// <param name="configuration"></param>
         public Startup(IHostingEnvironment env, IConfiguration configuration) {
             Environment = env;
+            ServiceInfo = new ServiceInfo();
             Config = new Config(
                 new ConfigurationBuilder()
                     .AddConfiguration(configuration)

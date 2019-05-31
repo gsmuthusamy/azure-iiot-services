@@ -12,6 +12,9 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.Runtime {
     using Microsoft.Azure.IIoT.Hub.Client.Runtime;
     using Microsoft.Azure.IIoT.Messaging.ServiceBus;
     using Microsoft.Azure.IIoT.Messaging.ServiceBus.Runtime;
+    using Microsoft.Azure.IIoT.Storage.CosmosDb;
+    using Microsoft.Azure.IIoT.Storage.CosmosDb.Runtime;
+    using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Auth.Server;
     using Microsoft.Azure.IIoT.Auth.Runtime;
     using Microsoft.Azure.IIoT.Auth.Clients;
@@ -23,7 +26,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.Runtime {
     /// Common web service configuration aggregation
     /// </summary>
     public class Config : ConfigBase, IAuthConfig, IIoTHubConfig,
-        ICorsConfig, IClientConfig, ISwaggerConfig, IServiceBusConfig {
+        ICorsConfig, IClientConfig, ISwaggerConfig, IServiceBusConfig,
+        ICosmosDbConfig, IItemContainerConfig {
 
         /// <inheritdoc/>
         public string IoTHubConnString => _hub.IoTHubConnString;
@@ -63,6 +67,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.Runtime {
         public string SwaggerAppSecret => _swagger.SwaggerAppSecret;
         /// <inheritdoc/>
         public string ServiceBusConnString => _sb.ServiceBusConnString;
+        /// <inheritdoc/>
+        public string DbConnectionString => _cosmos.DbConnectionString;
+        /// <inheritdoc/>
+        public string ContainerName => "iiot_opc";
+        /// <inheritdoc/>
+        public string DatabaseName => "iiot_opc";
 
         /// <summary>
         /// Whether to use role based access
@@ -81,12 +91,14 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Registry.Runtime {
             _hub = new IoTHubConfig(configuration);
             _cors = new CorsConfig(configuration);
             _sb = new ServiceBusConfig(configuration);
+            _cosmos = new CosmosDbConfig(configuration);
         }
 
         private readonly SwaggerConfig _swagger;
         private readonly AuthConfig _auth;
         private readonly CorsConfig _cors;
         private readonly ServiceBusConfig _sb;
+        private readonly CosmosDbConfig _cosmos;
         private readonly IoTHubConfig _hub;
     }
 }

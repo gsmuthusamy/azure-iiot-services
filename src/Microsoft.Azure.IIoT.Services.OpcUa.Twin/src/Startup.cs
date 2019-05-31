@@ -63,6 +63,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Twin {
         /// <param name="configuration"></param>
         public Startup(IHostingEnvironment env, IConfiguration configuration) {
             Environment = env;
+            ServiceInfo = new ServiceInfo();
             Config = new Config(
                 new ConfigurationBuilder()
                     .AddConfiguration(configuration)

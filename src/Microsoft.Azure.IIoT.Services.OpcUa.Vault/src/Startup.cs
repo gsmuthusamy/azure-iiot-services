@@ -74,6 +74,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault {
                 throw new ArgumentNullException(nameof(configuration));
             }
             Environment = env;
+            ServiceInfo = new ServiceInfo();
 
             var configBuilder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)

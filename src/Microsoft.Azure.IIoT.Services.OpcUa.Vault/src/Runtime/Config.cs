@@ -9,8 +9,8 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
     using Microsoft.Azure.IIoT.Auth.Server;
     using Microsoft.Azure.IIoT.Crypto.KeyVault;
     using Microsoft.Azure.IIoT.Crypto.KeyVault.Runtime;
-    using Microsoft.Azure.IIoT.OpcUa.Registry;
-    using Microsoft.Azure.IIoT.OpcUa.Registry.Runtime;
+    using Microsoft.Azure.IIoT.Messaging.ServiceBus;
+    using Microsoft.Azure.IIoT.Messaging.ServiceBus.Runtime;
     using Microsoft.Azure.IIoT.OpcUa.Vault;
     using Microsoft.Azure.IIoT.OpcUa.Vault.Runtime;
     using Microsoft.Azure.IIoT.Services.Cors;
@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
     /// </summary>
     public class Config : ConfigBase, IAuthConfig, ICorsConfig,
         IClientConfig, ISwaggerConfig, IVaultConfig, ICosmosDbConfig,
-        IItemContainerConfig, IKeyVaultConfig, IRegistryConfig {
+        IItemContainerConfig, IKeyVaultConfig, IServiceBusConfig {
 
         /// <inheritdoc/>
         public string CorsWhitelist => _cors.CorsWhitelist;
@@ -78,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         /// <inheritdoc/>
         public string DatabaseName => "iiot_opc";
         /// <inheritdoc/>
-        public bool ApplicationsAutoApprove => _registry.ApplicationsAutoApprove;
+        public string ServiceBusConnString => _sb.ServiceBusConnString;
 
         /// <summary>
         /// Whether to use role based access
@@ -92,21 +92,21 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Vault.Runtime {
         internal Config(IConfigurationRoot configuration) :
             base(configuration) {
             _vault = new VaultConfig(configuration);
-            _registry = new RegistryConfig(configuration);
             _keyVault = new KeyVaultConfig(configuration);
             _cosmos = new CosmosDbConfig(configuration);
             _swagger = new SwaggerConfig(configuration);
             _auth = new AuthConfig(configuration);
             _cors = new CorsConfig(configuration);
+            _sb = new ServiceBusConfig(configuration);
         }
 
         private readonly IVaultConfig _vault;
-        private readonly RegistryConfig _registry;
         private readonly KeyVaultConfig _keyVault;
         private readonly ICosmosDbConfig _cosmos;
         private readonly SwaggerConfig _swagger;
         private readonly AuthConfig _auth;
         private readonly CorsConfig _cors;
+        private readonly ServiceBusConfig _sb;
     }
 }
 

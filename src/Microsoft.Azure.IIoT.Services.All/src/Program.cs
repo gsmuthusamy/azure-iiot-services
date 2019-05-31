@@ -19,6 +19,7 @@ namespace Microsoft.Azure.IIoT.Services.All {
             Task.WaitAll(new[] {
                 Task.Run(() => Hub.Router.Program.Main(args)),
                 Task.Run(() => OpcUa.Alerting.Program.Main(args)),
+                Task.Run(() => OpcUa.Jobs.Program.Main(args)),
                 Task.Run(() => OpcUa.Gateway.Program.Main(args)),
                 Task.Run(() => OpcUa.History.Program.Main(args)),
                 Task.Run(() => OpcUa.Onboarding.Program.Main(args)),

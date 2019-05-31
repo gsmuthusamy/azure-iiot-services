@@ -13,8 +13,6 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Alerting {
     using Microsoft.Azure.IIoT.Messaging.Default;
     using Microsoft.Azure.IIoT.Messaging.ServiceBus.Services;
     using Microsoft.Azure.IIoT.Messaging.ServiceBus.Clients;
-    using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Extensions.Configuration;
     using Autofac;
     using AutofacSerilogIntegration;
@@ -25,8 +23,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Alerting {
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Model import processor - processes uploaded models and inserts
-    /// them into the opc model graph and eventually CDM.
+    /// Security alerter agent
     /// </summary>
     public class Program {
 
